@@ -94,6 +94,42 @@ This application follows **Clean Architecture** principles with the following st
 
 The API will be available at `https://localhost:7000` and `http://localhost:5000`
 
+### Git Hooks Setup
+
+3. **Activate the git hooks:**
+
+   1. **Make the hooks executable:**
+   ```bash
+   # Linux/Mac users
+   chmod +x .githooks/pre-push
+   chmod +x .githooks/pre-commit
+   ```
+   ```bash
+   # In case you get line ending errors on mac/linux (like $'\r': command not found)
+   # Install dos2unix to fix Windows line endings
+   brew install dos2unix  # On macOS
+   # Or on Ubuntu/Debian: sudo apt install dos2unix
+   
+   # Convert line endings to Unix format
+   dos2unix .githooks/pre-commit
+   dos2unix .githooks/pre-push
+   # then make executable and repeat the chmod process above
+   ```
+   ```powershell
+   # Using PowerShell
+   icacls .githooks\pre-push /grant Everyone:RX
+   icacls .githooks\pre-commit /grant Everyone:RX
+
+   # Or using Command Prompt
+   attrib +x .githooks\pre-push
+   attrib +x .githooks\pre-commit
+   ```
+
+   2. **Configure Git to use the hooks:**
+   ```bash
+   git config core.hooksPath .githooks
+   ```
+
 ### Frontend Setup
 
 1. **Navigate to the frontend directory:**
