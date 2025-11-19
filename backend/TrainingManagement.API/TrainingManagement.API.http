@@ -1,0 +1,87 @@
+### Training Management API Tests
+
+# Test Variables
+@baseUrl = http://localhost:5118
+@contentType = application/json
+
+### Test API Health (should work)
+GET {{baseUrl}}/swagger
+
+### 1. Login with Test User
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "test@trainingmanagement.com",
+  "password": "Test123!"
+}
+
+### 2. Login with Admin User
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@trainingmanagement.com",
+  "password": "Admin123!"
+}
+
+### 3. Login with Trainer User  
+POST {{baseUrl}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "trainer@trainingmanagement.com",
+  "password": "Trainer123!"
+}
+
+### 4. Register New User
+POST {{baseUrl}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "newuser@example.com",
+  "password": "NewUser123!",
+  "confirmPassword": "NewUser123!",
+  "firstName": "New",
+  "lastName": "User",
+  "dateOfBirth": "1995-01-01T00:00:00.000Z"
+}
+
+### 5. Get User Profile (requires authentication)
+# First login to get a token, then use it here
+GET {{baseUrl}}/api/auth/profile
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 6. Validate Token
+GET {{baseUrl}}/api/auth/validate-token
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 7. Change Password (requires authentication)
+POST {{baseUrl}}/api/auth/change-password
+Content-Type: {{contentType}}
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "currentPassword": "Test123!",
+  "newPassword": "NewPassword123!",
+  "confirmNewPassword": "NewPassword123!"
+}
+
+### 8. Logout
+POST {{baseUrl}}/api/auth/logout
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 9. Get Departments (Lookup API)
+GET {{baseUrl}}/api/lookup/departments
+
+### 10. Get Facilities (Lookup API)
+GET {{baseUrl}}/api/lookup/facilities
+
+### 11. Get Designations (Lookup API)
+GET {{baseUrl}}/api/lookup/designations
+
+### 12. Get Salary Scales (Lookup API)
+GET {{baseUrl}}/api/lookup/salary-scales
+
+### 13. Get Sponsors (Lookup API)
+GET {{baseUrl}}/api/lookup/sponsors
