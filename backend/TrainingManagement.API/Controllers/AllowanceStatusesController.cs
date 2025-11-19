@@ -112,7 +112,7 @@ public class AllowanceStatusesController : ControllerBase
         {
             // Check if allowance status with same name already exists
             var isUnique = await _unitOfWork.AllowanceStatuses.IsNameUniqueAsync(createDto.Name);
-            
+
             if (!isUnique)
             {
                 return BadRequest($"Allowance status with name '{createDto.Name}' already exists");
@@ -168,7 +168,7 @@ public class AllowanceStatusesController : ControllerBase
             if (!string.IsNullOrEmpty(updateDto.Name) && updateDto.Name != allowanceStatus.Name)
             {
                 var isUnique = await _unitOfWork.AllowanceStatuses.IsNameUniqueAsync(updateDto.Name, id);
-                
+
                 if (!isUnique)
                 {
                     return BadRequest($"Allowance status with name '{updateDto.Name}' already exists");
