@@ -16,9 +16,8 @@ export interface LookupDto {
   description?: string;
 }
 
-export interface Department extends LookupDto {
-  // Additional department-specific fields
-}
+// Department uses LookupDto structure
+export type Department = LookupDto;
 
 export interface Facility extends LookupDto {
   location: string;
@@ -478,7 +477,7 @@ export interface FormState<T> {
 }
 
 // API Response interfaces
-export interface BaseApiResponse<T = any> {
+export interface BaseApiResponse<T = unknown> {
   success: boolean;
   message: string;
   data?: T;

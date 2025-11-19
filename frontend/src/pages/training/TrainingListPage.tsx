@@ -47,8 +47,7 @@ export default function TrainingListPage() {
       
       setTrainings(response.data || []);
       setTotalCount(response.total || 0);
-    } catch (error) {
-      console.error("Error loading trainings:", error);
+    } catch {
       setError("Failed to load trainings. Please try again.");
     } finally {
       setLoading(false);
@@ -60,8 +59,8 @@ export default function TrainingListPage() {
     try {
       const activeTrainings = await getActiveTrainings();
       setActiveTrainingsCount(activeTrainings.length);
-    } catch (err) {
-      console.error("Error fetching active trainings:", err);
+    } catch {
+      // Silently fail for stats
     }
   }, []);
 
@@ -83,8 +82,7 @@ export default function TrainingListPage() {
         const response = await searchTrainings(term, 1, pageSize);
         setTrainings(response.data || []);
         setTotalCount(response.total || 0);
-      } catch (err) {
-        console.error("Error searching trainings:", err);
+      } catch {
         setError("Search failed. Please try again.");
       } finally {
         setLoading(false);
@@ -125,8 +123,7 @@ export default function TrainingListPage() {
       setSuccessMessage(`Training "${trainingToDelete.program}" deleted successfully!`);
       setTrainingToDelete(null);
       fetchTrainings();
-    } catch (err) {
-      console.error("Error deleting training:", err);
+    } catch {
       setError("Failed to delete training. Please try again.");
       setTrainingToDelete(null);
     } finally {
@@ -381,3 +378,4 @@ export default function TrainingListPage() {
     </div>
   );
 }
+

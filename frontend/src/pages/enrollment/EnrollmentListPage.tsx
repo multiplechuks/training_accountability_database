@@ -25,13 +25,14 @@ export default function EnrollmentListPage() {
         const response = await getEnrollments(currentPage, itemsPerPage);
         setEnrollments(response.data || []);
         setTotalCount(response.total || response.data?.length || 0);
-      } catch (err: any) {
-        console.error("Error fetching enrollments:", err);
-        setError(
-          err?.response?.data?.message || 
-          err?.message || 
-          "Failed to load enrollments. Please try again."
-        );
+      } catch (err: unknown) {
+        const errorMsg = 
+          (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) 
+            ? String(err.response.data.message)
+            : (err instanceof Error) 
+              ? err.message 
+              : "Failed to load enrollments. Please try again.";
+        setError(errorMsg);
         setEnrollments([]);
         setTotalCount(0);
       } finally {
@@ -290,3 +291,4 @@ export default function EnrollmentListPage() {
     </div>
   );
 }
+

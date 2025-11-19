@@ -222,3 +222,4 @@ export default function Sidebar({ activeItem }: SidebarProps) {
     </>
   );
 }
+

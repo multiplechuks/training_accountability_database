@@ -46,8 +46,7 @@ export default function ParticipantsListPage() {
       
       setParticipants(response.data || []);
       setTotalCount(response.total || 0);
-    } catch (err) {
-      console.error("Error fetching participants:", err);
+    } catch {
       setError("Failed to load participants. Please try again.");
     } finally {
       setLoading(false);
@@ -68,8 +67,7 @@ export default function ParticipantsListPage() {
         const response = await searchParticipants(term, 1, pageSize);
         setParticipants(response.data || []);
         setTotalCount(response.total || 0);
-      } catch (err) {
-        console.error("Error searching participants:", err);
+      } catch {
         setError("Search failed. Please try again.");
       } finally {
         setLoading(false);
@@ -108,8 +106,7 @@ export default function ParticipantsListPage() {
       setSuccessMessage(`Participant "${participantToDelete.fullName}" deleted successfully!`);
       setParticipantToDelete(null);
       fetchParticipants();
-    } catch (err) {
-      console.error("Error deleting participant:", err);
+    } catch {
       setError("Failed to delete participant. Please try again.");
       setParticipantToDelete(null);
     } finally {
@@ -359,3 +356,4 @@ export default function ParticipantsListPage() {
     </div>
   );
 }
+

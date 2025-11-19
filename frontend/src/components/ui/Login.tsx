@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import type { LoginCredentials } from "@/types";
 
 interface LoginProps {
-  // eslint-disable-next-line no-unused-vars
   onLogin: (credentials: LoginCredentials) => void;
   loading?: boolean;
   error?: string;
@@ -135,3 +134,4 @@ export default function Login({ onLogin: _onLogin, loading = false, error }: Log
     </div>
   );
 }
+

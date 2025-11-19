@@ -63,9 +63,7 @@ export default function AllowanceCreatePage() {
         ]);
         setAllowanceTypes(allowanceTypesRes || []);
         setAllowanceStatuses(allowanceStatusesRes || []);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Error fetching lookup data:", error);
+      } catch {
         // Set default values if API fails
         setAllowanceTypes([
           { pk: 1, name: "Tuition Fee", description: "Training program tuition fees" },
@@ -101,9 +99,7 @@ export default function AllowanceCreatePage() {
           const trainingData = await getTraining(parseInt(trainingIdFromUrl));
           setSelectedTrainingData(trainingData);
         }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Error fetching initial data:", error);
+      } catch {
         setModalMessage("Error loading participant or training data. Please check the URL parameters.");
         setShowErrorModal(true);
       } finally {
@@ -196,9 +192,7 @@ export default function AllowanceCreatePage() {
       setSuccessCount(createdAllowances.length);
       setModalMessage(`Successfully created ${createdAllowances.length} allowance${createdAllowances.length !== 1 ? "s" : ""}!`);
       setShowSuccessModal(true);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Error creating allowances:", error);
+    } catch (error: unknown) {
       const errorMsg = error && typeof error === "object" && "response" in error 
         ? (error.response as unknown as { data?: { message?: string } })?.data?.message || "Error creating allowances. Please try again."
         : "Error creating allowances. Please try again.";
@@ -269,9 +263,8 @@ export default function AllowanceCreatePage() {
                     // Fetch participant data when selected
                     getParticipant(participantId)
                       .then(setSelectedParticipantData)
-                      .catch((err) => {
-                        // eslint-disable-next-line no-console
-                        console.error(err);
+                      .catch(() => {
+                        // Silently handle error
                       });
                   }
                 }}
@@ -299,9 +292,8 @@ export default function AllowanceCreatePage() {
                     // Fetch training data when selected
                     getTraining(trainingId)
                       .then(setSelectedTrainingData)
-                      .catch((err) => {
-                        // eslint-disable-next-line no-console
-                        console.error(err);
+                      .catch(() => {
+                        // Silently handle error
                       });
                   }
                 }}
@@ -594,3 +586,4 @@ export default function AllowanceCreatePage() {
     </div>
   );
 }
+

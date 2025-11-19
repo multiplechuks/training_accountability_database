@@ -3,7 +3,6 @@ import type { ConfigurationItem } from "@/types";
 
 export default function ConfigurationPage() {
   const handleConfigurationSave = (item: ConfigurationItem) => {
-    console.log("Configuration saved:", item);
     // Here you would typically send to API
     alert(`Configuration "${item.key}" saved successfully!`);
   };
@@ -19,3 +18,4 @@ export default function ConfigurationPage() {
     </div>
   );
 }
+

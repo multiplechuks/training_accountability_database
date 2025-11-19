@@ -27,8 +27,7 @@ export default function TrainingCreatePage() {
         }
       });
       
-    } catch (err) {
-      console.error("Error creating training:", err);
+    } catch {
       setError(
         err instanceof Error 
           ? err.message 

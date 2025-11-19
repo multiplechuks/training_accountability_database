@@ -30,8 +30,7 @@ export default function TrainingDetailsPage() {
         setError(null);
         const data = await getTraining(parseInt(id));
         setTraining(data);
-      } catch (err) {
-        console.error("Error fetching training:", err);
+      } catch {
         setError("Failed to load training details. Please try again.");
       } finally {
         setLoading(false);
@@ -66,8 +65,7 @@ export default function TrainingDetailsPage() {
           type: "success"
         }
       });
-    } catch (err) {
-      console.error("Error deleting training:", err);
+    } catch {
       setError("Failed to delete training. Please try again.");
       setShowDeleteModal(false);
     } finally {

@@ -5,7 +5,6 @@ import { formatInputDate } from "@/utils/dateFormatter";
 
 interface TrainingFormProps {
   training?: TrainingResponseDto; // For edit mode
-  // eslint-disable-next-line no-unused-vars
   onSubmit: (data: CreateTrainingDto | UpdateTrainingDto) => void;
   onCancel: () => void;
   loading?: boolean;

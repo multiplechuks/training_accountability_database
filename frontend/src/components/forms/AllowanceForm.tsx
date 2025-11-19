@@ -3,7 +3,6 @@ import { Card, CardHeader, CardBody } from "@/components/ui";
 import type { CreateAllowanceDto, AllowanceType, AllowanceStatus, ParticipantResponseDto, TrainingResponseDto } from "@/types";
 
 interface AllowanceFormProps {
-  // eslint-disable-next-line no-unused-vars
   onSubmit: (data: CreateAllowanceDto) => void;
   onCancel: () => void;
   loading?: boolean;
@@ -202,7 +201,7 @@ export default function AllowanceForm({ onSubmit, onCancel, loading = false, ini
     }
   };
 
-  const handleInputChange = (field: keyof CreateAllowanceDto, value: any) => {
+  const handleInputChange = (field: keyof CreateAllowanceDto, value: string | number | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -442,3 +441,4 @@ export default function AllowanceForm({ onSubmit, onCancel, loading = false, ini
     </Card>
   );
 }
+

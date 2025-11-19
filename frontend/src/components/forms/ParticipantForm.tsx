@@ -4,7 +4,6 @@ import { FormSection } from "@/components/forms";
 
 interface ParticipantFormProps {
   participant?: ParticipantResponseDto; // For edit mode
-  // eslint-disable-next-line no-unused-vars
   onSubmit: (data: CreateParticipantDto | UpdateParticipantDto) => void;
   onCancel: () => void;
   loading?: boolean;

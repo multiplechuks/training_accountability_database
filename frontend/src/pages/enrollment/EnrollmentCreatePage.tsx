@@ -14,7 +14,6 @@ export default function EnrollmentPage() {
   const handleEnrollmentSubmit = async (data: ParticipantEnrollmentDto) => {
     try {
       setIsSubmitting(true);
-      console.log("Submitting enrollment data:", data);
       
       // Format the data for the backend - ensure proper date formats and nullable fields
       const submissionData = {
@@ -40,11 +39,8 @@ export default function EnrollmentPage() {
         campusType: data.campusType || "MAIN"
       };
       
-      console.log("Formatted submission data:", submissionData);
-      
       // Submit to API
-      const response = await createEnrollment(submissionData as ParticipantEnrollmentDto);
-      console.log("Enrollment created successfully:", response);
+      await createEnrollment(submissionData as ParticipantEnrollmentDto);
       
       setNotificationType("success");
       setNotificationTitle("Enrollment Successful");
@@ -54,18 +50,20 @@ export default function EnrollmentPage() {
       // Optionally redirect or reset form here
       // navigate('/enrollments'); // if using react-router
       
-    } catch (error: any) {
-      console.error("Failed to submit enrollment:", error);
+    } catch (error: unknown) {
       
       let errorMessage = "An error occurred while submitting the enrollment";
       
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.response?.data?.errors) {
-        // Handle validation errors from backend
-        const errors = error.response.data.errors;
-        errorMessage = Array.isArray(errors) ? errors.join(", ") : errors;
-      } else if (error.message) {
+      if (error && typeof error === "object" && "response" in error) {
+        const err = error as { response?: { data?: { message?: string; errors?: string[] | string } } };
+        if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response?.data?.errors) {
+          // Handle validation errors from backend
+          const errors = err.response.data.errors;
+          errorMessage = Array.isArray(errors) ? errors.join(", ") : errors;
+        }
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
       
@@ -79,7 +77,6 @@ export default function EnrollmentPage() {
   };
 
   const handleEnrollmentCancel = () => {
-    console.log("Enrollment cancelled");
     // Optionally navigate back or reset form
     // navigate(-1); // Go back
   };
@@ -121,3 +118,4 @@ export default function EnrollmentPage() {
     </div>
   );
 }
+

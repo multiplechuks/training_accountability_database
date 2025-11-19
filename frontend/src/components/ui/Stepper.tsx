@@ -10,7 +10,6 @@ export interface Step {
 interface StepperProps {
   steps: Step[];
   currentStep: number;
-  // eslint-disable-next-line no-unused-vars
   onStepClick?: (stepIndex: number) => void;
   orientation?: "horizontal" | "vertical";
   allowClickToNavigate?: boolean;
@@ -72,3 +71,4 @@ export default function Stepper({
     </div>
   );
 }
+

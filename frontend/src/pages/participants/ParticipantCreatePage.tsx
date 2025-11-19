@@ -27,8 +27,7 @@ export default function ParticipantCreatePage() {
         }
       });
       
-    } catch (err) {
-      console.error("Error creating participant:", err);
+    } catch {
       setError(
         err instanceof Error 
           ? err.message 

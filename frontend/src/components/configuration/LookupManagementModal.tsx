@@ -41,6 +41,7 @@ export default function LookupManagementModal({
             setSearchTerm("");
             setPage(1);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
     // Fetch items when page or search term changes
@@ -48,6 +49,7 @@ export default function LookupManagementModal({
         if (isOpen) {
             fetchItems();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, searchTerm]);
 
     const fetchItems = async () => {
@@ -56,8 +58,7 @@ export default function LookupManagementModal({
             const result = await onFetch(page, pageSize, searchTerm || undefined);
             setItems(result.data);
             setTotalCount(result.totalCount);
-        } catch (error) {
-            console.error("Error fetching items:", error);
+        } catch {
             alert("Error loading data. Please try again.");
         } finally {
             setLoading(false);
@@ -76,9 +77,18 @@ export default function LookupManagementModal({
             setFormData({ name: "", description: "" });
             setIsCreating(false);
             fetchItems();
-        } catch (error: any) {
-            console.error("Error creating item:", error);
-            alert(error.response?.data?.message || error.response?.data || "Error creating item");
+        } catch (error: unknown) {
+            let errorMessage = "Error creating item";
+            if (error && typeof error === "object" && "response" in error) {
+                const err = error as { response?: { data?: { message?: string } | string } };
+                const data = err.response?.data;
+                if (typeof data === "object" && data && "message" in data) {
+                    errorMessage = data.message || errorMessage;
+                } else if (typeof data === "string") {
+                    errorMessage = data;
+                }
+            }
+            alert(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -96,9 +106,18 @@ export default function LookupManagementModal({
             setEditingItem(null);
             setFormData({ name: "", description: "" });
             fetchItems();
-        } catch (error: any) {
-            console.error("Error updating item:", error);
-            alert(error.response?.data?.message || error.response?.data || "Error updating item");
+        } catch (error: unknown) {
+            let errorMessage = "Error updating item";
+            if (error && typeof error === "object" && "response" in error) {
+                const err = error as { response?: { data?: { message?: string } | string } };
+                const data = err.response?.data;
+                if (typeof data === "object" && data && "message" in data) {
+                    errorMessage = data.message || errorMessage;
+                } else if (typeof data === "string") {
+                    errorMessage = data;
+                }
+            }
+            alert(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -113,9 +132,18 @@ export default function LookupManagementModal({
         try {
             await onDelete(id);
             fetchItems();
-        } catch (error: any) {
-            console.error("Error deleting item:", error);
-            alert(error.response?.data?.message || error.response?.data || "Error deleting item");
+        } catch (error: unknown) {
+            let errorMessage = "Error deleting item";
+            if (error && typeof error === "object" && "response" in error) {
+                const err = error as { response?: { data?: { message?: string } | string } };
+                const data = err.response?.data;
+                if (typeof data === "object" && data && "message" in data) {
+                    errorMessage = data.message || errorMessage;
+                } else if (typeof data === "string") {
+                    errorMessage = data;
+                }
+            }
+            alert(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -140,8 +168,6 @@ export default function LookupManagementModal({
     };
 
     if (!isOpen) return null;
-
-    console.log("Rendering LookupManagementModal for:", title, "isOpen:", isOpen);
 
     const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -353,3 +379,4 @@ export default function LookupManagementModal({
         </div>
     );
 }
+
