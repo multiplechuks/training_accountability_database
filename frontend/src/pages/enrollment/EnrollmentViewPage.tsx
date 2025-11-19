@@ -25,13 +25,14 @@ export default function EnrollmentViewPage() {
         setError(null);
         const data = await getEnrollment(parseInt(id));
         setEnrollment(data);
-      } catch (err: any) {
-        console.error("Error fetching enrollment:", err);
-        setError(
-          err?.response?.data?.message || 
-          err?.message || 
-          "Failed to load enrollment details. Please try again."
-        );
+      } catch (err: unknown) {
+        const errorMsg = 
+          (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) 
+            ? String(err.response.data.message)
+            : (err instanceof Error) 
+              ? err.message 
+              : "Failed to load enrollment details. Please try again.";
+        setError(errorMsg);
       } finally {
         setLoading(false);
       }
@@ -72,7 +73,7 @@ export default function EnrollmentViewPage() {
   const handleManageAllowances = () => {
     if (enrollment && enrollment.participant && enrollment.training) {
       // Navigate to allowance create page with participant and training pre-selected
-      navigate(`/allowances/create?participantId=${enrollment.participant.pK}&trainingId=${enrollment.training.pK}`);
+      navigate(`/allowances/create?participantId=${enrollment.participant.pk}&trainingId=${enrollment.training.pk}`);
     }
   };
 

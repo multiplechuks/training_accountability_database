@@ -106,7 +106,6 @@ export default function ParticipantAllowancePage({ participantId = 1 }: Particip
   }, [participantId]);
 
   const handleCreateAllowance = (data: CreateAllowanceDto) => {
-    console.log("Creating allowance for participant:", data);
     // Here you would typically send to API
     
     // Simulate adding the new allowance
@@ -431,3 +430,4 @@ export default function ParticipantAllowancePage({ participantId = 1 }: Particip
     </div>
   );
 }
+

@@ -22,9 +22,7 @@ export default function AllowanceListPage() {
         const response = await getAllowances(currentPage, itemsPerPage, searchTerm || undefined);
         setAllowances(response.data);
         setTotalCount(response.totalCount);
-        console.log("Fetched allowances:", response.data);
-      } catch (error) {
-        console.error("Error fetching allowances:", error);
+      } catch {
         // Set empty array on error
         setAllowances([]);
         setTotalCount(0);
@@ -348,3 +346,4 @@ export default function AllowanceListPage() {
     </div>
   );
 }
+

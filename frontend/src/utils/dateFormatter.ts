@@ -71,8 +71,7 @@ export function formatDate(
     }
 
     return new Intl.DateTimeFormat(locale, formatOptions).format(dateObj);
-  } catch (error) {
-    console.error("Error formatting date:", error);
+  } catch {
     return "Invalid date";
   }
 }
@@ -122,8 +121,7 @@ export function formatInputDate(date: string | Date | null | undefined): string 
     }
 
     return dateObj.toISOString().split("T")[0];
-  } catch (error) {
-    console.error("Error formatting input date:", error);
+  } catch {
     return "";
   }
 }
@@ -154,8 +152,7 @@ export function calculateAge(dateOfBirth: string | Date | null | undefined): num
     }
 
     return age >= 0 ? age : null;
-  } catch (error) {
-    console.error("Error calculating age:", error);
+  } catch {
     return null;
   }
 }
@@ -231,8 +228,7 @@ export function getRelativeTime(
 
     const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
     return rtf.format(isPast ? -value : value, unit);
-  } catch (error) {
-    console.error("Error getting relative time:", error);
+  } catch {
     return "Unknown time";
   }
 }

@@ -34,13 +34,14 @@ export default function EnrollmentEditPage() {
         setError(null);
         const data = await getEnrollment(parseInt(id));
         setEnrollment(data);
-      } catch (err: any) {
-        console.error("Error fetching enrollment:", err);
-        setError(
-          err?.response?.data?.message || 
-          err?.message || 
-          "Failed to load enrollment details. Please try again."
-        );
+      } catch (err: unknown) {
+        const errorMsg = 
+          (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) 
+            ? String(err.response.data.message)
+            : (err instanceof Error) 
+              ? err.message 
+              : "Failed to load enrollment details. Please try again.";
+        setError(errorMsg);
       } finally {
         setLoading(false);
       }
@@ -57,7 +58,6 @@ export default function EnrollmentEditPage() {
 
     try {
       setIsSubmitting(true);
-      console.log("Updating enrollment data:", data);
       
       // Format the data for the backend - ensure proper date formats and nullable fields
       const submissionData = {
@@ -83,29 +83,26 @@ export default function EnrollmentEditPage() {
         campusType: data.campusType || enrollment.campusType || "MAIN"
       };
       
-      console.log("Formatted submission data:", submissionData);
-      
       // Submit to API
-      const response = await updateEnrollment(enrollment.pk, submissionData as ParticipantEnrollmentDto);
-      console.log("Enrollment updated successfully:", response);
+      await updateEnrollment(enrollment.pk, submissionData as ParticipantEnrollmentDto);
       
       setNotificationType("success");
       setNotificationTitle("Update Successful");
       setNotificationMessage("The enrollment has been updated successfully!");
       setShowNotification(true);
       
-    } catch (error: any) {
-      console.error("Failed to update enrollment:", error);
-      
+    } catch (error: unknown) {
       let errorMessage = "An error occurred while updating the enrollment";
       
-      if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error.response?.data?.errors) {
-        // Handle validation errors from backend
-        const errors = error.response.data.errors;
-        errorMessage = Array.isArray(errors) ? errors.join(", ") : errors;
-      } else if (error.message) {
+      if (error && typeof error === "object" && "response" in error) {
+        const err = error as { response?: { data?: { message?: string; errors?: string[] | string } } };
+        if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response?.data?.errors) {
+          const errors = err.response.data.errors;
+          errorMessage = Array.isArray(errors) ? errors.join(", ") : errors;
+        }
+      } else if (error instanceof Error) {
         errorMessage = error.message;
       }
       
@@ -119,7 +116,6 @@ export default function EnrollmentEditPage() {
   };
 
   const handleEnrollmentCancel = () => {
-    console.log("Enrollment edit cancelled");
     if (enrollment?.pk) {
       navigate(NavigationRoutes.ENROLLMENT_DETAILS(enrollment.pk));
     } else {
@@ -134,8 +130,6 @@ export default function EnrollmentEditPage() {
       navigate(NavigationRoutes.ENROLLMENT_DETAILS(enrollment.pk));
     }
   };
-
-
 
   if (loading) {
     return (

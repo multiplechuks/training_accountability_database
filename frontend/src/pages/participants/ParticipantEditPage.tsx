@@ -28,8 +28,7 @@ export default function ParticipantEditPage() {
         setError(null);
         const data = await getParticipant(parseInt(id));
         setParticipant(data);
-      } catch (err) {
-        console.error("Error fetching participant:", err);
+      } catch {
         setError("Failed to load participant details. Please try again.");
       } finally {
         setLoading(false);
@@ -58,7 +57,6 @@ export default function ParticipantEditPage() {
       });
       
     } catch (err) {
-      console.error("Error updating participant:", err);
       setError(
         err instanceof Error 
           ? err.message 

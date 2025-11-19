@@ -13,7 +13,6 @@ import {
 } from "../../api/searchHelpers";
 
 interface EnrollmentFormProps {
-  // eslint-disable-next-line no-unused-vars
   onSubmit: (data: ParticipantEnrollmentDto) => void;
   onCancel: () => void;
   loading?: boolean;
@@ -65,7 +64,7 @@ export default function EnrollmentForm({ onSubmit, onCancel, loading = false }: 
     }
   ];
 
-  const updateFormData = (field: keyof ParticipantEnrollmentDto, value: any) => {
+  const updateFormData = (field: keyof ParticipantEnrollmentDto, value: string | number | boolean | undefined) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -607,3 +606,4 @@ export default function EnrollmentForm({ onSubmit, onCancel, loading = false }: 
     </div>
   );
 }
+

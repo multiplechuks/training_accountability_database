@@ -7,7 +7,6 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  // eslint-disable-next-line no-unused-vars
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
   clearError: () => void;
@@ -51,8 +50,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             apiService.removeAuthToken();
           }
         }
-      } catch (err) {
-        console.error("Auth check failed:", err);
+      } catch {
         apiService.removeAuthToken();
       } finally {
         setIsLoading(false);
@@ -92,7 +90,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           roles: response.user.roles
         });
       }
-    } catch (err) {
+    } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");
       throw err;
     } finally {
@@ -126,3 +124,4 @@ export function AuthProvider({ children }: AuthProviderProps) {
     </AuthContext.Provider>
   );
 }
+

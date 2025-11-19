@@ -28,8 +28,7 @@ export default function TrainingEditPage() {
         setError(null);
         const data = await getTraining(parseInt(id));
         setTraining(data);
-      } catch (err) {
-        console.error("Error fetching training:", err);
+      } catch {
         setError("Failed to load training details. Please try again.");
       } finally {
         setLoading(false);
@@ -57,8 +56,7 @@ export default function TrainingEditPage() {
         }
       });
       
-    } catch (err) {
-      console.error("Error updating training:", err);
+    } catch {
       setError(
         err instanceof Error 
           ? err.message 

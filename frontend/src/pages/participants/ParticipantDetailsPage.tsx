@@ -27,8 +27,7 @@ import type { ParticipantResponseDto } from "@/types";export default function Pa
         setError(null);
         const data = await getParticipant(parseInt(id));
         setParticipant(data);
-      } catch (err) {
-        console.error("Error fetching participant:", err);
+      } catch {
         setError("Failed to load participant details. Please try again.");
       } finally {
         setLoading(false);
@@ -63,8 +62,7 @@ import type { ParticipantResponseDto } from "@/types";export default function Pa
           type: "success"
         }
       });
-    } catch (err) {
-      console.error("Error deleting participant:", err);
+    } catch {
       setError("Failed to delete participant. Please try again.");
       setShowDeleteModal(false);
     } finally {

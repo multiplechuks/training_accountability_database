@@ -110,7 +110,7 @@ export default function SearchableSelect({
 
   // Custom styles for react-select
   const customStyles = {
-    control: (provided: any, state: any) => ({
+    control: (provided: Record<string, unknown>, state: { isFocused: boolean }) => ({
       ...provided,
       padding: "0.25rem 0.5rem",
       border: `2px solid ${error ? "#ef4444" : state.isFocused ? "var(--bs-botswana-blue, #0066cc)" : "var(--form-control-border, #d1d5db)"}`,
@@ -122,23 +122,23 @@ export default function SearchableSelect({
         borderColor: "var(--bs-botswana-blue, #0066cc)"
       }
     }),
-    placeholder: (provided: any) => ({
+    placeholder: (provided: Record<string, unknown>) => ({
       ...provided,
       color: "var(--form-control-placeholder, #9ca3af)"
     }),
-    singleValue: (provided: any) => ({
+    singleValue: (provided: Record<string, unknown>) => ({
       ...provided,
       color: "#374151",
       fontWeight: "500"
     }),
-    menu: (provided: any) => ({
+    menu: (provided: Record<string, unknown>) => ({
       ...provided,
       border: "2px solid var(--bs-botswana-blue, #0066cc)",
       borderRadius: "8px",
       boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
       zIndex: 9999
     }),
-    option: (provided: any, state: any) => ({
+    option: (provided: Record<string, unknown>, state: { isSelected: boolean; isFocused: boolean }) => ({
       ...provided,
       backgroundColor: state.isSelected 
         ? "var(--bs-botswana-blue, #0066cc)" 
@@ -150,15 +150,15 @@ export default function SearchableSelect({
       cursor: "pointer",
       borderLeft: state.isSelected ? "3px solid var(--bs-botswana-blue, #0066cc)" : "none"
     }),
-    input: (provided: any) => ({
+    input: (provided: Record<string, unknown>) => ({
       ...provided,
       color: "#374151"
     }),
-    loadingMessage: (provided: any) => ({
+    loadingMessage: (provided: Record<string, unknown>) => ({
       ...provided,
       color: "#6b7280"
     }),
-    noOptionsMessage: (provided: any) => ({
+    noOptionsMessage: (provided: Record<string, unknown>) => ({
       ...provided,
       color: "#6b7280"
     })
@@ -218,3 +218,4 @@ export default function SearchableSelect({
     </div>
   );
 }
+

@@ -6,7 +6,6 @@ import { getAllowanceTypes, createAllowanceType, updateAllowanceType, deleteAllo
 import { getAllowanceStatuses, createAllowanceStatus, updateAllowanceStatus, deleteAllowanceStatus } from "@/api/allowanceStatus";
 
 interface ConfigurationProps {
-  // eslint-disable-next-line no-unused-vars
   onSave: (item: ConfigurationItem) => void;
 }
 
@@ -15,11 +14,6 @@ export default function Configuration({ onSave: _onSave }: ConfigurationProps) {
   const [editingItem, setEditingItem] = useState<ConfigurationItem | null>(null);
   const [isAllowanceTypeModalOpen, setIsAllowanceTypeModalOpen] = useState(false);
   const [isAllowanceStatusModalOpen, setIsAllowanceStatusModalOpen] = useState(false);
-
-  console.log("Configuration component state:", { 
-    isAllowanceTypeModalOpen, 
-    isAllowanceStatusModalOpen 
-  });
 
   // Mock configuration data - replace with actual API calls
   const [configCategories] = useState<ConfigurationCategory[]>([
@@ -357,3 +351,4 @@ export default function Configuration({ onSave: _onSave }: ConfigurationProps) {
     </div>
   );
 }
+
