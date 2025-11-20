@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Get current branch
+BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+if [ $? -ne 0 ]; then
+    if [ -d ".git/rebase-merge" ] || [ -d ".git/rebase-apply" ] || [ -f ".git/MERGE_HEAD" ] || [ -f ".git/CHERRY_PICK_HEAD" ]; then
+        echo "✅ Allowing commit during rebase/merge/cherry-pick operation..."
+        exit 0
+    fi
+    echo "❌ Not on any branch"
+    exit 1
+fi
+
+# List of protected branches
+PROTECTED_BRANCHES=("release" "master" "develop")
+
+# List of allowed users (add your usernames)
+ALLOWED_USERS=("admin")
+
+# Get current user
+CURRENT_USER=$(git config user.name)
+
+echo "🔍 Checking commit permissions..."
+
+# Check if current branch is protected
+for branch in "${PROTECTED_BRANCHES[@]}"
+do
+    if [ "$BRANCH" = "$branch" ]
+    then
+        # Check if user is allowed
+        for user in "${ALLOWED_USERS[@]}"
+        do
+            if [ "$CURRENT_USER" = "$user" ]
+            then
+                echo "⚠️  Warning: You're about to commit to $BRANCH"
+                echo -n "Are you sure? (y/n): "
+                read confirm < /dev/tty
+                if [[ "$confirm" =~ ^[Yy]$ ]]
+                then
+                    echo "✅ Proceeding with commit to $BRANCH..."
+                    exit 0
+                else
+                    echo "❌ Commit aborted"
+                    exit 1
+                fi
+            fi
+        done
+        echo "❌ Direct commits to $BRANCH branch are not allowed"
+        echo "Please create a feature branch instead and raise a pull request"
+        exit 1
+    fi
+done
+
+echo "✅ Branch check passed!"
+exit 0
