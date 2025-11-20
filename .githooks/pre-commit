@@ -19,7 +19,6 @@ ALLOWED_USERS=("admin")
 
 # Get current user
 CURRENT_USER=$(git config user.name)
-# Debug information
 
 echo "🔍 Checking commit permissions..."
 

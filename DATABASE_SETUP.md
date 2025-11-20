@@ -19,7 +19,7 @@ This system supports multiple database providers: **SQL Server**, **MySQL**, **P
 {
   "Database": {
     "Provider": "MySQL",
-    "ConnectionString": "Server=localhost;Database=TrainingManagementDb;Uid=root;Pwd=password;",
+    "ConnectionString": "Server=localhost;Database=TrainingManagementDb;Uid=root;Pwd=your-secure-password-here;",
     "MySQL": {
       "ServerVersion": "8.0.0"
     }
@@ -32,7 +32,7 @@ This system supports multiple database providers: **SQL Server**, **MySQL**, **P
 {
   "Database": {
     "Provider": "PostgreSQL",
-    "ConnectionString": "Host=localhost;Database=TrainingManagementDb;Username=postgres;Password=password;"
+    "ConnectionString": "Host=localhost;Database=TrainingManagementDb;Username=postgres;Password=your-secure-password-here;"
   }
 }
 ```
@@ -67,6 +67,8 @@ This system supports multiple database providers: **SQL Server**, **MySQL**, **P
 3. **PostgreSQL**:
    ```bash
    dotnet run --environment PostgreSQL
+   or
+   ASPNETCORE_ENVIRONMENT=PostgreSQL dotnet run
    ```
 
 4. **SQLite**:
@@ -206,12 +208,12 @@ Data Source=Data/TrainingManagement.db;Foreign Keys=True;
 
 ### MySQL with Docker:
 ```bash
-docker run --name mysql-training -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=TrainingManagementDb -p 3306:3306 -d mysql:8.0
+docker run --name mysql-training -e MYSQL_ROOT_PASSWORD=YOUR_PASSWORD_HERE -e MYSQL_DATABASE=TrainingManagementDb -p 3306:3306 -d mysql:8.0
 ```
 
 ### PostgreSQL with Docker:
 ```bash
-docker run --name postgres-training -e POSTGRES_PASSWORD=password -e POSTGRES_DB=TrainingManagementDb -p 5432:5432 -d postgres:15
+docker run --name postgres-training -e POSTGRES_PASSWORD=YOUR_PASSWORD_HERE -e POSTGRES_DB=TrainingManagementDb -p 5432:5432 -d postgres:15
 ```
 
 ## 🔍 Troubleshooting

@@ -121,6 +121,7 @@ The API will be available at `https://localhost:7000` and `http://localhost:5000
    icacls .githooks\pre-commit /grant Everyone:RX
 
    # Or using Command Prompt
+   # NOTE: this is not a must on windows, Git should be able to execute the file
    attrib +x .githooks\pre-push
    attrib +x .githooks\pre-commit
    ```
