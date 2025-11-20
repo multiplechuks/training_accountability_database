@@ -96,7 +96,7 @@ The API will be available at `https://localhost:7000` and `http://localhost:5000
 
 ### Git Hooks Setup
 
-3. **Activate the git hooks:**
+6. **Activate the git hooks:**
 
    1. **Make the hooks executable:**
    ```bash
