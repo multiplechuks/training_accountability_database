@@ -1,0 +1,169 @@
+# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+###############################
+# Core EditorConfig Options   #
+###############################
+# All files
+[*]
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = crlf
+# Code files
+[*.{cs,csx,vb,vbx}]
+dotnet_diagnostic.CS8019.severity = error
+dotnet_remove_unnecessary_suppression_exclusions = true
+# Import organization
+dotnet_separate_import_directive_groups = false
+dotnet_sort_system_directives_first = true
+dotnet_diagnostic.CA1303.severity = error
+dotnet_diagnostic.IDE0001.severity = error
+
+###############################
+# .NET Coding Conventions     #
+###############################
+[*.{cs,vb}]
+# Unused using statements
+dotnet_diagnostic.CS8019.severity = error
+
+# Indentation warnings
+dotnet_diagnostic.IDE0055.severity = error
+
+# Unnecessary using directives
+dotnet_diagnostic.IDE0005.severity = error
+
+# Spacing rules
+dotnet_diagnostic.IDE0003.severity = error
+dotnet_diagnostic.IDE0004.severity = error
+
+# Line ending whitespace
+dotnet_diagnostic.IDE2000.severity = error
+
+# New line rules
+dotnet_diagnostic.IDE2002.severity = error
+
+# Empty lines
+dotnet_diagnostic.IDE2003.severity = error
+
+# Braces formatting
+dotnet_diagnostic.IDE0011.severity = error
+
+# Design rules
+dotnet_diagnostic.CA1501.severity = error  # Too many branch points
+dotnet_diagnostic.CA1502.severity = error  # Too high complexity
+# dotnet_diagnostic.CA1506.severity = error  # Too many methods
+dotnet_diagnostic.S134.severity = error    # Maximum nesting depth
+
+# Define naming symbols first
+dotnet_naming_symbols.classes.applicable_kinds = class
+dotnet_naming_symbols.classes.applicable_accessibilities = *
+
+dotnet_naming_symbols.methods.applicable_kinds = method
+dotnet_naming_symbols.methods.applicable_accessibilities = *
+
+dotnet_naming_symbols.parameters.applicable_kinds = parameter
+dotnet_naming_symbols.parameters.applicable_accessibilities = *
+
+# Define naming styles
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
+# Naming rules
+dotnet_naming_rule.constants_rule.severity = error
+dotnet_naming_rule.constants_rule.symbols = constants
+dotnet_naming_rule.constants_rule.style = upper_case_style
+
+# Define constants
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.applicable_accessibilities = *
+dotnet_naming_symbols.constants.required_modifiers = const
+
+# Define upper case style
+dotnet_naming_style.upper_case_style.capitalization = all_upper
+dotnet_naming_style.upper_case_style.word_separator = _
+
+dotnet_naming_rule.classes_rule.severity = error
+dotnet_naming_rule.classes_rule.symbols = classes
+dotnet_naming_rule.classes_rule.style = pascal_case_style
+
+dotnet_naming_rule.methods_rule.severity = error
+dotnet_naming_rule.methods_rule.symbols = methods
+dotnet_naming_rule.methods_rule.style = pascal_case_style
+
+dotnet_naming_rule.parameters_rule.severity = error
+dotnet_naming_rule.parameters_rule.symbols = parameters
+dotnet_naming_rule.parameters_rule.style = camel_case_style
+
+# Private field naming rule
+dotnet_naming_rule.private_fields_rule.severity = error
+dotnet_naming_rule.private_fields_rule.symbols = private_fields
+dotnet_naming_rule.private_fields_rule.style = camel_case_underscore_style
+
+# Define private fields (excluding static readonly fields)
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers =
+
+# Define private static readonly fields - allow PascalCase
+dotnet_naming_rule.static_readonly_rule.severity = suggestion
+dotnet_naming_rule.static_readonly_rule.symbols = static_readonly_fields
+dotnet_naming_rule.static_readonly_rule.style = pascal_case_style
+
+dotnet_naming_symbols.static_readonly_fields.applicable_kinds = field
+dotnet_naming_symbols.static_readonly_fields.applicable_accessibilities = private
+dotnet_naming_symbols.static_readonly_fields.required_modifiers = static,readonly
+
+# Define style (_camelCase)
+dotnet_naming_style.camel_case_underscore_style.required_prefix = _
+dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
+
+# Code quality
+dotnet_diagnostic.CA1031.severity = error  # Do not catch general exception types
+# CA1707 disabled for constants - underscores are standard for constants like SECTION_NAME
+# dotnet_diagnostic.CA1707.severity = error  # Identifiers should not contain underscores - disabled to allow constant naming
+dotnet_diagnostic.CA1716.severity = error  # Identifiers should not match keywords
+dotnet_diagnostic.CA1721.severity = error  # Property names should not match get methods
+dotnet_diagnostic.CA1724.severity = error  # Type names should not match namespaces
+dotnet_diagnostic.CA1801.severity = error  # Review unused parameters
+dotnet_diagnostic.CA1822.severity = error  # Mark members as static
+dotnet_diagnostic.CA2200.severity = error  # Rethrow to preserve stack details
+dotnet_diagnostic.CA2234.severity = error  # Pass System.Uri objects instead of strings
+
+# Import/using organization
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# Documentation requirements
+# We will gradually enable these rules
+# dotnet_diagnostic.CS1591.severity = error  # Missing XML comment
+
+# Code style enforcement
+dotnet_diagnostic.IDE0005.severity = error  # Using directive is unnecessary
+dotnet_diagnostic.IDE0035.severity = error  # Unreachable code
+dotnet_diagnostic.IDE0051.severity = error  # Private member is unused
+dotnet_diagnostic.IDE0052.severity = error  # Private member can be removed
+dotnet_diagnostic.IDE0059.severity = error  # Unnecessary assignment
+dotnet_diagnostic.IDE0060.severity = error  # Remove unused parameter
+
+# Spacing rules
+
+# Test files
+[*Test.cs]
+# Allow underscores in test names
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA2007.severity = none
+
+# EF Core generated files and DbContext
+[**/Migrations/*.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+dotnet_diagnostic.CA1724.severity = none  # Type name conflicts
+dotnet_diagnostic.CS8618.severity = none  # Non-nullable property must contain a non-null value
+dotnet_diagnostic.CS8625.severity = none  # Cannot convert null literal to non-nullable reference type
+dotnet_diagnostic.CS8604.severity = none  # Possible null reference argument
+dotnet_diagnostic.CA1711.severity = none  # Identifiers should not have incorrect suffix
+dotnet_diagnostic.CA1707.severity = none  # Identifiers should not contain underscores (migration names often have underscores)
+dotnet_diagnostic.CA1822.severity = none  # Mark members as static (migrations have required instance methods)
+dotnet_diagnostic.IDE0005.severity = none  # Using directive is unnecessary
+dotnet_diagnostic.CA1031.severity = none  # Do not catch general exception types
+dotnet_diagnostic.CA1801.severity = none  # Review unused parameters
+dotnet_diagnostic.CS8019.severity = none  # Unnecessary using directive
