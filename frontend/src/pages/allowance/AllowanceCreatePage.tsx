@@ -385,7 +385,6 @@ export default function AllowanceCreatePage() {
                             {isEditing === allowance.id ? (
                               <input
                                 type="number"
-                                // min="0"
                                 step="0.01"
                                 value={allowance.amount === 0 ? "" : allowance.amount}
                                 onChange={(e) => updateAllowance(allowance.id, "amount", e.target.value === "" ? 0 : parseFloat(e.target.value))}
