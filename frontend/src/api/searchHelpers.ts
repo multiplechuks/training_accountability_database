@@ -1,11 +1,14 @@
-import { searchParticipants } from "./participant";
-import { searchTrainings } from "./training";
+import { searchParticipants, getParticipants } from "./participant";
+import { searchTrainings, getTrainings } from "./training";
 import { apiService } from "./apiService";
 import type { ParticipantResponseDto, TrainingResponseDto, PaginatedResponse, LookupDto, DesignationResponse, SalaryScaleResponse, DepartmentResponse, FacilityResponse, SponsorResponse } from "../types";
 
 export async function searchParticipantsForSelect(searchTerm: string): Promise<LookupDto[]> {
   try {
-    const response: PaginatedResponse<ParticipantResponseDto> = await searchParticipants(searchTerm, 1, 10);
+    // If empty search term, get all participants; otherwise search
+    const response: PaginatedResponse<ParticipantResponseDto> = searchTerm
+      ? await searchParticipants(searchTerm, 1, 10)
+      : await getParticipants(1, 50); // Get first 50 participants for dropdown
     
     if (response) {
       return response.data.map((participant: ParticipantResponseDto) => ({
@@ -24,7 +27,10 @@ export async function searchParticipantsForSelect(searchTerm: string): Promise<L
 
 export async function searchTrainingsForSelect(searchTerm: string): Promise<LookupDto[]> {
   try {
-    const response: PaginatedResponse<TrainingResponseDto> = await searchTrainings(searchTerm, 1, 10);
+    // If empty search term, get all trainings; otherwise search
+    const response: PaginatedResponse<TrainingResponseDto> = searchTerm
+      ? await searchTrainings(searchTerm, 1, 10)
+      : await getTrainings(1, 50); // Get first 50 trainings for dropdown
     
     if (response) {
       return response.data.map((training: TrainingResponseDto) => ({

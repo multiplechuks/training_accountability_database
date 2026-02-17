@@ -27,6 +27,11 @@ export const NavigationRoutes = {
   ENROLLMENT_DETAILS: (id: number | string) => `/enrollment/view/${id}`,
   ENROLLMENT_EDIT: (id: number | string) => `/enrollment/edit/${id}`,
   
+  // Nomination routes (Enrollment Wizard)
+  NOMINATIONS: "/nomination/list",
+  NOMINATION_START: "/nomination/start",
+  NOMINATION_PROGRESS: (progressId: number | string) => `/nomination/progress/${progressId}`,
+
   // Allowance routes
   ALLOWANCES: "/allowances",
   ALLOWANCE_DETAILS: (id: number | string) => `/allowances/view/${id}`,

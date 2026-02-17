@@ -127,10 +127,14 @@ export interface TrainingResponseDto {
   id: number;
   institution: string;
   program: string;
+  specialty?: string;
   countryOfStudy: string;
   startDate: string;
   endDate: string;
   duration: number;
+  modeOfStudy: string;
+  campusType: string;
+  // Optional fields that may come from enrollment context
   departureDate?: string;
   arrivalDate?: string;
   vacationEmploymentPeriod?: string;
@@ -139,54 +143,34 @@ export interface TrainingResponseDto {
   dateBondSigned?: string;
   bondServingPeriod?: string;
   sponsorFK?: number;
-  modeOfStudy: string;
-  registrationDate: string;
-  trainingStatus: string;
-  financialYear: string;
-  campusType: string;
-  createdAt: string;
-  updatedAt: string;
+  registrationDate?: string;
+  trainingStatus?: string;
+  financialYear?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CreateTrainingDto {
   institution: string;
   program: string;
+  specialty?: string;
   countryOfStudy: string;
   startDate: string;
   endDate: string;
   duration: number;
-  departureDate?: string;
-  arrivalDate?: string;
-  vacationEmploymentPeriod?: string;
-  resumptionDate?: string;
-  extensionPeriod?: string;
-  dateBondSigned?: string;
-  bondServingPeriod?: string;
-  sponsorFK?: number;
   modeOfStudy: string;
-  trainingStatus: string;
-  financialYear: string;
   campusType: string;
 }
 
 export interface UpdateTrainingDto {
   institution?: string;
   program?: string;
+  specialty?: string;
   countryOfStudy?: string;
   startDate?: string;
   endDate?: string;
   duration?: number;
-  departureDate?: string;
-  arrivalDate?: string;
-  vacationEmploymentPeriod?: string;
-  resumptionDate?: string;
-  extensionPeriod?: string;
-  dateBondSigned?: string;
-  bondServingPeriod?: string;
-  sponsorFK?: number;
   modeOfStudy?: string;
-  trainingStatus?: string;
-  financialYear?: string;
   campusType?: string;
 }
 
@@ -226,7 +210,7 @@ export interface ParticipantEnrollmentDto {
   departmentFK?: number;
   facilityFK?: number;
 
-  payrollDate?: string;
+  // payrollDate?: string;
   studyLeaveDate?: string;
   allowanceStoppageDate?: string;
 
@@ -294,6 +278,7 @@ export interface TrainingSummaryDto {
 
 // Allowance interfaces
 export interface AllowanceType extends LookupDto {
+  frequency?: string;
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;

@@ -139,7 +139,7 @@ export default function TrainingListPage() {
     navigate(NavigationRoutes.TRAINING_CREATE);
   };
 
-  const getStatusBadgeClass = (status: string) => {
+  const getStatusBadgeClass = (status?: string) => {
     switch (status?.toLowerCase()) {
       case "active":
       case "in progress":

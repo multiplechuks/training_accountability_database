@@ -15,23 +15,29 @@ const menuItems: MenuItem[] = [
     icon: "🏠",
     path: "/dashboard"
   },
-  {
-    id: "participant",
-    label: "Participants",
-    icon: "👥",
-    path: "/participants"
-  },
+  // {
+  //   id: "participant",
+  //   label: "Participants",
+  //   icon: "👥",
+  //   path: "/participants"
+  // },
   {
     id: "training",
     label: "Training",
     icon: "📚",
     path: "/training"
   },
+  // {
+  //   id: "enrollment",
+  //   label: "Enrollment",
+  //   icon: "📝",
+  //   path: "/enrollment"
+  // },
   {
-    id: "enrollment",
-    label: "Enrollment",
-    icon: "📝",
-    path: "/enrollment"
+    id: "nomination",
+    label: "Nominations",
+    icon: "🎯",
+    path: "/nomination/list"
   },
   {
     id: "allowance",

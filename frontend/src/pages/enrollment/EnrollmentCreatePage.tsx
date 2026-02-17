@@ -26,7 +26,7 @@ export default function EnrollmentPage() {
         startDate: data.startDate ? new Date(data.startDate).toISOString() : new Date().toISOString(),
         endDate: data.endDate ? new Date(data.endDate).toISOString() : new Date().toISOString(),
         registrationDate: data.registrationDate ? new Date(data.registrationDate).toISOString() : new Date().toISOString(),
-        payrollDate: data.payrollDate ? new Date(data.payrollDate).toISOString() : null,
+        // payrollDate: data.payrollDate ? new Date(data.payrollDate).toISOString() : null,
         studyLeaveDate: data.studyLeaveDate ? new Date(data.studyLeaveDate).toISOString() : null,
         allowanceStoppageDate: data.allowanceStoppageDate ? new Date(data.allowanceStoppageDate).toISOString() : null,
         departureDate: data.departureDate ? new Date(data.departureDate).toISOString() : null,

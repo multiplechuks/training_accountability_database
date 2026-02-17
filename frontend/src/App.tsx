@@ -19,8 +19,13 @@ import {
   EnrollmentCreatePage, 
   EnrollmentListPage, 
   EnrollmentViewPage, 
-  EnrollmentEditPage 
+  EnrollmentEditPage,
+  EnrollmentWizardPage,
+  EnrollmentCompletePage
 } from "@/pages/enrollment";
+import NominationListPage from "@/pages/nomination/NominationListPage";
+import NominationStartPage from "@/pages/nomination/NominationStartPage";
+import NominationProgressPage from "@/pages/nomination/NominationProgressPage";
 import { ReportsPage } from "@/pages/reports";
 import { ConfigurationPage } from "@/pages/configuration";
 import { useAuth } from "@/hooks/useAuth";
@@ -55,6 +60,13 @@ function App() {
             <Route path={NavigationRoutes.ENROLLMENT_CREATE} element={<EnrollmentCreatePage />} />
             <Route path="/enrollment/view/:id" element={<EnrollmentViewPage />} />
             <Route path="/enrollment/edit/:id" element={<EnrollmentEditPage />} />
+            <Route path="/enrollment/wizard" element={<EnrollmentWizardPage />} />
+            <Route path="/enrollment/wizard/:progressId" element={<EnrollmentWizardPage />} />
+            <Route path="/enrollment/complete/:progressId" element={<EnrollmentCompletePage />} />
+
+            <Route path="/nomination/list" element={<NominationListPage />} />
+            <Route path="/nomination/start" element={<NominationStartPage />} />
+            <Route path="/nomination/progress/:progressId" element={<NominationProgressPage />} />
 
             <Route path={NavigationRoutes.ALLOWANCES} element={<AllowanceListPage />} />
             <Route path={NavigationRoutes.ALLOWANCE_CREATE} element={<AllowanceCreatePage />} />

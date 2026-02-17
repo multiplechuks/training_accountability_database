@@ -27,7 +27,7 @@ export default function TrainingCreatePage() {
         }
       });
       
-    } catch {
+    } catch (err: unknown) {
       setError(
         err instanceof Error 
           ? err.message 

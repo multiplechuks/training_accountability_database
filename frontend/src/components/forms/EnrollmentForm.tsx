@@ -266,7 +266,7 @@ export default function EnrollmentForm({ onSubmit, onCancel, loading = false }: 
             </div>
 
             <div className="row">
-              <div className="col-12 col-sm-4">
+              {/* <div className="col-12 col-sm-4">
                 <div className="form-group">
                   <label className="form-label">Payroll Date</label>
                   <input
@@ -276,7 +276,7 @@ export default function EnrollmentForm({ onSubmit, onCancel, loading = false }: 
                     onChange={(e) => updateFormData("payrollDate", e.target.value)}
                   />
                 </div>
-              </div>
+              </div> */}
               
               <div className="col-12 col-sm-4">
                 <div className="form-group">
