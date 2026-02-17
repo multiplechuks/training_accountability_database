@@ -42,5 +42,43 @@ public static class LookupConfiguration
             entity.HasIndex(e => e.Name);
             entity.HasIndex(e => e.Email);
         });
+
+        // New lookup entities for 6-form enrollment
+        builder.Entity<ExtensionReason>(entity =>
+        {
+            entity.HasKey(e => e.PK);
+            entity.HasIndex(e => e.Name);
+        });
+
+        builder.Entity<NominationStatus>(entity =>
+        {
+            entity.HasKey(e => e.PK);
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        builder.Entity<TravelMode>(entity =>
+        {
+            entity.HasKey(e => e.PK);
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        builder.Entity<StudyMode>(entity =>
+        {
+            entity.HasKey(e => e.PK);
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        builder.Entity<Specialty>(entity =>
+        {
+            entity.HasKey(e => e.PK);
+            entity.HasIndex(e => e.Name);
+        });
+
+        builder.Entity<Qualification>(entity =>
+        {
+            entity.HasKey(e => e.PK);
+            entity.HasIndex(e => e.Name);
+            entity.HasIndex(e => e.Level);
+        });
     }
 }

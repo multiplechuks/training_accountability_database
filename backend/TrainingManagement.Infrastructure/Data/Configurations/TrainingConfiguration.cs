@@ -12,12 +12,12 @@ public static class TrainingConfiguration
             entity.HasKey(e => e.PK);
             entity.HasIndex(e => e.Institution);
             entity.HasIndex(e => e.Program);
-            entity.HasIndex(e => e.FinancialYear);
+            // entity.HasIndex(e => e.FinancialYear);
 
-            entity.HasOne(e => e.Sponsor)
-                .WithMany(e => e.Trainings)
-                .HasForeignKey(e => e.SponsorFK)
-                .OnDelete(DeleteBehavior.SetNull);
+            // entity.HasOne(e => e.Sponsor)
+            //     .WithMany(e => e.Trainings)
+            //     .HasForeignKey(e => e.SponsorFK)
+            //     .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasMany(e => e.ParticipantEnrollments)
                 .WithOne(e => e.Training)

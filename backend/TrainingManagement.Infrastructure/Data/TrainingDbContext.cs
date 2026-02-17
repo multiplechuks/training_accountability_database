@@ -26,10 +26,26 @@ public class TrainingDbContext : IdentityDbContext<User, ApplicationRole, int>
     public DbSet<SalaryScale> SalaryScales { get; set; }
     public DbSet<Sponsor> Sponsors { get; set; }
 
-    // DbSets for additional entities (from AdditionalEntities.cs)
+    // DbSets for additional entities (from split files)
     public DbSet<NextOfKin> NextOfKins { get; set; }
     public DbSet<ParticipantTraining> ParticipantTrainings { get; set; }
-    // public DbSet<Bond> Bonds { get; set; } // Temporarily disabled until relationship is properly configured
+    public DbSet<Bond> Bonds { get; set; }
+    public DbSet<TrainingBudget> TrainingBudgets { get; set; }
+    public DbSet<TrainingReport> TrainingReports { get; set; }
+    public DbSet<TrainingTransfer> TrainingTransfers { get; set; }
+
+    // DbSets for new enrollment entities
+    public DbSet<Nomination> Nominations { get; set; }
+    public DbSet<TrainingExtension> TrainingExtensions { get; set; }
+    public DbSet<EnrollmentProgress> EnrollmentProgresses { get; set; }
+
+    // DbSets for new lookup entities
+    public DbSet<ExtensionReason> ExtensionReasons { get; set; }
+    public DbSet<NominationStatus> NominationStatuses { get; set; }
+    public DbSet<TravelMode> TravelModes { get; set; }
+    public DbSet<StudyMode> StudyModes { get; set; }
+    public DbSet<Specialty> Specialties { get; set; }
+    public DbSet<Qualification> Qualifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

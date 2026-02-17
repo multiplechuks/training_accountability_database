@@ -83,7 +83,7 @@ public class TrainingEnrollmentController : ControllerBase
                         StartDate = e.Training.StartDate,
                         EndDate = e.Training.EndDate,
                         Duration = e.Training.Duration,
-                        FinancialYear = e.Training.FinancialYear
+                        FinancialYear = e.FinancialYear // Now in ParticipantEnrollment
                     } : null
                 }).ToList();
 
@@ -167,7 +167,7 @@ public class TrainingEnrollmentController : ControllerBase
                     StartDate = enrollment.Training.StartDate,
                     EndDate = enrollment.Training.EndDate,
                     Duration = enrollment.Training.Duration,
-                    FinancialYear = enrollment.Training.FinancialYear
+                    FinancialYear = enrollment.FinancialYear // Now in ParticipantEnrollment
                 } : null
             };
 
@@ -239,7 +239,7 @@ public class TrainingEnrollmentController : ControllerBase
                     StartDate = e.Training.StartDate,
                     EndDate = e.Training.EndDate,
                     Duration = e.Training.Duration,
-                    FinancialYear = e.Training.FinancialYear
+                    FinancialYear = e.FinancialYear // Now in ParticipantEnrollment
                 } : null
             }).ToList();
 
@@ -311,7 +311,7 @@ public class TrainingEnrollmentController : ControllerBase
                     StartDate = e.Training.StartDate,
                     EndDate = e.Training.EndDate,
                     Duration = e.Training.Duration,
-                    FinancialYear = e.Training.FinancialYear
+                    FinancialYear = e.FinancialYear // Now in ParticipantEnrollment
                 } : null
             }).ToList();
 
@@ -446,7 +446,7 @@ public class TrainingEnrollmentController : ControllerBase
                     StartDate = createdEnrollment.Training.StartDate,
                     EndDate = createdEnrollment.Training.EndDate,
                     Duration = createdEnrollment.Training.Duration,
-                    FinancialYear = createdEnrollment.Training.FinancialYear
+                    FinancialYear = createdEnrollment.FinancialYear // Now in ParticipantEnrollment
                 } : null
             };
 
@@ -553,7 +553,7 @@ public class TrainingEnrollmentController : ControllerBase
                     StartDate = enrollment.Training.StartDate,
                     EndDate = enrollment.Training.EndDate,
                     Duration = enrollment.Training.Duration,
-                    FinancialYear = enrollment.Training.FinancialYear
+                    FinancialYear = enrollment.FinancialYear // Now in ParticipantEnrollment
                 } : null
             };
 

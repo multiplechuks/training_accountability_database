@@ -10,6 +10,12 @@ public class Allowance : BaseEntity
 
     public DateTime EndDate { get; set; }
 
+    // Form 4: Additional Fields
+    [MaxLength(50)]
+    public string Frequency { get; set; } = string.Empty; // Monthly, Annual, Once-Off
+
+    public DateTime? AllowanceStoppageDate { get; set; }
+
     [MaxLength(1000)]
     public string? Comments { get; set; }
 
@@ -34,6 +40,9 @@ public class AllowanceType : BaseEntity
 
     [MaxLength(500)]
     public string? Description { get; set; }
+
+    [MaxLength(50)]
+    public string? Frequency { get; set; } // Monthly, Annual, Once Off
 
     // Navigation properties
     public virtual ICollection<Allowance> Allowances { get; set; } = new List<Allowance>();

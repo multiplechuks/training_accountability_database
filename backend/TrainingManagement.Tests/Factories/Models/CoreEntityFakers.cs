@@ -71,17 +71,18 @@ public class TrainingFaker : BaseFakerConfig<Training>
             .RuleFor(t => t.StartDate, f => f.Date.Future(0, DateTime.Now.AddMonths(1)))
             .RuleFor(t => t.Duration, f => f.Random.Int(6, 48)) // 6 months to 4 years
             .RuleFor(t => t.EndDate, (f, t) => t.StartDate.AddMonths(t.Duration))
-            .RuleFor(t => t.DepartureDate, (f, t) => f.Date.Between(DateTime.Now, t.StartDate))
-            .RuleFor(t => t.ArrivalDate, (f, t) => t.DepartureDate?.AddDays(f.Random.Int(1, 3)))
-            .RuleFor(t => t.VacationEmploymentPeriod, f => f.Random.Bool(0.3f) ? f.Random.Int(1, 6) + " months" : null)
-            .RuleFor(t => t.ResumptionDate, (f, t) => f.Random.Bool(0.3f) ? t.EndDate.AddMonths(f.Random.Int(1, 3)) : null)
-            .RuleFor(t => t.ExtensionPeriod, f => f.Random.Bool(0.2f) ? f.Random.Int(3, 12) + " months" : null)
-            .RuleFor(t => t.DateBondSigned, f => f.Random.Bool(0.8f) ? f.Date.Recent(30) : null)
-            .RuleFor(t => t.BondServingPeriod, f => f.Random.Bool(0.8f) ? f.Random.Int(2, 5) + " years" : null)
+            // Properties below moved to ParticipantEnrollment
+            // .RuleFor(t => t.DepartureDate, (f, t) => f.Date.Between(DateTime.Now, t.StartDate))
+            // .RuleFor(t => t.ArrivalDate, (f, t) => t.DepartureDate?.AddDays(f.Random.Int(1, 3)))
+            // .RuleFor(t => t.VacationEmploymentPeriod, f => f.Random.Bool(0.3f) ? f.Random.Int(1, 6) + " months" : null)
+            // .RuleFor(t => t.ResumptionDate, (f, t) => f.Random.Bool(0.3f) ? t.EndDate.AddMonths(f.Random.Int(1, 3)) : null)
+            // .RuleFor(t => t.ExtensionPeriod, f => f.Random.Bool(0.2f) ? f.Random.Int(3, 12) + " months" : null)
+            // .RuleFor(t => t.DateBondSigned, f => f.Random.Bool(0.8f) ? f.Date.Recent(30) : null)
+            // .RuleFor(t => t.BondServingPeriod, f => f.Random.Bool(0.8f) ? f.Random.Int(2, 5) + " years" : null)
             .RuleFor(t => t.ModeOfStudy, f => f.PickRandom("Full-time", "Part-time", "Distance Learning"))
-            .RuleFor(t => t.RegistrationDate, f => f.Date.Recent(30))
-            .RuleFor(t => t.TrainingStatus, f => f.PickRandom("Active", "Completed", "Suspended", "Cancelled"))
-            .RuleFor(t => t.FinancialYear, f => DateTime.Now.Year + "/" + (DateTime.Now.Year + 1))
+            // .RuleFor(t => t.RegistrationDate, f => f.Date.Recent(30))
+            // .RuleFor(t => t.TrainingStatus, f => f.PickRandom("Active", "Completed", "Suspended", "Cancelled"))
+            // .RuleFor(t => t.FinancialYear, f => DateTime.Now.Year + "/" + (DateTime.Now.Year + 1))
             .RuleFor(t => t.CampusType, f => f.PickRandom("Main Campus", "Branch Campus", "Online"))
             .RuleFor(t => t.CreatedAt, f => f.Date.Recent(30))
             .RuleFor(t => t.CreatedBy, f => "System")
@@ -106,7 +107,8 @@ public class TrainingFaker : BaseFakerConfig<Training>
     public Training CreateCompleted()
     {
         return _faker.Clone()
-            .RuleFor(t => t.TrainingStatus, "Completed")
+            // TrainingStatus moved to ParticipantEnrollment
+            // .RuleFor(t => t.TrainingStatus, "Completed")
             .RuleFor(t => t.StartDate, f => f.Date.Past(2))
             .RuleFor(t => t.EndDate, f => f.Date.Recent(30))
             .Generate();
@@ -115,7 +117,8 @@ public class TrainingFaker : BaseFakerConfig<Training>
     public Training CreateActive()
     {
         return _faker.Clone()
-            .RuleFor(t => t.TrainingStatus, "Active")
+            // TrainingStatus moved to ParticipantEnrollment
+            // .RuleFor(t => t.TrainingStatus, "Active")
             .RuleFor(t => t.StartDate, f => f.Date.Recent(30))
             .RuleFor(t => t.EndDate, f => f.Date.Future(2))
             .Generate();

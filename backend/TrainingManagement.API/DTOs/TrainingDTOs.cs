@@ -117,22 +117,29 @@ public class TrainingResponseDto
     public int Id { get; set; }
     public string Institution { get; set; } = string.Empty;
     public string Program { get; set; } = string.Empty;
+    public string? Specialty { get; set; } // Added in new structure
     public string CountryOfStudy { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public int Duration { get; set; }
-    public DateTime? DepartureDate { get; set; }
-    public DateTime? ArrivalDate { get; set; }
-    public string? VacationEmploymentPeriod { get; set; }
-    public DateTime? ResumptionDate { get; set; }
-    public string? ExtensionPeriod { get; set; }
-    public DateTime? DateBondSigned { get; set; }
-    public string? BondServingPeriod { get; set; }
-    public int? SponsorFK { get; set; }
+
+    // Properties below moved to ParticipantEnrollment/Bond - commented out for backwards compatibility
+    // public DateTime? DepartureDate { get; set; }
+    // public DateTime? ArrivalDate { get; set; }
+    // public string? VacationEmploymentPeriod { get; set; }
+    // public DateTime? ResumptionDate { get; set; }
+    // public string? ExtensionPeriod { get; set; }
+    // public DateTime? DateBondSigned { get; set; }
+    // public string? BondServingPeriod { get; set; }
+    // public int? SponsorFK { get; set; }
+
     public string ModeOfStudy { get; set; } = string.Empty;
-    public DateTime RegistrationDate { get; set; }
-    public string TrainingStatus { get; set; } = string.Empty;
-    public string FinancialYear { get; set; } = string.Empty;
+
+    // Properties below moved to ParticipantEnrollment
+    // public DateTime RegistrationDate { get; set; }
+    // public string TrainingStatus { get; set; } = string.Empty;
+    // public string FinancialYear { get; set; } = string.Empty;
+
     public string CampusType { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

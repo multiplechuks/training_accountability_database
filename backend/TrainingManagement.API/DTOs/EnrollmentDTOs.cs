@@ -123,3 +123,57 @@ public class TrainingSearchDto
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 10;
 }
+
+// Nomination Wizard DTOs (7 Stages)
+public class EnrollmentProgressDto
+{
+    public int PK { get; set; }
+    public int? ParticipantFK { get; set; }
+    public int CurrentStep { get; set; }
+    public string EnrollmentStatus { get; set; } = "In Progress";
+
+    // Stage completion tracking (using Form* naming for backward compatibility)
+    public bool Form1_ParticipantProfile { get; set; }
+    public bool Form2_Nomination { get; set; }
+    public bool Form3_Admission { get; set; }
+    public bool Form4_TrainingCosts { get; set; }
+    public bool Form5_Extension { get; set; }
+    public bool Form6_Completion { get; set; }
+
+    // Stage data
+    public string? Stage2_NextOfKinData { get; set; }
+    public string? Stage3_NominationData { get; set; }
+    public string? Stage4_AdmissionData { get; set; }
+    public string? Stage5_BondingData { get; set; }
+    public string? Stage6_TrainingCostsData { get; set; }
+
+    public DateTime LastUpdated { get; set; }
+    public DateTime? CompletedDate { get; set; }
+
+    public ParticipantSummaryDto? Participant { get; set; }
+
+    // Legacy properties for backward compatibility with existing controllers
+    public int Id { get => PK; set => PK = value; }
+    public int? ParticipantId { get => ParticipantFK; set => ParticipantFK = value; }
+    public int? NominationId { get; set; }
+    public int? EnrollmentId { get; set; }
+    public string? Notes { get; set; }
+
+    public bool Form1Complete { get => Form1_ParticipantProfile; set => Form1_ParticipantProfile = value; }
+    public bool Form2Complete { get => Form2_Nomination; set => Form2_Nomination = value; }
+    public bool Form3Complete { get => Form3_Admission; set => Form3_Admission = value; }
+    public bool Form4Complete { get => Form4_TrainingCosts; set => Form4_TrainingCosts = value; }
+    public bool Form5Complete { get => Form5_Extension; set => Form5_Extension = value; }
+    public bool Form6Complete { get => Form6_Completion; set => Form6_Completion = value; }
+}
+
+public class UpdateEnrollmentStepDto
+{
+    public int? ParticipantId { get; set; }
+    public string? Notes { get; set; }
+}
+
+public class SaveEnrollmentProgressDto
+{
+    public string? Notes { get; set; }
+}

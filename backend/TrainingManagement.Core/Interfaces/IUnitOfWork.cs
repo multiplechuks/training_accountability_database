@@ -9,6 +9,10 @@ public interface IUnitOfWork : IDisposable
     ITrainingTransferRepository TrainingTransfers { get; }
     IAllowanceTypeRepository AllowanceTypes { get; }
     IAllowanceStatusRepository AllowanceStatuses { get; }
+    IEnrollmentProgressRepository EnrollmentProgress { get; }
+    INominationRepository Nominations { get; }
+    INextOfKinRepository NextOfKins { get; }
+    IBondRepository Bonds { get; }
 
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();
