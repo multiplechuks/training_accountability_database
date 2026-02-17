@@ -43,6 +43,7 @@ public class AllowanceTypesController : ControllerBase
                     PK = at.PK,
                     Name = at.Name,
                     Description = at.Description,
+                    Frequency = at.Frequency,
                     CreatedAt = at.CreatedAt,
                     UpdatedAt = at.UpdatedAt,
                     CreatedBy = at.CreatedBy,
@@ -122,6 +123,7 @@ public class AllowanceTypesController : ControllerBase
             {
                 Name = createDto.Name,
                 Description = createDto.Description,
+                Frequency = createDto.Frequency,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 CreatedBy = "System", // TODO: Get from authenticated user
@@ -136,6 +138,7 @@ public class AllowanceTypesController : ControllerBase
                 PK = allowanceType.PK,
                 Name = allowanceType.Name,
                 Description = allowanceType.Description,
+                Frequency = allowanceType.Frequency,
                 CreatedAt = allowanceType.CreatedAt,
                 UpdatedAt = allowanceType.UpdatedAt,
                 CreatedBy = allowanceType.CreatedBy,
@@ -184,6 +187,11 @@ public class AllowanceTypesController : ControllerBase
             if (updateDto.Description != null)
             {
                 allowanceType.Description = updateDto.Description;
+            }
+
+            if (updateDto.Frequency != null)
+            {
+                allowanceType.Frequency = updateDto.Frequency;
             }
 
             allowanceType.UpdatedAt = DateTime.UtcNow;
@@ -251,7 +259,7 @@ public class AllowanceTypesController : ControllerBase
 
     // GET: api/allowancetypes/lookup
     [HttpGet("lookup")]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetAllowanceTypesLookup([FromQuery] string? searchTerm = null)
+    public async Task<ActionResult<IEnumerable<AllowanceTypeLookupDto>>> GetAllowanceTypesLookup([FromQuery] string? searchTerm = null)
     {
         try
         {
@@ -261,16 +269,17 @@ public class AllowanceTypesController : ControllerBase
 
             var lookupData = allowanceTypes
                 .Where(at => !at.Deleted)
-                .Select(at => new LookupDto
+                .Select(at => new AllowanceTypeLookupDto
                 {
                     PK = at.PK,
                     Name = at.Name,
-                    Description = at.Description
+                    Description = at.Description,
+                    Frequency = at.Frequency
                 })
                 .OrderBy(at => at.Name)
                 .ToList();
 
-            return Ok(allowanceTypes);
+            return Ok(lookupData);
         }
         catch (Exception ex)
         {

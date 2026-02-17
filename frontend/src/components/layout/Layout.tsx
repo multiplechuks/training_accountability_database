@@ -14,6 +14,7 @@ export default function Layout({ children }: LayoutProps) {
     if (pathname.startsWith("/participants")) return "participant";
     if (pathname.startsWith("/training")) return "training";
     if (pathname.startsWith("/enrollment")) return "enrollment";
+    if (pathname.startsWith("/nomination")) return "nomination";
     if (pathname.startsWith("/allowances")) return "allowance";
     if (pathname.startsWith("/reports")) return "report";
     if (pathname.startsWith("/configuration")) return "configuration";

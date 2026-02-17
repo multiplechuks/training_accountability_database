@@ -37,6 +37,17 @@ public class CreateParticipantDto
     [MaxLength(100)]
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
+
+    [MaxLength(15)]
+    public string? WorkTelephone { get; set; }
+
+    public int? DesignationFK { get; set; }
+
+    [MaxLength(200)]
+    public string? DepartmentOrFacility { get; set; }
+
+    [MaxLength(200)]
+    public string? DutyStation { get; set; }
 }
 
 public class UpdateParticipantDto
@@ -67,6 +78,17 @@ public class UpdateParticipantDto
     [MaxLength(100)]
     [EmailAddress]
     public string? Email { get; set; }
+
+    [MaxLength(15)]
+    public string? WorkTelephone { get; set; }
+
+    public int? DesignationFK { get; set; }
+
+    [MaxLength(200)]
+    public string? DepartmentOrFacility { get; set; }
+
+    [MaxLength(200)]
+    public string? DutyStation { get; set; }
 }
 
 public class ParticipantResponseDto

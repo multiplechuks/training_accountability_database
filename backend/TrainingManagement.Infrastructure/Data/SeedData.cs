@@ -229,8 +229,8 @@ public static class SeedData
                     StartDate = new DateTime(2025, 9, 1),
                     EndDate = new DateTime(2027, 8, 31),
                     Duration = 24,
-                    FinancialYear = "2025/2026",
-                    SponsorFK = 1, // Government of Botswana
+                    ModeOfStudy = "Full-time",
+                    CampusType = "Main Campus",
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "System",
                     UpdatedAt = DateTime.UtcNow,
@@ -244,8 +244,8 @@ public static class SeedData
                     StartDate = new DateTime(2026, 1, 15),
                     EndDate = new DateTime(2031, 12, 15),
                     Duration = 72,
-                    FinancialYear = "2025/2026",
-                    SponsorFK = 1, // Government of Botswana
+                    ModeOfStudy = "Full-time",
+                    CampusType = "Main Campus",
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "System",
                     UpdatedAt = DateTime.UtcNow,
@@ -259,8 +259,8 @@ public static class SeedData
                     StartDate = new DateTime(2025, 10, 1),
                     EndDate = new DateTime(2026, 9, 30),
                     Duration = 12,
-                    FinancialYear = "2025/2026",
-                    SponsorFK = 2, // WHO
+                    ModeOfStudy = "Full-time",
+                    CampusType = "Main Campus",
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = "System",
                     UpdatedAt = DateTime.UtcNow,

@@ -41,7 +41,7 @@ export async function getTrainingsByFinancialYear(financialYear: string): Promis
 
 // Search trainings
 export async function searchTrainings(searchTerm: string, page = 1, pageSize = 10): Promise<PaginatedResponse<TrainingResponseDto>> {
-  const response = await axiosInstance.get(`${ApiUrls.trainings.SEARCH}?searchTerm=${encodeURIComponent(searchTerm)}&page=${page}&pageSize=${pageSize}`);
+  const response = await axiosInstance.get(`${ApiUrls.trainings.SEARCH}?search=${encodeURIComponent(searchTerm)}&page=${page}&pageSize=${pageSize}`);
   return response.data;
 }
 

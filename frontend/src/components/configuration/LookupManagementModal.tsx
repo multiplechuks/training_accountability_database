@@ -6,9 +6,10 @@ interface LookupManagementModalProps {
     isOpen: boolean;
     onClose: () => void;
     onFetch: (page: number, pageSize: number, searchTerm?: string) => Promise<{ data: LookupDto[]; totalCount: number }>;
-    onCreate: (data: { name: string; description?: string }) => Promise<LookupDto>;
-    onUpdate: (id: number, data: { name?: string; description?: string }) => Promise<LookupDto>;
+    onCreate: (data: { name: string; description?: string; frequency?: string }) => Promise<LookupDto>;
+    onUpdate: (id: number, data: { name?: string; description?: string; frequency?: string }) => Promise<LookupDto>;
     onDelete: (id: number) => Promise<void>;
+    showFrequency?: boolean; // New prop to show/hide frequency field
 }
 
 export default function LookupManagementModal({
@@ -18,13 +19,14 @@ export default function LookupManagementModal({
     onFetch,
     onCreate,
     onUpdate,
-    onDelete
+    onDelete,
+    showFrequency = false
 }: LookupManagementModalProps) {
     const [items, setItems] = useState<LookupDto[]>([]);
     const [loading, setLoading] = useState(false);
     const [editingItem, setEditingItem] = useState<LookupDto | null>(null);
     const [isCreating, setIsCreating] = useState(false);
-    const [formData, setFormData] = useState({ name: "", description: "" });
+    const [formData, setFormData] = useState({ name: "", description: "", frequency: "" });
     const [searchTerm, setSearchTerm] = useState("");
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
@@ -37,7 +39,7 @@ export default function LookupManagementModal({
             // Reset form state when modal opens
             setIsCreating(false);
             setEditingItem(null);
-            setFormData({ name: "", description: "" });
+            setFormData({ name: "", description: "", frequency: "" });
             setSearchTerm("");
             setPage(1);
         }
@@ -74,7 +76,7 @@ export default function LookupManagementModal({
         setLoading(true);
         try {
             await onCreate(formData);
-            setFormData({ name: "", description: "" });
+            setFormData({ name: "", description: "", frequency: "" });
             setIsCreating(false);
             fetchItems();
         } catch (error: unknown) {
@@ -104,7 +106,7 @@ export default function LookupManagementModal({
         try {
             await onUpdate(editingItem.pk, formData);
             setEditingItem(null);
-            setFormData({ name: "", description: "" });
+            setFormData({ name: "", description: "", frequency: "" });
             fetchItems();
         } catch (error: unknown) {
             let errorMessage = "Error updating item";
@@ -151,20 +153,21 @@ export default function LookupManagementModal({
 
     const handleEdit = (item: LookupDto) => {
         setEditingItem(item);
-        setFormData({ name: item.name, description: item.description || "" });
+        const frequency = (item as { frequency?: string }).frequency || "";
+        setFormData({ name: item.name, description: item.description || "", frequency });
         setIsCreating(false);
     };
 
     const handleCancel = () => {
         setEditingItem(null);
         setIsCreating(false);
-        setFormData({ name: "", description: "" });
+        setFormData({ name: "", description: "", frequency: "" });
     };
 
     const handleAddNew = () => {
         setIsCreating(true);
         setEditingItem(null);
-        setFormData({ name: "", description: "" });
+        setFormData({ name: "", description: "", frequency: "" });
     };
 
     if (!isOpen) return null;
@@ -231,7 +234,7 @@ export default function LookupManagementModal({
                             <div className="card-body" style={{ padding: "0.75rem" }}>
                                 <h6 style={{ margin: "0 0 0.5rem 0", fontWeight: 600 }}>{isCreating ? "Create New" : "Edit"}</h6>
                                 <div className="row">
-                                    <div className="col-md-6 mb-2">
+                                    <div className="col-md-4 mb-2">
                                         <label className="form-label" style={{ marginBottom: "0.25rem", fontSize: "0.875rem" }}>Name *</label>
                                         <input
                                             type="text"
@@ -241,7 +244,7 @@ export default function LookupManagementModal({
                                             placeholder="Enter name"
                                         />
                                     </div>
-                                    <div className="col-md-6 mb-2">
+                                    <div className="col-md-4 mb-2">
                                         <label className="form-label" style={{ marginBottom: "0.25rem", fontSize: "0.875rem" }}>Description</label>
                                         <input
                                             type="text"
@@ -251,6 +254,21 @@ export default function LookupManagementModal({
                                             placeholder="Enter description (optional)"
                                         />
                                     </div>
+                                    {showFrequency && (
+                                        <div className="col-md-4 mb-2">
+                                            <label className="form-label" style={{ marginBottom: "0.25rem", fontSize: "0.875rem" }}>Frequency</label>
+                                            <select
+                                                className="form-control form-control-sm"
+                                                value={formData.frequency}
+                                                onChange={(e) => setFormData({ ...formData, frequency: e.target.value })}
+                                            >
+                                                <option value="">Select...</option>
+                                                <option value="Monthly">Monthly</option>
+                                                <option value="Annual">Annual</option>
+                                                <option value="Once Off">Once Off</option>
+                                            </select>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="d-flex gap-2" style={{ marginTop: "0.5rem" }}>
                                     <button
@@ -291,6 +309,7 @@ export default function LookupManagementModal({
                                         <th style={{ padding: "0.5rem" }}>ID</th>
                                         <th style={{ padding: "0.5rem" }}>Name</th>
                                         <th style={{ padding: "0.5rem" }}>Description</th>
+                                        {showFrequency && <th style={{ padding: "0.5rem" }}>Frequency</th>}
                                         <th style={{ width: "120px", padding: "0.5rem" }}>Actions</th>
                                     </tr>
                                 </thead>
@@ -300,6 +319,7 @@ export default function LookupManagementModal({
                                             <td style={{ padding: "0.5rem" }}>{item.pk}</td>
                                             <td style={{ padding: "0.5rem" }}><strong>{item.name}</strong></td>
                                             <td style={{ padding: "0.5rem" }}>{item.description || "—"}</td>
+                                            {showFrequency && <td style={{ padding: "0.5rem" }}>{(item as { frequency?: string }).frequency || "—"}</td>}
                                             <td style={{ padding: "0.5rem" }}>
                                                 <div style={{ display: "flex", gap: "0.25rem" }}>
                                                     <button

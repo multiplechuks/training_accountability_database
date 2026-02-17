@@ -27,8 +27,11 @@ public class TrainingRepository : GenericRepository<Training>, ITrainingReposito
 
     public async Task<IEnumerable<Training>> GetTrainingsByFinancialYearAsync(string financialYear)
     {
+        // FinancialYear is now in ParticipantEnrollment, so we query through enrollments
         return await _dbSet
-            .Where(t => t.FinancialYear == financialYear)
+            .Include(t => t.ParticipantEnrollments)
+            .Where(t => t.ParticipantEnrollments.Any(pe => pe.FinancialYear == financialYear))
+            .Distinct()
             .ToListAsync();
     }
 

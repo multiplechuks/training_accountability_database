@@ -11,6 +11,9 @@ public class CreateAllowanceTypeDto
 
     [MaxLength(500)]
     public string? Description { get; set; }
+
+    [MaxLength(50)]
+    public string? Frequency { get; set; }
 }
 
 public class UpdateAllowanceTypeDto
@@ -20,6 +23,9 @@ public class UpdateAllowanceTypeDto
 
     [MaxLength(500)]
     public string? Description { get; set; }
+
+    [MaxLength(50)]
+    public string? Frequency { get; set; }
 }
 
 public class AllowanceTypeResponseDto
@@ -27,6 +33,7 @@ public class AllowanceTypeResponseDto
     public int PK { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public string? Frequency { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public string CreatedBy { get; set; } = string.Empty;
@@ -159,6 +166,7 @@ public class AllowanceTypeLookupDto
     public int PK { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public string? Frequency { get; set; }
 }
 
 public class AllowanceStatusLookupDto

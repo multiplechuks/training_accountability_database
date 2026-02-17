@@ -263,6 +263,7 @@ export default function Configuration({ onSave: _onSave }: ConfigurationProps) {
         onDelete={async (id) => {
           await deleteAllowanceType(id);
         }}
+        showFrequency={true}
       />
 
       {/* Allowance Status Management Modal */}

@@ -133,6 +133,9 @@ namespace TrainingManagement.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
 
+                    b.Property<DateTime?>("AllowanceStoppageDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("AllowanceTypeFK")
                         .HasColumnType("int");
 
@@ -156,6 +159,11 @@ namespace TrainingManagement.Infrastructure.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Frequency")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("ParticipantFK")
                         .HasColumnType("int");
@@ -257,6 +265,10 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("Frequency")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -348,6 +360,9 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.Property<int>("BondPeriodMonths")
                         .HasColumnType("int");
 
+                    b.Property<bool>("BondSigned")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("BondStartDate")
                         .HasColumnType("datetime2");
 
@@ -367,8 +382,17 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime?>("DateSigned")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("InductionCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("InductionDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ParticipantEnrollmentFK")
                         .HasColumnType("int");
@@ -497,6 +521,173 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.ToTable("Designations");
                 });
 
+            modelBuilder.Entity("TrainingManagement.Core.Entities.EnrollmentProgress", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
+
+                    b.Property<int?>("BondFK")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BondPK")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("CurrentStep")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("EnrollmentStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Form1_ParticipantProfile")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Form2_Nomination")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Form3_Admission")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Form4_TrainingCosts")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Form5_Extension")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Form6_Completion")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("NextOfKinFK")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NextOfKinPK")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NominationFK")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("ParticipantEnrollmentFK")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParticipantFK")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Stage2_NextOfKinData")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Stage3_NominationData")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Stage4_AdmissionData")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Stage5_BondingData")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Stage6_TrainingCostsData")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("BondPK");
+
+                    b.HasIndex("CurrentStep");
+
+                    b.HasIndex("NextOfKinPK");
+
+                    b.HasIndex("NominationFK");
+
+                    b.HasIndex("ParticipantEnrollmentFK");
+
+                    b.HasIndex("ParticipantFK", "EnrollmentStatus");
+
+                    b.ToTable("EnrollmentProgresses");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.ExtensionReason", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("ExtensionReasons");
+                });
+
             modelBuilder.Entity("TrainingManagement.Core.Entities.Facility", b =>
                 {
                     b.Property<int>("PK")
@@ -600,6 +791,11 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -613,6 +809,180 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.HasIndex("ParticipantFK");
 
                     b.ToTable("NextOfKins");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.Nomination", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
+
+                    b.Property<DateTime?>("ApprovalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("CurrentQualifications")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("EstimatedBudget")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("NextOfKinAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("NextOfKinEmail")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NextOfKinName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NextOfKinOccupation")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NextOfKinPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("NextOfKinRelationship")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NominatedProgram")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("NominationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NominationStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("ParticipantFK")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProfessionalBody")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Specialty")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("SponsorFK")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SponsorType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("StatusReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("YearOfNomination")
+                        .HasColumnType("int");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("NominationStatus");
+
+                    b.HasIndex("ParticipantFK");
+
+                    b.HasIndex("SponsorFK");
+
+                    b.HasIndex("YearOfNomination");
+
+                    b.ToTable("Nominations");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.NominationStatus", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("NominationStatuses");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.Participant", b =>
@@ -634,8 +1004,19 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("DepartmentOrFacility")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int?>("DesignationFK")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Dob")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DutyStation")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -689,7 +1070,13 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("WorkTelephone")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
                     b.HasKey("PK");
+
+                    b.HasIndex("DesignationFK");
 
                     b.HasIndex("Email");
 
@@ -722,6 +1109,13 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("CompletionFailureReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("CompletionSuccessful")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -740,6 +1134,9 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DepartureDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DepartureDate_Travel")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("DesignationFK")
@@ -767,6 +1164,9 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.Property<bool>("NeedingTravel")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("NominationFK")
+                        .HasColumnType("int");
+
                     b.Property<int>("ParticipantFK")
                         .HasColumnType("int");
 
@@ -785,6 +1185,9 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("StudyCompletionDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("StudyLeaveDate")
                         .HasColumnType("datetime2");
 
@@ -796,6 +1199,10 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("TravelMode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -804,6 +1211,9 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime?>("WorkResumptionDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("PK");
 
                     b.HasIndex("DepartmentFK");
@@ -811,6 +1221,8 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.HasIndex("DesignationFK");
 
                     b.HasIndex("FacilityFK");
+
+                    b.HasIndex("NominationFK");
 
                     b.HasIndex("SalaryScaleFK");
 
@@ -856,12 +1268,18 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.Property<int>("ParticipantFK")
                         .HasColumnType("int");
 
+                    b.Property<int>("ParticipantPK")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("TrainingFK")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrainingPK")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -874,11 +1292,64 @@ namespace TrainingManagement.Infrastructure.Migrations
 
                     b.HasKey("PK");
 
-                    b.HasIndex("TrainingFK");
+                    b.HasIndex("ParticipantPK");
 
-                    b.HasIndex("ParticipantFK", "TrainingFK");
+                    b.HasIndex("TrainingPK");
 
                     b.ToTable("ParticipantTrainings");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.Qualification", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("Level");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("Qualifications");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.SalaryScale", b =>
@@ -934,6 +1405,52 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("SalaryScales");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.Specialty", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("Name");
+
+                    b.ToTable("Specialties");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.Sponsor", b =>
@@ -1001,7 +1518,7 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.ToTable("Sponsors");
                 });
 
-            modelBuilder.Entity("TrainingManagement.Core.Entities.Training", b =>
+            modelBuilder.Entity("TrainingManagement.Core.Entities.StudyMode", b =>
                 {
                     b.Property<int>("PK")
                         .ValueGeneratedOnAdd()
@@ -1009,12 +1526,52 @@ namespace TrainingManagement.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
 
-                    b.Property<DateTime?>("ArrivalDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("BondServingPeriod")
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("StudyModes");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.Training", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
 
                     b.Property<string>("CampusType")
                         .IsRequired()
@@ -1034,29 +1591,14 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime?>("DateBondSigned")
-                        .HasColumnType("datetime2");
-
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime?>("DepartureDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("ExtensionPeriod")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FinancialYear")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Institution")
                         .IsRequired()
@@ -1073,22 +1615,15 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Specialty")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<DateTime?>("ResumptionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("SponsorFK")
+                    b.Property<int?>("SponsorPK")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("TrainingStatus")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -1098,19 +1633,13 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("VacationEmploymentPeriod")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.HasKey("PK");
-
-                    b.HasIndex("FinancialYear");
 
                     b.HasIndex("Institution");
 
                     b.HasIndex("Program");
 
-                    b.HasIndex("SponsorFK");
+                    b.HasIndex("SponsorPK");
 
                     b.ToTable("Trainings");
                 });
@@ -1170,6 +1699,94 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.HasIndex("TrainingFK");
 
                     b.ToTable("TrainingBudgets");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.TrainingExtension", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
+
+                    b.Property<DateTime?>("ApprovalDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovalStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("EstimatedExtensionCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ExtensionDurationMonths")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExtensionEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExtensionReasonCategory")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ExtensionReasonDetails")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime>("ExtensionStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("ParticipantEnrollmentFK")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedBondEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UpdatedBondPeriodMonths")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("ExtensionStartDate");
+
+                    b.HasIndex("ParticipantEnrollmentFK");
+
+                    b.ToTable("TrainingExtensions");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.TrainingReport", b =>
@@ -1273,6 +1890,9 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.Property<int>("ParticipantFK")
                         .HasColumnType("int");
 
+                    b.Property<int>("ParticipantPK")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ParticipantTrainingPK")
                         .HasColumnType("int");
 
@@ -1280,6 +1900,9 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TrainingFK")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrainingPK")
                         .HasColumnType("int");
 
                     b.Property<string>("TransferReason")
@@ -1301,15 +1924,60 @@ namespace TrainingManagement.Infrastructure.Migrations
 
                     b.HasKey("PK");
 
-                    b.HasIndex("ParticipantFK");
+                    b.HasIndex("ParticipantPK");
 
                     b.HasIndex("ParticipantTrainingPK");
 
-                    b.HasIndex("StartDate");
-
-                    b.HasIndex("TrainingFK");
+                    b.HasIndex("TrainingPK");
 
                     b.ToTable("TrainingTransfers");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.TravelMode", b =>
+                {
+                    b.Property<int>("PK")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PK");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TravelModes");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.User", b =>
@@ -1513,6 +2181,42 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.Navigation("ParticipantEnrollment");
                 });
 
+            modelBuilder.Entity("TrainingManagement.Core.Entities.EnrollmentProgress", b =>
+                {
+                    b.HasOne("TrainingManagement.Core.Entities.Bond", "Bond")
+                        .WithMany()
+                        .HasForeignKey("BondPK");
+
+                    b.HasOne("TrainingManagement.Core.Entities.NextOfKin", "NextOfKin")
+                        .WithMany()
+                        .HasForeignKey("NextOfKinPK");
+
+                    b.HasOne("TrainingManagement.Core.Entities.Nomination", "Nomination")
+                        .WithMany()
+                        .HasForeignKey("NominationFK")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("TrainingManagement.Core.Entities.ParticipantEnrollment", "ParticipantEnrollment")
+                        .WithMany("EnrollmentProgresses")
+                        .HasForeignKey("ParticipantEnrollmentFK")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("TrainingManagement.Core.Entities.Participant", "Participant")
+                        .WithMany("EnrollmentProgresses")
+                        .HasForeignKey("ParticipantFK")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Bond");
+
+                    b.Navigation("NextOfKin");
+
+                    b.Navigation("Nomination");
+
+                    b.Navigation("Participant");
+
+                    b.Navigation("ParticipantEnrollment");
+                });
+
             modelBuilder.Entity("TrainingManagement.Core.Entities.NextOfKin", b =>
                 {
                     b.HasOne("TrainingManagement.Core.Entities.Participant", "Participant")
@@ -1522,6 +2226,34 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Participant");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.Nomination", b =>
+                {
+                    b.HasOne("TrainingManagement.Core.Entities.Participant", "Participant")
+                        .WithMany("Nominations")
+                        .HasForeignKey("ParticipantFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TrainingManagement.Core.Entities.Sponsor", "Sponsor")
+                        .WithMany()
+                        .HasForeignKey("SponsorFK")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Participant");
+
+                    b.Navigation("Sponsor");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.Participant", b =>
+                {
+                    b.HasOne("TrainingManagement.Core.Entities.Designation", "Designation")
+                        .WithMany()
+                        .HasForeignKey("DesignationFK")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Designation");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.ParticipantEnrollment", b =>
@@ -1539,6 +2271,11 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.HasOne("TrainingManagement.Core.Entities.Facility", "Facility")
                         .WithMany("ParticipantEnrollments")
                         .HasForeignKey("FacilityFK")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("TrainingManagement.Core.Entities.Nomination", "Nomination")
+                        .WithMany("ParticipantEnrollments")
+                        .HasForeignKey("NominationFK")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("TrainingManagement.Core.Entities.Participant", "Participant")
@@ -1569,6 +2306,8 @@ namespace TrainingManagement.Infrastructure.Migrations
 
                     b.Navigation("Facility");
 
+                    b.Navigation("Nomination");
+
                     b.Navigation("Participant");
 
                     b.Navigation("SalaryScale");
@@ -1582,14 +2321,14 @@ namespace TrainingManagement.Infrastructure.Migrations
                 {
                     b.HasOne("TrainingManagement.Core.Entities.Participant", "Participant")
                         .WithMany("ParticipantTrainings")
-                        .HasForeignKey("ParticipantFK")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("ParticipantPK")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TrainingManagement.Core.Entities.Training", "Training")
                         .WithMany("ParticipantTrainings")
-                        .HasForeignKey("TrainingFK")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("TrainingPK")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Participant");
@@ -1599,12 +2338,9 @@ namespace TrainingManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.Training", b =>
                 {
-                    b.HasOne("TrainingManagement.Core.Entities.Sponsor", "Sponsor")
+                    b.HasOne("TrainingManagement.Core.Entities.Sponsor", null)
                         .WithMany("Trainings")
-                        .HasForeignKey("SponsorFK")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Sponsor");
+                        .HasForeignKey("SponsorPK");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.TrainingBudget", b =>
@@ -1616,6 +2352,17 @@ namespace TrainingManagement.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Training");
+                });
+
+            modelBuilder.Entity("TrainingManagement.Core.Entities.TrainingExtension", b =>
+                {
+                    b.HasOne("TrainingManagement.Core.Entities.ParticipantEnrollment", "ParticipantEnrollment")
+                        .WithMany("TrainingExtensions")
+                        .HasForeignKey("ParticipantEnrollmentFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParticipantEnrollment");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.TrainingReport", b =>
@@ -1633,8 +2380,8 @@ namespace TrainingManagement.Infrastructure.Migrations
                 {
                     b.HasOne("TrainingManagement.Core.Entities.Participant", "Participant")
                         .WithMany("TrainingTransfers")
-                        .HasForeignKey("ParticipantFK")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("ParticipantPK")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TrainingManagement.Core.Entities.ParticipantTraining", null)
@@ -1643,8 +2390,8 @@ namespace TrainingManagement.Infrastructure.Migrations
 
                     b.HasOne("TrainingManagement.Core.Entities.Training", "Training")
                         .WithMany("TrainingTransfers")
-                        .HasForeignKey("TrainingFK")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("TrainingPK")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Participant");
@@ -1677,11 +2424,20 @@ namespace TrainingManagement.Infrastructure.Migrations
                     b.Navigation("ParticipantEnrollments");
                 });
 
+            modelBuilder.Entity("TrainingManagement.Core.Entities.Nomination", b =>
+                {
+                    b.Navigation("ParticipantEnrollments");
+                });
+
             modelBuilder.Entity("TrainingManagement.Core.Entities.Participant", b =>
                 {
                     b.Navigation("Allowances");
 
+                    b.Navigation("EnrollmentProgresses");
+
                     b.Navigation("NextOfKins");
+
+                    b.Navigation("Nominations");
 
                     b.Navigation("ParticipantEnrollments");
 
@@ -1693,6 +2449,10 @@ namespace TrainingManagement.Infrastructure.Migrations
             modelBuilder.Entity("TrainingManagement.Core.Entities.ParticipantEnrollment", b =>
                 {
                     b.Navigation("Bond");
+
+                    b.Navigation("EnrollmentProgresses");
+
+                    b.Navigation("TrainingExtensions");
                 });
 
             modelBuilder.Entity("TrainingManagement.Core.Entities.ParticipantTraining", b =>

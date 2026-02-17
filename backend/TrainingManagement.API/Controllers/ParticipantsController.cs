@@ -153,7 +153,7 @@ public class ParticipantsController : ControllerBase
                     // Assuming we have navigation properties loaded
                     TrainingProgram = e.Training?.Program ?? "N/A",
                     Institution = e.Training?.Institution ?? "N/A",
-                    TrainingStatus = e.Training?.TrainingStatus ?? "N/A",
+                    TrainingStatus = e.TrainingStatus, // Now in ParticipantEnrollment
                     StartDate = e.StartDate,
                     EndDate = e.EndDate
                 }).ToList()
@@ -244,7 +244,7 @@ public class ParticipantsController : ControllerBase
             var existingParticipant = await _unitOfWork.Participants.GetByIdNumberAsync(dto.IdNo);
             if (existingParticipant != null)
             {
-                return Conflict(new { message = "A participant with this ID number already exists" });
+                return Conflict(new { message = "A participant with this ID number already exists", participantId = existingParticipant.PK });
             }
 
             var participant = new Participant
@@ -258,7 +258,15 @@ public class ParticipantsController : ControllerBase
                 Dob = dto.Dob,
                 IdType = dto.IdType,
                 Phone = dto.Phone,
-                Email = dto.Email
+                Email = dto.Email,
+                WorkTelephone = dto.WorkTelephone,
+                DesignationFK = dto.DesignationFK,
+                DepartmentOrFacility = dto.DepartmentOrFacility,
+                DutyStation = dto.DutyStation,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = User.Identity?.Name ?? "System",
+                UpdatedAt = DateTime.UtcNow,
+                UpdatedBy = User.Identity?.Name ?? "System"
             };
 
             await _unitOfWork.Participants.AddAsync(participant);
@@ -277,6 +285,10 @@ public class ParticipantsController : ControllerBase
                 IdType = participant.IdType,
                 Phone = participant.Phone,
                 Email = participant.Email,
+                // WorkTelephone = participant.WorkTelephone,
+                // DesignationFK = participant.DesignationFK,
+                // DepartmentOrFacility = participant.DepartmentOrFacility,
+                // DutyStation = participant.DutyStation,
                 FullName = participant.FullName,
                 CreatedAt = participant.CreatedAt,
                 UpdatedAt = participant.UpdatedAt
@@ -288,6 +300,140 @@ public class ParticipantsController : ControllerBase
         {
             _logger.LogError(ex, "Error creating participant");
             return StatusCode(500, new { message = "An error occurred while creating the participant" });
+        }
+    }
+
+    /// <summary>
+    /// Create a new participant and start enrollment immediately
+    /// Accepts full Stage1ParticipantDto with all employment fields
+    /// </summary>
+    [HttpPost("create-and-enroll")]
+    public async Task<IActionResult> CreateParticipantAndStartEnrollment([FromBody] Stage1ParticipantDto dto)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            // Check if ID number is unique
+            var existingParticipant = await _unitOfWork.Participants.GetByIdNumberAsync(dto.IdNo);
+
+            int participantId;
+            bool isNewParticipant = false;
+
+            if (existingParticipant != null)
+            {
+                // Update existing participant with all fields
+                existingParticipant.Title = dto.Title;
+                existingParticipant.Firstname = dto.Firstname;
+                existingParticipant.Lastname = dto.Lastname;
+                existingParticipant.Middlename = dto.Middlename;
+                existingParticipant.Sex = dto.Sex;
+                existingParticipant.Dob = dto.Dob;
+                existingParticipant.IdType = dto.IdType;
+                existingParticipant.Phone = dto.Phone;
+                existingParticipant.Email = dto.Email;
+                existingParticipant.WorkTelephone = dto.WorkTelephone;
+                existingParticipant.DesignationFK = dto.DesignationFK;
+                existingParticipant.DepartmentOrFacility = dto.DepartmentOrFacility;
+                existingParticipant.DutyStation = dto.DutyStation;
+                existingParticipant.UpdatedAt = DateTime.UtcNow;
+                existingParticipant.UpdatedBy = User.Identity?.Name ?? "System";
+
+                await _unitOfWork.Participants.UpdateAsync(existingParticipant);
+                await _unitOfWork.SaveChangesAsync();
+                participantId = existingParticipant.PK;
+            }
+            else
+            {
+                var participant = new Participant
+                {
+                    Title = dto.Title,
+                    Firstname = dto.Firstname,
+                    Lastname = dto.Lastname,
+                    Middlename = dto.Middlename,
+                    IdNo = dto.IdNo,
+                    Sex = dto.Sex,
+                    Dob = dto.Dob,
+                    IdType = dto.IdType,
+                    Phone = dto.Phone,
+                    Email = dto.Email,
+                    WorkTelephone = dto.WorkTelephone,
+                    DesignationFK = dto.DesignationFK,
+                    DepartmentOrFacility = dto.DepartmentOrFacility,
+                    DutyStation = dto.DutyStation,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = User.Identity?.Name ?? "System",
+                    UpdatedAt = DateTime.UtcNow,
+                    UpdatedBy = User.Identity?.Name ?? "System"
+                };
+
+                await _unitOfWork.Participants.AddAsync(participant);
+                await _unitOfWork.SaveChangesAsync();
+                participantId = participant.PK;
+                isNewParticipant = true;
+            }
+
+            // Check if there's already an in-progress enrollment
+            var allProgress = await _unitOfWork.EnrollmentProgress.GetAllAsync();
+            var existingProgress = allProgress
+                .FirstOrDefault(p => p.ParticipantFK == participantId && p.EnrollmentStatus == "In Progress");
+
+            if (existingProgress != null)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                return Ok(new
+                {
+                    participantId,
+                    progressId = existingProgress.PK,
+                    message = "Participant exists with enrollment in progress",
+                    currentStep = existingProgress.CurrentStep,
+                    alreadyExists = true
+                });
+            }
+
+            // Create enrollment progress starting at Stage 2 (Stage 1 is complete with participant creation)
+            var progress = new EnrollmentProgress
+            {
+                ParticipantFK = participantId,
+                CurrentStep = 2, // Skip to Stage 2 (Next of Kin)
+                EnrollmentStatus = "In Progress",
+                Form1_ParticipantProfile = true, // Mark Stage 1 complete
+                Form2_Nomination = false,
+                Form3_Admission = false,
+                Form4_TrainingCosts = false,
+                Form5_Extension = false,
+                Form6_Completion = false,
+                LastUpdated = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = User.Identity?.Name ?? "System"
+            };
+
+            await _unitOfWork.EnrollmentProgress.AddAsync(progress);
+            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
+
+            return Ok(new
+            {
+                participantId,
+                progressId = progress.PK,
+                message = isNewParticipant
+                    ? "Participant created and enrollment started"
+                    : "Enrollment started for existing participant",
+                currentStep = 2,
+                nextAction = "Complete Stage 2: Next of Kin",
+                isNewParticipant
+            });
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackTransactionAsync();
+            _logger.LogError(ex, "Error creating participant and starting enrollment");
+            return StatusCode(500, new { message = "An error occurred while creating participant and starting enrollment" });
         }
     }
 
@@ -354,6 +500,26 @@ public class ParticipantsController : ControllerBase
             if (!string.IsNullOrEmpty(dto.Email))
             {
                 participant.Email = dto.Email;
+            }
+
+            if (dto.WorkTelephone != null)
+            {
+                participant.WorkTelephone = dto.WorkTelephone;
+            }
+
+            if (dto.DesignationFK.HasValue)
+            {
+                participant.DesignationFK = dto.DesignationFK;
+            }
+
+            if (dto.DepartmentOrFacility != null)
+            {
+                participant.DepartmentOrFacility = dto.DepartmentOrFacility;
+            }
+
+            if (dto.DutyStation != null)
+            {
+                participant.DutyStation = dto.DutyStation;
             }
 
             await _unitOfWork.Participants.UpdateAsync(participant);

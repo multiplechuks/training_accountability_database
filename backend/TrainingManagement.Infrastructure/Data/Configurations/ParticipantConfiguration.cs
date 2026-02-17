@@ -22,6 +22,11 @@ public static class ParticipantConfiguration
                 .WithOne(e => e.Participant)
                 .HasForeignKey(e => e.ParticipantFK)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Designation)
+                .WithMany()
+                .HasForeignKey(e => e.DesignationFK)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<ParticipantEnrollment>(entity =>
@@ -54,11 +59,10 @@ public static class ParticipantConfiguration
                 .HasForeignKey(e => e.SponsorFK)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Temporarily comment out Bond relationship until properly configured
-            // entity.HasOne(e => e.Bond)
-            //     .WithOne(e => e.ParticipantEnrollment)
-            //     .HasForeignKey<Bond>(e => e.ParticipantEnrollmentFK)
-            //     .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Nomination)
+                .WithMany(e => e.ParticipantEnrollments)
+                .HasForeignKey(e => e.NominationFK)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         builder.Entity<NextOfKin>(entity =>

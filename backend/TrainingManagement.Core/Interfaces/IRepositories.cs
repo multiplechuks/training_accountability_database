@@ -62,3 +62,18 @@ public interface IAllowanceStatusRepository : IGenericRepository<AllowanceStatus
     Task<bool> IsNameUniqueAsync(string name, int? excludeId = null);
     Task<bool> HasAllowancesAsync(int allowanceStatusId);
 }
+
+public interface IEnrollmentProgressRepository : IGenericRepository<EnrollmentProgress>
+{
+    Task<IEnumerable<EnrollmentProgress>> GetByParticipantAsync(int participantId);
+    Task<EnrollmentProgress?> GetActiveProgressByParticipantAsync(int participantId);
+    Task<IEnumerable<EnrollmentProgress>> GetByStatusAsync(string status);
+}
+
+public interface INominationRepository : IGenericRepository<Nomination>
+{
+    Task<IEnumerable<Nomination>> GetByParticipantAsync(int participantId);
+    Task<Nomination?> GetByIdWithRelatedAsync(int nominationId);
+    Task<IEnumerable<Nomination>> GetByStatusAsync(string status);
+    Task<IEnumerable<Nomination>> GetByYearAsync(int year);
+}

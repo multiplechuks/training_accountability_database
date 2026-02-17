@@ -83,6 +83,7 @@ builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
 builder.Services.AddScoped<IParticipantEnrollmentRepository, ParticipantEnrollmentRepository>();
 builder.Services.AddScoped<IAllowanceRepository, AllowanceRepository>();
 builder.Services.AddScoped<ITrainingTransferRepository, TrainingTransferRepository>();
+builder.Services.AddScoped<INominationRepository, NominationRepository>();
 
 // Configure Swagger with JWT Authentication
 builder.Services.AddSwaggerGen(options =>
@@ -193,6 +194,7 @@ if (app.Environment.IsDevelopment())
     // Seed lookup data
     await SeedData.SeedLookupDataAsync(context);
     await SeedData.SeedSampleDataAsync(context);
+    await EnrollmentLookupSeedData.SeedEnrollmentLookupsAsync(context);
 
     // Seed authentication data (roles and users)
     await AuthSeedData.SeedRolesAndUsersAsync(userManager, roleManager, context);
@@ -212,6 +214,7 @@ if (app.Environment.IsProduction())
     // Seed lookup data
     await SeedData.SeedLookupDataAsync(context);
     await SeedData.SeedSampleDataAsync(context);
+    await EnrollmentLookupSeedData.SeedEnrollmentLookupsAsync(context);
 
     // Seed authentication data (roles and users)
     await AuthSeedData.SeedRolesAndUsersAsync(userManager, roleManager, context);

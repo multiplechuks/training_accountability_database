@@ -19,6 +19,10 @@ public class UnitOfWork : IUnitOfWork
         TrainingTransfers = new TrainingTransferRepository(_context);
         AllowanceTypes = new AllowanceTypeRepository(_context);
         AllowanceStatuses = new AllowanceStatusRepository(_context);
+        EnrollmentProgress = new EnrollmentProgressRepository(_context);
+        Nominations = new NominationRepository(_context);
+        NextOfKins = new NextOfKinRepository(_context);
+        Bonds = new BondRepository(_context);
     }
 
     public IParticipantRepository Participants { get; }
@@ -28,6 +32,10 @@ public class UnitOfWork : IUnitOfWork
     public ITrainingTransferRepository TrainingTransfers { get; }
     public IAllowanceTypeRepository AllowanceTypes { get; }
     public IAllowanceStatusRepository AllowanceStatuses { get; }
+    public IEnrollmentProgressRepository EnrollmentProgress { get; }
+    public INominationRepository Nominations { get; }
+    public INextOfKinRepository NextOfKins { get; }
+    public IBondRepository Bonds { get; }
 
     public async Task<int> SaveChangesAsync()
     {

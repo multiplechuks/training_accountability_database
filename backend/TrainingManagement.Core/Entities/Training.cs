@@ -12,6 +12,9 @@ public class Training : BaseEntity
     [MaxLength(200)]
     public string Program { get; set; } = string.Empty;
 
+    [MaxLength(200)]
+    public string? Specialty { get; set; } // Form 3: Specialty dropdown
+
     [Required]
     [MaxLength(100)]
     public string CountryOfStudy { get; set; } = string.Empty;
@@ -22,42 +25,42 @@ public class Training : BaseEntity
 
     public int Duration { get; set; } // in months
 
-    public DateTime? DepartureDate { get; set; }
+    // public DateTime? DepartureDate { get; set; }
 
-    public DateTime? ArrivalDate { get; set; }
+    // public DateTime? ArrivalDate { get; set; }
 
-    [MaxLength(100)]
-    public string? VacationEmploymentPeriod { get; set; }
+    // [MaxLength(100)]
+    // public string? VacationEmploymentPeriod { get; set; }
 
-    public DateTime? ResumptionDate { get; set; }
+    // public DateTime? ResumptionDate { get; set; }
 
-    [MaxLength(100)]
-    public string? ExtensionPeriod { get; set; }
+    // [MaxLength(100)]
+    // public string? ExtensionPeriod { get; set; }
 
-    public DateTime? DateBondSigned { get; set; }
+    // public DateTime? DateBondSigned { get; set; }
 
-    [MaxLength(100)]
-    public string? BondServingPeriod { get; set; }
+    // [MaxLength(100)]
+    // public string? BondServingPeriod { get; set; }
 
-    // Foreign Key for Sponsor
-    public int? SponsorFK { get; set; }
+    // // Foreign Key for Sponsor
+    // public int? SponsorFK { get; set; }
 
     [MaxLength(50)]
     public string ModeOfStudy { get; set; } = string.Empty;
 
-    public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
+    // public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
-    [MaxLength(50)]
-    public string TrainingStatus { get; set; } = string.Empty;
+    // [MaxLength(50)]
+    // public string TrainingStatus { get; set; } = string.Empty;
 
-    [MaxLength(20)]
-    public string FinancialYear { get; set; } = string.Empty;
+    // [MaxLength(20)]
+    // public string FinancialYear { get; set; } = string.Empty;
 
     [MaxLength(50)]
     public string CampusType { get; set; } = string.Empty;
 
     // Navigation properties
-    public virtual Sponsor? Sponsor { get; set; }
+    // public virtual Sponsor? Sponsor { get; set; }
     public virtual ICollection<ParticipantEnrollment> ParticipantEnrollments { get; set; } = new List<ParticipantEnrollment>();
     public virtual ICollection<TrainingBudget> TrainingBudgets { get; set; } = new List<TrainingBudget>();
     public virtual ICollection<TrainingReport> TrainingReports { get; set; } = new List<TrainingReport>();
