@@ -167,6 +167,22 @@ textarea.form-control {
   min-width: 0;
 }
 
+/* Required Field Label */
+label.required::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: 500;
+  margin-left: 0.15rem;
+}
+
+/* Alternative: Use this class on label elements */
+.label-required::after {
+  content: " *";
+  color: #dc3545;
+  font-weight: 500;
+  margin-left: 0.15rem;
+}
+
 /* ==========================================================================
    Button Styles
    ========================================================================== */

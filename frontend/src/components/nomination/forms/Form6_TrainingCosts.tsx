@@ -178,9 +178,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
                     <div className="row">
                       <div className="col-md-6">
                         <div className="form-group mb-3">
-                          <label htmlFor={`allowanceType-${index}`}>
-                            Allowance Type <span className="text-danger">*</span>
-                          </label>
+                          <label className="required" htmlFor={`allowanceType-${index}`}>Allowance Type</label>
                           <select
                             id={`allowanceType-${index}`}
                             className="form-control"
@@ -200,9 +198,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
 
                       <div className="col-md-6">
                         <div className="form-group mb-3">
-                          <label htmlFor={`status-${index}`}>
-                            Status <span className="text-danger">*</span>
-                          </label>
+                          <label className="required" htmlFor={`status-${index}`}>Status</label>
                           <select
                             id={`status-${index}`}
                             className="form-control"
@@ -223,9 +219,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
                     <div className="row">
                       <div className="col-md-4">
                         <div className="form-group mb-3">
-                          <label htmlFor={`amount-${index}`}>
-                            Amount <span className="text-danger">*</span>
-                          </label>
+                          <label className="required" htmlFor={`amount-${index}`}>Amount</label>
                           <input
                             type="number"
                             id={`amount-${index}`}
@@ -241,9 +235,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
 
                       <div className="col-md-4">
                         <div className="form-group mb-3">
-                          <label htmlFor={`startDate-${index}`}>
-                            Start Date <span className="text-danger">*</span>
-                          </label>
+                          <label className="required" htmlFor={`startDate-${index}`}>Start Date</label>
                           <input
                             type="date"
                             id={`startDate-${index}`}
@@ -257,9 +249,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
 
                       <div className="col-md-4">
                         <div className="form-group mb-3">
-                          <label htmlFor={`endDate-${index}`}>
-                            End Date <span className="text-danger">*</span>
-                          </label>
+                          <label className="required" htmlFor={`endDate-${index}`}>End Date</label>
                           <input
                             type="date"
                             id={`endDate-${index}`}
@@ -275,9 +265,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
                     <div className="row">
                       <div className="col-md-6">
                         <div className="form-group mb-3">
-                          <label htmlFor={`frequency-${index}`}>
-                            Frequency
-                          </label>
+                          <label htmlFor={`frequency-${index}`}>Frequency</label>
                           <input
                             type="text"
                             id={`frequency-${index}`}
@@ -294,9 +282,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
 
                       <div className="col-md-6">
                         <div className="form-group mb-3">
-                          <label htmlFor={`comments-${index}`}>
-                            Comments
-                          </label>
+                          <label htmlFor={`comments-${index}`}>Comments</label>
                           <textarea
                             id={`comments-${index}`}
                             className="form-control"

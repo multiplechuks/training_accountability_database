@@ -62,7 +62,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
           {mode === "select" && (
             <div>
               <div className="form-group">
-                <label htmlFor="participantFK">Select Participant *</label>
+                <label className="required" htmlFor="participantFK">Select Participant</label>
                 <SearchableSelect
                   value={data.participantId}
                   onChange={(value: number | undefined) => onDataChange({ ...data, participantId: value })}
@@ -105,7 +105,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
 
                 <div className="col-md-4">
                   <div className="form-group">
-                    <label htmlFor="firstname">First Name *</label>
+                    <label className="required" htmlFor="firstname">First Name</label>
                     <input
                       type="text"
                       id="firstname"
@@ -132,7 +132,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label htmlFor="lastname">Last Name *</label>
+                    <label className="required" htmlFor="lastname">Last Name</label>
                     <input
                       type="text"
                       id="lastname"
@@ -148,7 +148,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
               <div className="row">
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label htmlFor="idType">ID Type *</label>
+                    <label className="required" htmlFor="idType">ID Type</label>
                     <select
                       id="idType"
                       className="form-control"
@@ -166,7 +166,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label htmlFor="idNo">ID Number *</label>
+                    <label className="required" htmlFor="idNo">ID Number</label>
                     <input
                       type="text"
                       id="idNo"
@@ -180,7 +180,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label htmlFor="dob">Date of Birth *</label>
+                    <label className="required" htmlFor="dob">Date of Birth</label>
                     <input
                       type="date"
                       id="dob"
@@ -194,7 +194,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
 
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label htmlFor="sex">Gender *</label>
+                    <label className="required" htmlFor="sex">Gender</label>
                     <select
                       id="sex"
                       className="form-control"
@@ -214,7 +214,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
               <div className="row">
                 <div className="col-md-4">
                   <div className="form-group">
-                    <label htmlFor="phone">Phone Number *</label>
+                    <label className="required" htmlFor="phone">Phone Number</label>
                     <input
                       type="tel"
                       id="phone"
@@ -243,7 +243,7 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
 
                 <div className="col-md-4">
                   <div className="form-group">
-                    <label htmlFor="email">Email Address *</label>
+                    <label className="required" htmlFor="email">Email Address</label>
                     <input
                       type="email"
                       id="email"
