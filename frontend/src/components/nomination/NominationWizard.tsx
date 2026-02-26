@@ -274,7 +274,10 @@ export default function NominationWizard({
   };
 
   const goToStep = (stepIndex: number) => {
-    setCurrentStep(stepIndex + 1);
+    // Only allow navigating to steps already reached, not skipping ahead
+    if (stepIndex + 1 <= currentStep) {
+      setCurrentStep(stepIndex + 1);
+    }
   };
 
   return (
@@ -284,7 +287,7 @@ export default function NominationWizard({
         <p className="text-muted">Progress ID: {progressId}</p>
       </div>
 
-      <Stepper steps={steps} currentStep={currentStep - 1} onStepClick={goToStep} />
+      <Stepper steps={steps} currentStep={currentStep - 1} onStepClick={goToStep} maxClickableStep={currentStep - 1} />
 
       {error && (
         <div className="alert alert-danger mt-3">

@@ -13,6 +13,7 @@ interface StepperProps {
   onStepClick?: (stepIndex: number) => void;
   orientation?: "horizontal" | "vertical";
   allowClickToNavigate?: boolean;
+  maxClickableStep?: number; // steps beyond this index cannot be clicked
 }
 
 export default function Stepper({ 
@@ -20,10 +21,12 @@ export default function Stepper({
   currentStep, 
   onStepClick,
   orientation = "horizontal",
-  allowClickToNavigate = true
+  allowClickToNavigate = true,
+  maxClickableStep
 }: StepperProps) {
   const handleStepClick = (index: number) => {
-    if (allowClickToNavigate && onStepClick) {
+    const isAllowed = maxClickableStep === undefined ? true : index <= maxClickableStep;
+    if (allowClickToNavigate && onStepClick && isAllowed) {
       onStepClick(index);
     }
   };
@@ -34,13 +37,15 @@ export default function Stepper({
         {steps.map((step, index) => {
           const isActive = index === currentStep;
           const isCompleted = index < currentStep || step.isCompleted;
-          const isClickable = allowClickToNavigate && onStepClick;
+          const withinClickable = maxClickableStep === undefined ? true : index <= maxClickableStep;
+          const isClickable = allowClickToNavigate && onStepClick && withinClickable;
 
           return (
             <div 
               key={step.id}
-              className={`step ${isActive ? "active" : ""} ${isCompleted ? "completed" : ""} ${isClickable ? "clickable" : ""}`}
+              className={`step ${isActive ? "active" : ""} ${isCompleted ? "completed" : ""} ${isClickable ? "clickable" : ""} ${!withinClickable ? "disabled" : ""}`}
               onClick={() => handleStepClick(index)}
+              title={!withinClickable ? "Complete the current step first" : undefined}
             >
               <div className="step-indicator">
                 <div className="step-circle">
