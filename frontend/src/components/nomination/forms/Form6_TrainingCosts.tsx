@@ -107,11 +107,18 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
         [field]: parseInt(value, 10)
       };
     } else if (field === "amount") {
-      const parsedAmount = parseFloat(value);
-      updated[index] = {
-        ...updated[index],
-        [field]: Number.isNaN(parsedAmount) ? 0 : parsedAmount
-      };
+      if (value === "") {
+        updated[index] = {
+          ...updated[index],
+          [field]: 0
+        };
+      } else {
+        const parsedAmount = parseFloat(value);
+        updated[index] = {
+          ...updated[index],
+          [field]: Number.isNaN(parsedAmount) ? 0 : parsedAmount
+        };
+      }
     } else {
       updated[index] = {
         ...updated[index],
@@ -223,7 +230,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
                             type="number"
                             id={`amount-${index}`}
                             className="form-control"
-                            value={allowance.amount}
+                            value={allowance.amount === 0 ? "" : allowance.amount}
                             onChange={(e) => updateAllowance(index, "amount", e.target.value)}
                             placeholder="Enter amount"
                             min="0"
