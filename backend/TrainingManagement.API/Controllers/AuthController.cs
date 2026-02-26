@@ -77,7 +77,7 @@ public class AuthController : ControllerBase
 
             var roles = await _userManager.GetRolesAsync(user);
             var token = _jwtService.GenerateJwtToken(user, roles);
-            var expiresAt = DateTime.UtcNow.AddHours(24); // Should match token expiry
+            var expiresAt = DateTime.UtcNow.AddHours(6); // Should match token expiry
 
             return Ok(new AuthResponseDto
             {
