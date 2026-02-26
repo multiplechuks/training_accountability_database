@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Form4_AdmissionData } from "../../../types/nomination";
 import { searchTrainings } from "../../../api/training";
 import type { TrainingResponseDto } from "../../../types";
@@ -17,6 +17,7 @@ export default function Form4_Admission({ data, onDataChange, onNext, onBack, on
   const [programOptions, setProgramOptions] = useState<TrainingResponseDto[]>([]);
   const [showProgramDropdown, setShowProgramDropdown] = useState(false);
   const [loadingPrograms, setLoadingPrograms] = useState(false);
+  const skipSearchRef = useRef(false);
 
   // Sync program search with prop changes
   useEffect(() => {
@@ -26,6 +27,10 @@ export default function Form4_Admission({ data, onDataChange, onNext, onBack, on
   // Search programs when user types
   useEffect(() => {
     const searchPrograms = async () => {
+      if (skipSearchRef.current) {
+        skipSearchRef.current = false;
+        return;
+      }
       if (programSearch.length >= 2) {
         try {
           setLoadingPrograms(true);
@@ -50,6 +55,7 @@ export default function Form4_Admission({ data, onDataChange, onNext, onBack, on
 
   const selectProgram = (program: TrainingResponseDto) => {
     const programName = `${program.program} - ${program.institution}`;
+    skipSearchRef.current = true;
     onDataChange({ 
       ...data, 
       programName: program.program,
