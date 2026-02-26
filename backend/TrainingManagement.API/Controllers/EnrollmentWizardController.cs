@@ -828,7 +828,7 @@ public class EnrollmentWizardController : ControllerBase
             completed++;
         }
 
-        return (int)((completed / 7.0) * 100);
+        return (int)((completed / 6.0) * 100);
     }
 
     private static string GetNextActionMessage(int currentStep)
