@@ -117,7 +117,7 @@ export interface Form1_ParticipantProfileData {
   
   // Employment information
   workTelephone?: string;
-  designationFK?: string;
+  designationFK?: number;
   departmentOrFacility?: string;
   dutyStation?: string;
 }

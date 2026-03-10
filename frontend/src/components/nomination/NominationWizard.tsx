@@ -45,7 +45,8 @@ export default function NominationWizard({
 
   // Form data for each step
   const [form1Data, setForm1Data] = useState<Form1_ParticipantProfileData>({
-    participantId: initialData?.participantId
+    participantId: initialData?.participantId,
+    idType: "NATIONAL_ID"
   });
   const [form2Data, setForm2Data] = useState<Form2_NextOfKinData>({});
   const [form3Data, setForm3Data] = useState<Form3_NominationData>({

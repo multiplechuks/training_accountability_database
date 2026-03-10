@@ -263,16 +263,48 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
               <div className="row">
                 <div className="col-md-3">
                   <div className="form-group">
-                    <label htmlFor="designationFK">Current Scale/Designation</label>
-                    <input
-                      type="text"
+                    <label htmlFor="designationFK">Salary Scale</label>
+                    <select
                       id="designationFK"
                       className="form-control"
-                      value={data.designationFK || ""}
-                      onChange={(e) => onDataChange({ ...data, designationFK: e.target.value})}
-                      placeholder="e.g., D1, C2"
-                    />
-                    <small className="form-text text-muted">Enter salary scale number</small>
+                      value={data.designationFK ?? ""}
+                      onChange={(e) => onDataChange({ ...data, designationFK: e.target.value ? parseInt(e.target.value) : undefined })}
+                    >
+                      <option value="">Select scale...</option>
+                      <optgroup label="A - Senior Management">
+                        <option value="1">A1</option>
+                        <option value="2">A2</option>
+                        <option value="3">A3</option>
+                        <option value="4">A4</option>
+                      </optgroup>
+                      <optgroup label="B - Management">
+                        <option value="5">B1</option>
+                        <option value="6">B2</option>
+                        <option value="7">B3</option>
+                        <option value="8">B4</option>
+                        <option value="9">B5</option>
+                        <option value="10">B6</option>
+                        <option value="11">B7</option>
+                        <option value="12">B8</option>
+                      </optgroup>
+                      <optgroup label="C - Supervisory">
+                        <option value="13">C1</option>
+                        <option value="14">C2</option>
+                        <option value="15">C3</option>
+                        <option value="16">C4</option>
+                      </optgroup>
+                      <optgroup label="D - General">
+                        <option value="17">D1</option>
+                        <option value="18">D2</option>
+                        <option value="19">D3</option>
+                        <option value="20">D4</option>
+                      </optgroup>
+                      <optgroup label="E - Support">
+                        <option value="21">E1</option>
+                        <option value="22">E2</option>
+                        <option value="23">E3</option>
+                      </optgroup>
+                    </select>
                   </div>
                 </div>
 
