@@ -11,7 +11,6 @@ import type {
   CancelEnrollmentDto,
   EnrollmentStatistics,
   InProgressEnrollmentsResponse,
-  Form2_NominationData
 } from "@/types/nomination";
 
 // Start a new enrollment/nomination process
@@ -48,17 +47,17 @@ export async function saveProgress(progressId: number, data: SaveProgressDto): P
   return response.data;
 }
 
-// Save Form 2 (Nomination) data
-export async function saveNominationForm(progressId: number, data: Form2_NominationData): Promise<{ message: string; nominationId: number }> {
-  const response = await axiosInstance.post(ApiUrls.nomination.SAVE_FORM2(progressId), data);
-  return response.data;
-}
+// // Save Form 2 (Nomination) data
+// export async function saveNominationForm(progressId: number, data: Form2_NominationData): Promise<{ message: string; nominationId: number }> {
+//   const response = await axiosInstance.post(ApiUrls.nomination.SAVE_FORM2(progressId), data);
+//   return response.data;
+// }
 
-// Get Form 2 (Nomination) data
-export async function getNominationForm(progressId: number): Promise<Form2_NominationData | null> {
-  const response = await axiosInstance.get(ApiUrls.nomination.GET_FORM2(progressId));
-  return response.data?.data || response.data;
-}
+// // Get Form 2 (Nomination) data
+// export async function getNominationForm(progressId: number): Promise<Form2_NominationData | null> {
+//   const response = await axiosInstance.get(ApiUrls.nomination.GET_FORM2(progressId));
+//   return response.data?.data || response.data;
+// }
 
 // Cancel an enrollment process
 export async function cancelEnrollment(progressId: number, data?: CancelEnrollmentDto): Promise<{ message: string }> {

@@ -22,6 +22,7 @@ export async function getParticipantWithEnrollments(id: number): Promise<Partici
 
 // Create a new participant
 export async function createParticipant(participantData: CreateParticipantDto): Promise<ParticipantResponseDto> {
+  console.log("Creating participant with data:", participantData);
   const response = await axiosInstance.post(ApiUrls.participants.LIST, participantData);
   return response.data;
 }

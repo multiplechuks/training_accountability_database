@@ -12,6 +12,7 @@ export default function SearchableSelect({
   options = [],
   value,
   onChange,
+  onChangeWithLabel,
   placeholder = "Select an option...",
   loading = false,
   error,
@@ -90,6 +91,7 @@ export default function SearchableSelect({
 
   const handleChange = (selectedOption: SelectOption | null) => {
     onChange(selectedOption?.value);
+    onChangeWithLabel?.(selectedOption?.value, selectedOption?.label);
   };
 
   // Load initial options for async mode when component mounts

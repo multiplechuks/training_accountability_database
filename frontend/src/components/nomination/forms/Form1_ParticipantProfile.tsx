@@ -45,14 +45,30 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
             <button
               type="button"
               className={`btn ${mode === "select" ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setMode("select")}
+              onClick={() => {
+                setMode("select");
+                // Clear create-new fields when switching to select
+                onDataChange({
+                  participantId: undefined,
+                  selectedParticipantName: undefined,
+                  idType: "NATIONAL_ID"
+                });
+              }}
             >
               Select Existing
             </button>
             <button
               type="button"
               className={`btn ${mode === "create" ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setMode("create")}
+              onClick={() => {
+                setMode("create");
+                // Clear selected participant when switching to create
+                onDataChange({
+                  ...data,
+                  participantId: undefined,
+                  selectedParticipantName: undefined
+                });
+              }}
             >
               Create New
             </button>
@@ -65,7 +81,8 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
                 <label className="required" htmlFor="participantFK">Select Participant</label>
                 <SearchableSelect
                   value={data.participantId}
-                  onChange={(value: number | undefined) => onDataChange({ ...data, participantId: value })}
+                  onChange={(value: number | undefined) => onDataChange({ ...data, participantId: value, selectedParticipantName: undefined })}
+                  onChangeWithLabel={(value, label) => onDataChange({ ...data, participantId: value, selectedParticipantName: label })}
                   placeholder="Search by name, email, or ID number..."
                   onSearch={searchParticipantsForSelect}
                   minSearchLength={2}

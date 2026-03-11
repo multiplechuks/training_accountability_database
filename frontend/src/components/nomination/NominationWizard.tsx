@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Stepper, Step } from "../ui";
-import { createParticipant } from "../../api/participant";
+import { createParticipant, getParticipant } from "../../api/participant";
 import type {
   Form1_ParticipantProfileData,
   Form2_NextOfKinData,
@@ -42,12 +42,31 @@ export default function NominationWizard({
   const [currentStep, setCurrentStep] = useState(initialStep);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fetchedParticipantName, setFetchedParticipantName] = useState<string | undefined>(undefined);
 
   // Form data for each step
   const [form1Data, setForm1Data] = useState<Form1_ParticipantProfileData>({
     participantId: initialData?.participantId,
     idType: "NATIONAL_ID"
   });
+
+  // Fetch participant name when initialized with an existing participantId
+  useEffect(() => {
+    if (initialData?.participantId) {
+      getParticipant(initialData.participantId)
+        .then(p => setFetchedParticipantName(`${p.firstname} ${p.lastname}`.trim()))
+        .catch(() => { /* name unavailable - silently ignore */ });
+    }
+  }, [initialData?.participantId]);
+
+  // Derive display name: prefer newly-entered or selected data, fall back to fetched
+  const participantDisplayName = useMemo(() => {
+    if (form1Data.selectedParticipantName) return form1Data.selectedParticipantName;
+    if (form1Data.firstname || form1Data.lastname) {
+      return [form1Data.firstname, form1Data.lastname].filter(Boolean).join(" ");
+    }
+    return fetchedParticipantName;
+  }, [form1Data.selectedParticipantName, form1Data.firstname, form1Data.lastname, fetchedParticipantName]);
   const [form2Data, setForm2Data] = useState<Form2_NextOfKinData>({});
   const [form3Data, setForm3Data] = useState<Form3_NominationData>({
     currentQualifications: [],
@@ -283,9 +302,14 @@ export default function NominationWizard({
 
   return (
     <div className="nomination-wizard">
-      <div className="wizard-header">
-        <h2>Nomination Process</h2>
-        <p className="text-muted">Progress ID: {progressId}</p>
+      <div className="wizard-header mb-4">
+        <h5>Nomination Process</h5>
+        {participantDisplayName && (
+          <div className="participant-banner">
+            <span className="participant-banner-label">Participant:</span>
+            <strong className="participant-banner-name">{participantDisplayName}</strong>
+          </div>
+        )}
       </div>
 
       <Stepper steps={steps} currentStep={currentStep - 1} onStepClick={goToStep} maxClickableStep={currentStep - 1} />

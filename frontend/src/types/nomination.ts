@@ -101,6 +101,7 @@ export interface InProgressEnrollmentsResponse {
 export interface Form1_ParticipantProfileData {
   // Option to select existing or create new
   participantId?: number;
+  selectedParticipantName?: string; // Name captured when selecting an existing participant
   
   // If creating new participant
   title?: string;

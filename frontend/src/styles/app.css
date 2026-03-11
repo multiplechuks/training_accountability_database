@@ -2732,3 +2732,27 @@ label.required::after {
   height: 3rem;
 }
 
+/* Participant Banner */
+.participant-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--bs-botswana-blue, #0066cc);
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  margin-top: 0.6rem;
+  font-size: 1rem;
+}
+
+.participant-banner-label {
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.participant-banner-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+

@@ -381,6 +381,7 @@ export interface SearchableSelectProps {
   options?: LookupDto[];
   value?: number;
   onChange: (value: number | undefined) => void;
+  onChangeWithLabel?: (value: number | undefined, label: string | undefined) => void;
   placeholder?: string;
   loading?: boolean;
   error?: string;
