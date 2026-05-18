@@ -4,16 +4,23 @@ import FormSection from "../forms/FormSection";
 import LookupManagementModal from "../configuration/LookupManagementModal";
 import { getAllowanceTypes, createAllowanceType, updateAllowanceType, deleteAllowanceType } from "@/api/allowanceType";
 import { getAllowanceStatuses, createAllowanceStatus, updateAllowanceStatus, deleteAllowanceStatus } from "@/api/allowanceStatus";
+import { getLookupItems, createLookupItem, updateLookupItem, deleteLookupItem } from "@/api/nomination";
+import { ApiUrls } from "@/constants/apiUrls";
 
 interface ConfigurationProps {
   onSave: (item: ConfigurationItem) => void;
+  onNavigate?: (path: string) => void;
 }
 
-export default function Configuration({ onSave: _onSave }: ConfigurationProps) {
+export default function Configuration({ onSave: _onSave, onNavigate }: ConfigurationProps) {
   const [activeCategory, setActiveCategory] = useState("lookups");
   const [editingItem, setEditingItem] = useState<ConfigurationItem | null>(null);
   const [isAllowanceTypeModalOpen, setIsAllowanceTypeModalOpen] = useState(false);
   const [isAllowanceStatusModalOpen, setIsAllowanceStatusModalOpen] = useState(false);
+  const [isRelationshipTypeModalOpen, setIsRelationshipTypeModalOpen] = useState(false);
+  const [isSponsorTypeModalOpen, setIsSponsorTypeModalOpen] = useState(false);
+  const [isQualificationModalOpen, setIsQualificationModalOpen] = useState(false);
+  const [isModeOfStudyModalOpen, setIsModeOfStudyModalOpen] = useState(false);
 
   // Mock configuration data - replace with actual API calls
   const [configCategories] = useState<ConfigurationCategory[]>([
@@ -192,14 +199,98 @@ export default function Configuration({ onSave: _onSave }: ConfigurationProps) {
                   </div>
 
                   <div className="lookup-card">
-                    <h4>Sponsors</h4>
-                    <p>Manage training sponsors</p>
+                    <h4>Relationship Types</h4>
+                    <p>Manage next-of-kin relationship types</p>
                     <div className="lookup-stats">
-                      <span className="stat">4 items</span>
+                      <span className="stat">Manage items</span>
                     </div>
                     <div className="lookup-card-actions">
-                      <button className="btn btn-primary btn-small">Manage</button>
-                      <button className="btn btn-secondary btn-small">Export</button>
+                      <button
+                        className="btn btn-primary btn-small"
+                        onClick={() => setIsRelationshipTypeModalOpen(true)}
+                      >
+                        Manage
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="lookup-card">
+                    <h4>Sponsor Types</h4>
+                    <p>Manage nomination sponsor types</p>
+                    <div className="lookup-stats">
+                      <span className="stat">Manage items</span>
+                    </div>
+                    <div className="lookup-card-actions">
+                      <button
+                        className="btn btn-primary btn-small"
+                        onClick={() => setIsSponsorTypeModalOpen(true)}
+                      >
+                        Manage
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="lookup-card">
+                    <h4>Qualifications</h4>
+                    <p>Manage nominee qualifications</p>
+                    <div className="lookup-stats">
+                      <span className="stat">Manage items</span>
+                    </div>
+                    <div className="lookup-card-actions">
+                      <button
+                        className="btn btn-primary btn-small"
+                        onClick={() => setIsQualificationModalOpen(true)}
+                      >
+                        Manage
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="lookup-card">
+                    <h4>Nominated Programs</h4>
+                    <p>Programs available for nomination by year</p>
+                    <div className="lookup-stats">
+                      <span className="stat">Manage items</span>
+                    </div>
+                    <div className="lookup-card-actions">
+                      <button
+                        className="btn btn-primary btn-small"
+                        onClick={() => onNavigate?.("/configuration/nominated-programs")}
+                      >
+                        Manage
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="lookup-card">
+                    <h4>Admission Programmes</h4>
+                    <p>Programmes participants are admitted into</p>
+                    <div className="lookup-stats">
+                      <span className="stat">Manage items</span>
+                    </div>
+                    <div className="lookup-card-actions">
+                      <button
+                        className="btn btn-primary btn-small"
+                        onClick={() => onNavigate?.("/configuration/admission-programs")}
+                      >
+                        Manage
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="lookup-card">
+                    <h4>Modes of Study</h4>
+                    <p>Study modes (e.g. Full-time, Part-time, Online)</p>
+                    <div className="lookup-stats">
+                      <span className="stat">Manage items</span>
+                    </div>
+                    <div className="lookup-card-actions">
+                      <button
+                        className="btn btn-primary btn-small"
+                        onClick={() => setIsModeOfStudyModalOpen(true)}
+                      >
+                        Manage
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -250,9 +341,9 @@ export default function Configuration({ onSave: _onSave }: ConfigurationProps) {
         title="Allowance Types"
         isOpen={isAllowanceTypeModalOpen}
         onClose={() => setIsAllowanceTypeModalOpen(false)}
-        onFetch={async (page, pageSize, searchTerm) => {
-          const response = await getAllowanceTypes(page, pageSize, searchTerm);
-          return { data: response.data, totalCount: response.totalCount };
+        onFetch={async (_page, _pageSize, searchTerm) => {
+          const items = await getAllowanceTypes(searchTerm);
+          return { data: items, totalCount: items.length };
         }}
         onCreate={async (data) => {
           return await createAllowanceType(data);
@@ -271,9 +362,9 @@ export default function Configuration({ onSave: _onSave }: ConfigurationProps) {
         title="Allowance Statuses"
         isOpen={isAllowanceStatusModalOpen}
         onClose={() => setIsAllowanceStatusModalOpen(false)}
-        onFetch={async (page, pageSize, searchTerm) => {
-          const response = await getAllowanceStatuses(page, pageSize, searchTerm);
-          return { data: response.data, totalCount: response.totalCount };
+        onFetch={async (_page, _pageSize, searchTerm) => {
+          const items = await getAllowanceStatuses(searchTerm);
+          return { data: items, totalCount: items.length };
         }}
         onCreate={async (data) => {
           return await createAllowanceStatus(data);
@@ -283,6 +374,86 @@ export default function Configuration({ onSave: _onSave }: ConfigurationProps) {
         }}
         onDelete={async (id) => {
           await deleteAllowanceStatus(id);
+        }}
+      />
+
+      {/* Relationship Type Management Modal */}
+      <LookupManagementModal
+        title="Relationship Types"
+        isOpen={isRelationshipTypeModalOpen}
+        onClose={() => setIsRelationshipTypeModalOpen(false)}
+        onFetch={async (_page, _pageSize, searchTerm) => {
+          const items = await getLookupItems(ApiUrls.lookups.RELATIONSHIP_TYPES, searchTerm);
+          return { data: items, totalCount: items.length };
+        }}
+        onCreate={async (data) => {
+          return await createLookupItem(ApiUrls.lookups.RELATIONSHIP_TYPES, data);
+        }}
+        onUpdate={async (id, data) => {
+          return await updateLookupItem(ApiUrls.lookups.RELATIONSHIP_TYPES, id, data);
+        }}
+        onDelete={async (id) => {
+          await deleteLookupItem(ApiUrls.lookups.RELATIONSHIP_TYPES, id);
+        }}
+      />
+
+      {/* Sponsor Type Management Modal */}
+      <LookupManagementModal
+        title="Sponsor Types"
+        isOpen={isSponsorTypeModalOpen}
+        onClose={() => setIsSponsorTypeModalOpen(false)}
+        onFetch={async (_page, _pageSize, searchTerm) => {
+          const items = await getLookupItems(ApiUrls.lookups.SPONSOR_TYPES, searchTerm);
+          return { data: items, totalCount: items.length };
+        }}
+        onCreate={async (data) => {
+          return await createLookupItem(ApiUrls.lookups.SPONSOR_TYPES, data);
+        }}
+        onUpdate={async (id, data) => {
+          return await updateLookupItem(ApiUrls.lookups.SPONSOR_TYPES, id, data);
+        }}
+        onDelete={async (id) => {
+          await deleteLookupItem(ApiUrls.lookups.SPONSOR_TYPES, id);
+        }}
+      />
+
+      {/* Qualification Management Modal */}
+      <LookupManagementModal
+        title="Qualifications"
+        isOpen={isQualificationModalOpen}
+        onClose={() => setIsQualificationModalOpen(false)}
+        onFetch={async (_page, _pageSize, searchTerm) => {
+          const items = await getLookupItems(ApiUrls.lookups.QUALIFICATIONS, searchTerm);
+          return { data: items, totalCount: items.length };
+        }}
+        onCreate={async (data) => {
+          return await createLookupItem(ApiUrls.lookups.QUALIFICATIONS, data);
+        }}
+        onUpdate={async (id, data) => {
+          return await updateLookupItem(ApiUrls.lookups.QUALIFICATIONS, id, data);
+        }}
+        onDelete={async (id) => {
+          await deleteLookupItem(ApiUrls.lookups.QUALIFICATIONS, id);
+        }}
+      />
+
+      {/* Mode of Study Management Modal */}
+      <LookupManagementModal
+        title="Modes of Study"
+        isOpen={isModeOfStudyModalOpen}
+        onClose={() => setIsModeOfStudyModalOpen(false)}
+        onFetch={async (_page, _pageSize, searchTerm) => {
+          const items = await getLookupItems(ApiUrls.lookups.MODES_OF_STUDY, searchTerm);
+          return { data: items, totalCount: items.length };
+        }}
+        onCreate={async (data) => {
+          return await createLookupItem(ApiUrls.lookups.MODES_OF_STUDY, data);
+        }}
+        onUpdate={async (id, data) => {
+          return await updateLookupItem(ApiUrls.lookups.MODES_OF_STUDY, id, data);
+        }}
+        onDelete={async (id) => {
+          await deleteLookupItem(ApiUrls.lookups.MODES_OF_STUDY, id);
         }}
       />
 

@@ -12,10 +12,10 @@ public static class AllowanceConfiguration
             entity.HasKey(e => e.PK);
             entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
-            entity.HasOne(e => e.Training)
-                .WithMany(e => e.Allowances)
-                .HasForeignKey(e => e.TrainingFK)
-                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.Admission)
+                .WithMany()
+                .HasForeignKey(e => e.AdmissionFK)
+                .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(e => e.Participant)
                 .WithMany(e => e.Allowances)

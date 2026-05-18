@@ -1,263 +1,428 @@
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { getInProgressEnrollments, getEnrollmentStatistics, cancelEnrollment } from "../../api/nomination";
-import type { EnrollmentProgressSummaryDto, EnrollmentStatistics } from "../../types/nomination";
+﻿import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Card, CardHeader, CardBody } from "@/components/ui";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { getNominations, deleteNomination, updateNominationStatus } from "@/api/training";
+import type { NominationResponseDto, PaginatedResponse, UpdateNominationStatusDto } from "@/types";
 
-const getErrorMessage = (err: unknown) => {
-    if (err && typeof err === "object" && "response" in err) {
-        const response = (err as { response?: { data?: { message?: string } } }).response;
-        return response?.data?.message;
-    }
-    return err instanceof Error ? err.message : undefined;
+const STATUSES = ["Pending", "Approved", "Rejected", "Deferred"];
+
+const statusBadgeClass = (status: string) => {
+  switch (status) {
+    case "Approved": return "badge badge-success";
+    case "Rejected": return "badge badge-danger";
+    case "Deferred": return "badge badge-warning";
+    default: return "badge badge-secondary";
+  }
 };
 
-export default function NominationListPage() {
-    const navigate = useNavigate();
-    const [allEnrollments, setAllEnrollments] = useState<EnrollmentProgressSummaryDto[]>([]);
-    const [filteredEnrollments, setFilteredEnrollments] = useState<EnrollmentProgressSummaryDto[]>([]);
-    const [statistics, setStatistics] = useState<EnrollmentStatistics | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [statusFilter, setStatusFilter] = useState<string>("");
-
-    const loadData = useCallback(async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            const [enrollmentsData, statsData] = await Promise.all([
-                getInProgressEnrollments("All"), // Load all enrollments
-                getEnrollmentStatistics()
-            ]);
-
-            setAllEnrollments(enrollmentsData.enrollments);
-            setFilteredEnrollments(enrollmentsData.enrollments);
-            setStatistics(statsData);
-        } catch (err: unknown) {
-            setError(getErrorMessage(err) || "Failed to load nominations");
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        loadData();
-    }, [loadData]);
-
-    useEffect(() => {
-        // Filter enrollments client-side
-        if (statusFilter === "") {
-            setFilteredEnrollments(allEnrollments);
-        } else {
-            setFilteredEnrollments(allEnrollments.filter(e => e.status === statusFilter));
-        }
-    }, [statusFilter, allEnrollments]);
-
-    const handleStartNew = () => {
-        navigate("/nomination/start");
-    };
-
-    const handleViewProgress = (progressId: number) => {
-        navigate(`/nomination/progress/${progressId}`);
-    };
-
-    const handleCancelEnrollment = async (progressId: number, participantName: string) => {
-        if (!confirm(`Are you sure you want to cancel the enrollment for ${participantName}?`)) {
-            return;
-        }
-
-        try {
-            await cancelEnrollment(progressId, { reason: "Cancelled by user" });
-            loadData(); // Reload the list
-        } catch (err: unknown) {
-            alert(getErrorMessage(err) || "Failed to cancel enrollment");
-        }
-    };
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString();
-    };
-
-    const getStatusBadgeClass = (status: string) => {
-        switch (status) {
-            case "In Progress":
-                return "badge bg-primary";
-            case "Completed":
-                return "badge bg-success";
-            case "Cancelled":
-                return "badge bg-danger";
-            default:
-                return "badge bg-secondary";
-        }
-    };
-
-    const getStepName = (step: number) => {
-        const steps = [
-            "Participant Profile",
-            "Next of Kin",
-            "Nomination",
-            "Admission",
-            "Training Costs",
-            "Extension",
-            "Completion"
-        ];
-        return steps[step - 1] || "Unknown";
-    };
-
-    if (loading) {
-        return (
-            <div className="container mt-4">
-                <div className="text-center">
-                    <div className="spinner-border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h1>Enrollment Nominations</h1>
-                <button className="btn btn-primary" onClick={handleStartNew}>
-                    <i className="bi bi-plus-circle me-2"></i>
-                    Start New Nomination
-                </button>
-            </div>
-
-            {error && (
-                <div className="alert alert-danger">
-                    {error}
-                </div>
-            )}
-
-            {/* Statistics Cards */}
-            {statistics && (
-                <div className="row mb-4">
-                    <div className="col-md-3">
-                        <div className="card">
-                            <div className="card-body">
-                                <h5 className="card-title">Total</h5>
-                                <p className="card-text display-6">{statistics.total}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-3">
-                        <div className="card border-primary">
-                            <div className="card-body">
-                                <h5 className="card-title text-primary">In Progress</h5>
-                                <p className="card-text display-6">{statistics.inProgress}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-3">
-                        <div className="card border-success">
-                            <div className="card-body">
-                                <h5 className="card-title text-success">Completed</h5>
-                                <p className="card-text display-6">{statistics.completed}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-3">
-                        <div className="card border-danger">
-                            <div className="card-body">
-                                <h5 className="card-title text-danger">Cancelled</h5>
-                                <p className="card-text display-6">{statistics.cancelled}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Filter */}
-            <div className="mb-3">
-                <label htmlFor="statusFilter" className="form-label">Filter by Status:</label>
-                <select
-                    id="statusFilter"
-                    className="form-select"
-                    style={{ maxWidth: "200px" }}
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                    <option value="">All</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-            </div>
-
-            {/* Enrollments Table */}
-            {filteredEnrollments.length === 0 ? (
-                <div className="alert alert-info">
-                    {statusFilter ? `No nominations found with status: ${statusFilter}` : "No nominations found"}
-                </div>
-            ) : (
-                <div className="table-responsive">
-                    <table className="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Participant</th>
-                                <th>Current Step</th>
-                                <th>Progress</th>
-                                <th>Status</th>
-                                <th>Last Updated</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredEnrollments.map((enrollment) => (
-                                <tr key={enrollment.progressId}>
-                                    <td>
-                                        <strong>{enrollment.participantName}</strong>
-                                        <br />
-                                        <small className="text-muted">ID: {enrollment.participantId}</small>
-                                    </td>
-                                    <td>
-                                        Step {enrollment.currentStep}: {getStepName(enrollment.currentStep)}
-                                    </td>
-                                    <td>
-                                        <div className="progress" style={{ height: "25px" }}>
-                                            <div
-                                                className="progress-bar"
-                                                role="progressbar"
-                                                style={{ width: `${enrollment.percentComplete}%` }}
-                                                aria-valuenow={enrollment.percentComplete}
-                                                aria-valuemin={0}
-                                                aria-valuemax={100}
-                                            >
-                                                {enrollment.percentComplete}%
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span className={getStatusBadgeClass(enrollment.status)}>
-                                            {enrollment.status}
-                                        </span>
-                                    </td>
-                                    <td>{formatDate(enrollment.lastUpdated)}</td>
-                                    <td>
-                                        <button
-                                            className="btn btn-sm btn-primary me-2"
-                                            onClick={() => handleViewProgress(enrollment.progressId)}
-                                        >
-                                            {enrollment.status === "In Progress" ? "Continue" : "View"}
-                                        </button>
-                                        {enrollment.status === "In Progress" && (
-                                            <button
-                                                className="btn btn-sm btn-outline-danger"
-                                                onClick={() => handleCancelEnrollment(enrollment.progressId, enrollment.participantName)}
-                                            >
-                                                Cancel
-                                            </button>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-        </div>
-    );
+interface StatusModalState {
+  nomination: NominationResponseDto;
+  status: string;
+  statusReason: string;
+  approvedBy: string;
+  approvalDate: string;
 }
+
+export default function NominationListPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [data, setData] = useState<PaginatedResponse<NominationResponseDto> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("Pending");
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+
+  const [toDelete, setToDelete] = useState<NominationResponseDto | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const [statusModal, setStatusModal] = useState<StatusModalState | null>(null);
+  const [isSavingStatus, setIsSavingStatus] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
+
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await getNominations(page, pageSize, search || undefined);
+      setData(result);
+    } catch {
+      setError("Failed to load nominations. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [page, search]);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const handleDelete = async () => {
+    if (!toDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteNomination(toDelete.pk);
+      setSuccessMessage("Nomination deleted successfully.");
+      setToDelete(null);
+      loadData();
+    } catch {
+      setError("Failed to delete nomination.");
+      setToDelete(null);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const openStatusModal = (n: NominationResponseDto) => {
+    setStatusModal({
+      nomination: n,
+      status: n.nominationStatus,
+      statusReason: n.statusReason ?? "",
+      approvedBy: n.approvedBy ?? "",
+      approvalDate: n.approvalDate ? n.approvalDate.split("T")[0] : "",
+    });
+  };
+
+  const handleStatusSave = async () => {
+    if (!statusModal) return;
+    setIsSavingStatus(true);
+    try {
+      const dto: UpdateNominationStatusDto = {
+        status: statusModal.status,
+        statusReason: statusModal.statusReason || undefined,
+        approvedBy: statusModal.approvedBy || undefined,
+        approvalDate: statusModal.approvalDate || undefined,
+      };
+      await updateNominationStatus(statusModal.nomination.pk, dto);
+      setSuccessMessage(`Status updated to "${statusModal.status}".`);
+      setStatusModal(null);
+      loadData();
+    } catch {
+      setError("Failed to update nomination status.");
+    } finally {
+      setIsSavingStatus(false);
+    }
+  };
+
+  const nominations = (data?.data ?? []).filter(
+    (n) => !statusFilter || n.nominationStatus === statusFilter
+  );
+
+  const totalPages = data?.totalPages ?? 1;
+
+  return (
+    <div className="page-content">
+      <div className="page-header">
+        <h1 className="page-title">Nominations</h1>
+        <p className="page-subtitle">Manage participant training nominations</p>
+      </div>
+
+      {successMessage && (
+        <div className="alert alert-success alert-dismissible mb-3" role="alert">
+          {successMessage}
+          <button type="button" className="btn-close" onClick={() => setSuccessMessage(null)} />
+        </div>
+      )}
+      {error && (
+        <div className="alert alert-danger alert-dismissible mb-3" role="alert">
+          {error}
+          <button type="button" className="btn-close" onClick={() => setError(null)} />
+        </div>
+      )}
+
+      <Card>
+        <CardHeader
+          title="Nomination Records"
+          subtitle={`${data?.totalCount ?? 0} total`}
+          actions={
+            <button
+              className="btn btn-primary"
+              onClick={() => navigate("/nomination/progress/new")}
+            >
+              ➕ New Nomination
+            </button>
+          }
+        />
+        <CardBody>
+          <div className="d-flex flex-wrap gap-2 mb-3">
+            <input
+              className="form-control"
+              style={{ maxWidth: 300 }}
+              placeholder="Search participant, program..."
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            />
+            <select
+              className="form-select"
+              style={{ maxWidth: 200 }}
+              value={statusFilter}
+              onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+            >
+              <option value="">All Statuses</option>
+              {STATUSES.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+
+          {loading ? (
+            <div className="text-center py-4">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : nominations.length === 0 ? (
+            <div className="alert alert-info">No nominations found matching the current filters.</div>
+          ) : (
+            <div className="table-container">
+              <table className="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Participant</th>
+                    <th>Program</th>
+                    <th>Year</th>
+                    <th>Sponsor</th>
+                    <th>
+                    Status
+                    <div className="text-muted fw-normal" style={{ fontSize: "0.7rem" }}>click to change</div>
+                  </th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {nominations.map((n) => (
+                    <tr key={n.pk}>
+                      <td>{n.participantName ?? `#${n.participantFK}`}</td>
+                      <td>{n.nominatedProgramName ?? "—"}</td>
+                      <td>{n.yearOfNomination ?? "—"}</td>
+                      <td>{n.sponsorTypeName ?? "—"}</td>
+                      <td>
+                        <button
+                          className={`${statusBadgeClass(n.nominationStatus)} border-0`}
+                          style={{ cursor: "pointer" }}
+                          title="Click to change status"
+                          onClick={() => openStatusModal(n)}
+                        >
+                          {n.nominationStatus}
+                        </button>
+                      </td>
+                      <td>
+                        {n.nominationDate
+                          ? new Date(n.nominationDate).toLocaleDateString("en-GB")
+                          : "—"}
+                      </td>
+                      <td style={{ whiteSpace: "nowrap" }}>
+                        <div className="d-flex gap-1">
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            title="Edit nomination"
+                            onClick={() => navigate(`/nomination/progress/${n.pk}`)}
+                          >
+                            ✏️ Edit
+                          </button>
+                          {n.nominationStatus === "Approved" && !n.hasAdmission && (
+                            <button
+                              className="btn btn-sm btn-success"
+                              title="Enroll in a training programme"
+                              onClick={() => navigate(`/training/enroll/${n.pk}`)}
+                            >
+                              🎓 Enroll
+                            </button>
+                          )}
+                          {n.hasAdmission && (
+                            <span className="badge badge-info align-self-center px-2">Enrolled</span>
+                          )}
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            title="Delete nomination"
+                            onClick={() => setToDelete(n)}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <nav className="mt-3">
+              <ul className="pagination">
+                <li className={`page-item${page === 1 ? " disabled" : ""}`}>
+                  <button className="page-link" onClick={() => setPage((p) => p - 1)}>Previous</button>
+                </li>
+                <li className="page-item disabled">
+                  <span className="page-link">Page {page} of {totalPages}</span>
+                </li>
+                <li className={`page-item${page === totalPages ? " disabled" : ""}`}>
+                  <button className="page-link" onClick={() => setPage((p) => p + 1)}>Next</button>
+                </li>
+              </ul>
+            </nav>
+          )}
+        </CardBody>
+      </Card>
+
+      {/* Delete Confirmation */}
+      <ConfirmationModal
+        show={!!toDelete}
+        message={`Are you sure you want to delete the nomination for ${toDelete?.participantName ?? "this participant"}?`}
+        confirmText={isDeleting ? "Deleting..." : "Delete"}
+        cancelText="Cancel"
+        confirmVariant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setToDelete(null)}
+      />
+
+      {/* Status Change Modal — backdrop */}
+      {statusModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            zIndex: 1040,
+          }}
+          onClick={() => !isSavingStatus && setStatusModal(null)}
+        />
+      )}
+
+      {/* Status Change Modal — dialog */}
+      {statusModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1050,
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "8px",
+              width: "90%",
+              maxWidth: 480,
+              boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+              pointerEvents: "auto",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e5e7eb", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h5 style={{ margin: 0, fontWeight: 600 }}>Change Nomination Status</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setStatusModal(null)}
+                disabled={isSavingStatus}
+              />
+            </div>
+
+            {/* Body */}
+            <div style={{ padding: "1.25rem 1.5rem" }}>
+              <p className="text-muted small mb-3">
+                <strong>{statusModal.nomination.participantName}</strong>
+                {statusModal.nomination.nominatedProgramName && (
+                  <> &mdash; {statusModal.nomination.nominatedProgramName}</>
+                )}
+              </p>
+
+              <div className="mb-3">
+                <label className="form-label">Status <span className="text-danger">*</span></label>
+                <select
+                  className="form-select"
+                  value={statusModal.status}
+                  onChange={(e) => setStatusModal((m) => m ? { ...m, status: e.target.value } : m)}
+                >
+                  {STATUSES.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+
+              {(statusModal.status === "Rejected" || statusModal.status === "Deferred") && (
+                <div className="mb-3">
+                  <label className="form-label">Reason <span className="text-danger">*</span></label>
+                  <textarea
+                    className="form-control"
+                    rows={3}
+                    placeholder={`Reason for ${statusModal.status.toLowerCase()}ing this nomination...`}
+                    value={statusModal.statusReason}
+                    onChange={(e) => setStatusModal((m) => m ? { ...m, statusReason: e.target.value } : m)}
+                  />
+                </div>
+              )}
+
+              {statusModal.status === "Approved" && (
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Approved By</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Name of approver"
+                      value={statusModal.approvedBy}
+                      onChange={(e) => setStatusModal((m) => m ? { ...m, approvedBy: e.target.value } : m)}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Approval Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={statusModal.approvalDate}
+                      onChange={(e) => setStatusModal((m) => m ? { ...m, approvalDate: e.target.value } : m)}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid #e5e7eb", display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => setStatusModal(null)}
+                disabled={isSavingStatus}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleStatusSave}
+                disabled={isSavingStatus || ((statusModal.status === "Rejected" || statusModal.status === "Deferred") && !statusModal.statusReason.trim())}
+              >
+                {isSavingStatus ? "Saving..." : "Save Status"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+

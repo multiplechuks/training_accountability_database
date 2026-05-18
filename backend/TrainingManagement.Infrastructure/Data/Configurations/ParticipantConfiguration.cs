@@ -1,74 +1,57 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TrainingManagement.Core.Entities;
 
 namespace TrainingManagement.Infrastructure.Data.Configurations;
 
 public static class ParticipantConfiguration
 {
-    public static void ConfigureParticipantEntities(ModelBuilder builder)
+    public static void Configure(ModelBuilder builder)
     {
         builder.Entity<Participant>(entity =>
         {
             entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.IdNo).IsUnique();
-            entity.HasIndex(e => e.Email);
 
-            entity.HasMany(e => e.ParticipantEnrollments)
-                .WithOne(e => e.Participant)
-                .HasForeignKey(e => e.ParticipantFK)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasMany(e => e.NextOfKins)
-                .WithOne(e => e.Participant)
-                .HasForeignKey(e => e.ParticipantFK)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(e => e.Designation)
-                .WithMany()
-                .HasForeignKey(e => e.DesignationFK)
+            entity.HasOne(e => e.Title)
+                .WithMany(e => e.Participants)
+                .HasForeignKey(e => e.TitleFK)
                 .OnDelete(DeleteBehavior.SetNull);
-        });
 
-        builder.Entity<ParticipantEnrollment>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => new { e.ParticipantFK, e.TrainingFK }).IsUnique();
-
-            entity.HasOne(e => e.Designation)
-                .WithMany(e => e.ParticipantEnrollments)
-                .HasForeignKey(e => e.DesignationFK)
+            entity.HasOne(e => e.IdType)
+                .WithMany(e => e.Participants)
+                .HasForeignKey(e => e.IdTypeFK)
                 .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(e => e.SalaryScale)
-                .WithMany(e => e.ParticipantEnrollments)
+                .WithMany(e => e.Participants)
                 .HasForeignKey(e => e.SalaryScaleFK)
                 .OnDelete(DeleteBehavior.SetNull);
 
             entity.HasOne(e => e.Department)
-                .WithMany(e => e.ParticipantEnrollments)
+                .WithMany(e => e.Participants)
                 .HasForeignKey(e => e.DepartmentFK)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            entity.HasOne(e => e.Facility)
-                .WithMany(e => e.ParticipantEnrollments)
-                .HasForeignKey(e => e.FacilityFK)
+            entity.HasOne(e => e.DutyStation)
+                .WithMany(e => e.Participants)
+                .HasForeignKey(e => e.DutyStationFK)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            entity.HasOne(e => e.Sponsor)
-                .WithMany()
-                .HasForeignKey(e => e.SponsorFK)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            entity.HasOne(e => e.Nomination)
-                .WithMany(e => e.ParticipantEnrollments)
-                .HasForeignKey(e => e.NominationFK)
-                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasIndex(e => e.IdNumber).IsUnique();
         });
 
         builder.Entity<NextOfKin>(entity =>
         {
             entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.ParticipantFK);
+
+            entity.HasOne(e => e.Participant)
+                .WithOne(e => e.NextOfKin)
+                .HasForeignKey<NextOfKin>(e => e.ParticipantFK)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.RelationshipType)
+                .WithMany(e => e.NextOfKins)
+                .HasForeignKey(e => e.RelationshipTypeFK)
+                .OnDelete(DeleteBehavior.SetNull);
         });
     }
 }

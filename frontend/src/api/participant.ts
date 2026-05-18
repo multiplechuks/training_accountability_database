@@ -1,45 +1,43 @@
-import axiosInstance from "@/utils/axiosInstance";
+﻿import axiosInstance from "@/utils/axiosInstance";
 import { ApiUrls } from "@/constants/apiUrls";
-import type { ParticipantResponseDto, CreateParticipantDto, UpdateParticipantDto, ParticipantWithEnrollmentsDto, PaginatedResponse } from "@/types";
+import type { ParticipantResponseDto, CreateParticipantDto, UpdateParticipantDto, NextOfKinResponseDto, UpsertNextOfKinDto, PaginatedResponse } from "@/types";
 
-// Get all participants with pagination
-export async function getParticipants(page = 1, pageSize = 10): Promise<PaginatedResponse<ParticipantResponseDto>> {
-  const response = await axiosInstance.get(`${ApiUrls.participants.LIST}?page=${page}&pageSize=${pageSize}`);
+export async function getParticipants(page = 1, pageSize = 10, search?: string): Promise<PaginatedResponse<ParticipantResponseDto>> {
+  const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+  if (search) params.append("search", search);
+  const response = await axiosInstance.get(`${ApiUrls.participants.LIST}?${params}`);
   return response.data;
 }
 
-// Get a single participant by ID
 export async function getParticipant(id: number): Promise<ParticipantResponseDto> {
   const response = await axiosInstance.get(ApiUrls.participants.DETAILS(id));
   return response.data;
 }
 
-// Get a participant with their enrollments
-export async function getParticipantWithEnrollments(id: number): Promise<ParticipantWithEnrollmentsDto> {
-  const response = await axiosInstance.get(ApiUrls.participants.WITH_ENROLLMENTS(id));
+export async function createParticipant(data: CreateParticipantDto): Promise<ParticipantResponseDto> {
+  const response = await axiosInstance.post(ApiUrls.participants.LIST, data);
   return response.data;
 }
 
-// Create a new participant
-export async function createParticipant(participantData: CreateParticipantDto): Promise<ParticipantResponseDto> {
-  console.log("Creating participant with data:", participantData);
-  const response = await axiosInstance.post(ApiUrls.participants.LIST, participantData);
+export async function updateParticipant(id: number, data: UpdateParticipantDto): Promise<ParticipantResponseDto> {
+  const response = await axiosInstance.put(ApiUrls.participants.DETAILS(id), data);
   return response.data;
 }
 
-// Update an existing participant
-export async function updateParticipant(id: number, participantData: UpdateParticipantDto): Promise<ParticipantResponseDto> {
-  const response = await axiosInstance.put(ApiUrls.participants.DETAILS(id), participantData);
-  return response.data;
-}
-
-// Delete a participant
 export async function deleteParticipant(id: number): Promise<void> {
   await axiosInstance.delete(ApiUrls.participants.DETAILS(id));
 }
 
-// Search participants
 export async function searchParticipants(searchTerm: string, page = 1, pageSize = 10): Promise<PaginatedResponse<ParticipantResponseDto>> {
-  const response = await axiosInstance.get(`${ApiUrls.participants.SEARCH}?searchTerm=${encodeURIComponent(searchTerm)}&page=${page}&pageSize=${pageSize}`);
+  return getParticipants(page, pageSize, searchTerm);
+}
+
+export async function getNextOfKin(participantId: number): Promise<NextOfKinResponseDto | null> {
+  const response = await axiosInstance.get(ApiUrls.participants.NEXT_OF_KIN(participantId));
+  return response.data;
+}
+
+export async function upsertNextOfKin(participantId: number, data: UpsertNextOfKinDto): Promise<NextOfKinResponseDto> {
+  const response = await axiosInstance.put(ApiUrls.participants.NEXT_OF_KIN(participantId), data);
   return response.data;
 }

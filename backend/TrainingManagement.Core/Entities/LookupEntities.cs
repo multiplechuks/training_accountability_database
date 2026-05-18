@@ -2,6 +2,42 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TrainingManagement.Core.Entities;
 
+public class Title : BaseEntity
+{
+    [Required]
+    [MaxLength(50)]
+    public string Name { get; set; } = string.Empty;
+
+    public bool IsActive { get; set; } = true;
+
+    public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
+}
+
+public class IdType : BaseEntity
+{
+    [Required]
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(500)]
+    public string? Description { get; set; }
+
+    public bool IsActive { get; set; } = true;
+
+    public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
+}
+
+public class RelationshipType : BaseEntity
+{
+    [Required]
+    [MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    public bool IsActive { get; set; } = true;
+
+    public virtual ICollection<NextOfKin> NextOfKins { get; set; } = new List<NextOfKin>();
+}
+
 public class Department : BaseEntity
 {
     [Required]
@@ -9,51 +45,14 @@ public class Department : BaseEntity
     public string Name { get; set; } = string.Empty;
 
     [MaxLength(10)]
-    public string Code { get; set; } = string.Empty;
+    public string? Code { get; set; }
 
     [MaxLength(500)]
     public string? Description { get; set; }
 
-    // Navigation properties
-    public virtual ICollection<ParticipantEnrollment> ParticipantEnrollments { get; set; } = new List<ParticipantEnrollment>();
-}
+    public bool IsActive { get; set; } = true;
 
-public class Facility : BaseEntity
-{
-    [Required]
-    [MaxLength(150)]
-    public string Name { get; set; } = string.Empty;
-
-    [MaxLength(10)]
-    public string Code { get; set; } = string.Empty;
-
-    [MaxLength(100)]
-    public string Location { get; set; } = string.Empty;
-
-    [MaxLength(500)]
-    public string? Description { get; set; }
-
-    // Navigation properties
-    public virtual ICollection<ParticipantEnrollment> ParticipantEnrollments { get; set; } = new List<ParticipantEnrollment>();
-}
-
-public class Designation : BaseEntity
-{
-    [Required]
-    [MaxLength(100)]
-    public string Title { get; set; } = string.Empty;
-
-    [MaxLength(10)]
-    public string Code { get; set; } = string.Empty;
-
-    [MaxLength(50)]
-    public string Level { get; set; } = string.Empty; // Junior, Senior, Principal, etc.
-
-    [MaxLength(500)]
-    public string? Description { get; set; }
-
-    // Navigation properties
-    public virtual ICollection<ParticipantEnrollment> ParticipantEnrollments { get; set; } = new List<ParticipantEnrollment>();
+    public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
 }
 
 public class SalaryScale : BaseEntity
@@ -63,40 +62,45 @@ public class SalaryScale : BaseEntity
     public string Scale { get; set; } = string.Empty;
 
     [MaxLength(50)]
-    public string Grade { get; set; } = string.Empty;
-
-    public decimal MinSalary { get; set; }
-
-    public decimal MaxSalary { get; set; }
+    public string? Grade { get; set; }
 
     [MaxLength(500)]
     public string? Description { get; set; }
 
-    // Navigation properties
-    public virtual ICollection<ParticipantEnrollment> ParticipantEnrollments { get; set; } = new List<ParticipantEnrollment>();
+    public bool IsActive { get; set; } = true;
+
+    public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
 }
 
-public class Sponsor : BaseEntity
+public class DutyStation : BaseEntity
+{
+    [Required]
+    [MaxLength(150)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(10)]
+    public string? Code { get; set; }
+
+    [MaxLength(200)]
+    public string? Description { get; set; }
+
+    public bool IsActive { get; set; } = true;
+
+    public virtual ICollection<Participant> Participants { get; set; } = new List<Participant>();
+}
+
+public class SponsorType : BaseEntity
 {
     [Required]
     [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
-    [MaxLength(20)]
-    public string Type { get; set; } = string.Empty; // Government, Private, International, etc.
-
-    [MaxLength(100)]
-    public string ContactPerson { get; set; } = string.Empty;
-
-    [MaxLength(100)]
-    public string Email { get; set; } = string.Empty;
-
-    [MaxLength(15)]
-    public string Phone { get; set; } = string.Empty;
-
     [MaxLength(500)]
     public string? Description { get; set; }
 
-    // Navigation properties
-    public virtual ICollection<Training> Trainings { get; set; } = new List<Training>();
+    public bool IsActive { get; set; } = true;
+
+    public virtual ICollection<Nomination> Nominations { get; set; } = new List<Nomination>();
 }
+
+

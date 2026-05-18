@@ -1,57 +1,63 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TrainingManagement.Core.Entities;
 using TrainingManagement.Core.Interfaces;
 using TrainingManagement.Infrastructure.Data;
 
 namespace TrainingManagement.Infrastructure.Services;
 
-public class ParticipantRepository : GenericRepository<Participant>, IParticipantRepository
+public class ParticipantRepository : IParticipantRepository
 {
-    public ParticipantRepository(TrainingDbContext context) : base(context)
-    {
-    }
+    private readonly TrainingDbContext _db;
+    public ParticipantRepository(TrainingDbContext db) => _db = db;
 
-    public async Task<IEnumerable<Participant>> SearchParticipantsAsync(string searchTerm)
+    public async Task<(IEnumerable<Participant> Items, int Total)> GetPagedAsync(int page, int pageSize, string? search)
     {
-        return await _dbSet
-            .Where(p => p.Firstname.Contains(searchTerm) ||
-                       p.Lastname.Contains(searchTerm) ||
-                       p.IdNo.Contains(searchTerm))
-            .ToListAsync();
-    }
-
-    public async Task<Participant?> GetByIdNumberAsync(string idNumber)
-    {
-        return await _dbSet
-            .FirstOrDefaultAsync(p => p.IdNo == idNumber);
-    }
-
-    public async Task<IEnumerable<Participant>> GetParticipantsByStatusAsync(string status)
-    {
-        // Since Participant doesn't have a Status field, let's filter by a different criteria
-        // or we can add status to the base entity
-        return await _dbSet
-            .Where(p => !p.Deleted) // Using the BaseEntity Deleted field instead
-            .ToListAsync();
-    }
-
-    public async Task<Participant?> GetWithEnrollmentsAsync(int participantId)
-    {
-        return await _dbSet
-            .Include(p => p.ParticipantEnrollments)
-            .ThenInclude(pe => pe.Training)
-            .FirstOrDefaultAsync(p => p.PK == participantId);
-    }
-
-    public async Task<bool> IsIdNumberUniqueAsync(string idNumber, int? excludeParticipantId = null)
-    {
-        var query = _dbSet.Where(p => p.IdNo == idNumber);
-
-        if (excludeParticipantId.HasValue)
+        var query = _db.Participants.Where(p => !p.Deleted)
+            .Include(p => p.Title).Include(p => p.IdType)
+            .Include(p => p.Department).Include(p => p.SalaryScale).Include(p => p.DutyStation)
+            .AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(p => p.PK != excludeParticipantId.Value);
+            query = query.Where(p => p.Firstname.Contains(search) || p.Lastname.Contains(search) || p.IdNumber.Contains(search) || p.Email.Contains(search));
         }
 
-        return !await query.AnyAsync();
+        var total = await query.CountAsync();
+        var items = await query.OrderBy(p => p.Lastname).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        return (items, total);
+    }
+
+    public async Task<Participant?> GetByIdAsync(int id)
+        => await _db.Participants.Where(p => !p.Deleted && p.PK == id)
+            .Include(p => p.Title).Include(p => p.IdType)
+            .Include(p => p.Department).Include(p => p.SalaryScale).Include(p => p.DutyStation)
+            .Include(p => p.NextOfKin).ThenInclude(n => n!.RelationshipType)
+            .FirstOrDefaultAsync();
+
+    public async Task<Participant?> GetByIdNumberAsync(string idNumber)
+        => await _db.Participants.FirstOrDefaultAsync(p => !p.Deleted && p.IdNumber == idNumber);
+
+    public async Task<bool> IdNumberExistsAsync(string idNumber, int? excludeId = null)
+        => await _db.Participants.AnyAsync(p => !p.Deleted && p.IdNumber == idNumber && (excludeId == null || p.PK != excludeId));
+
+    public async Task<Participant> CreateAsync(Participant participant)
+    {
+        participant.CreatedAt = DateTime.UtcNow;
+        _db.Participants.Add(participant);
+        await _db.SaveChangesAsync();
+        return participant;
+    }
+
+    public async Task<Participant> UpdateAsync(Participant participant)
+    {
+        participant.UpdatedAt = DateTime.UtcNow;
+        _db.Participants.Update(participant);
+        await _db.SaveChangesAsync();
+        return participant;
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var p = await _db.Participants.FindAsync(id);
+        if (p != null) { p.Deleted = true; p.UpdatedAt = DateTime.UtcNow; await _db.SaveChangesAsync(); }
     }
 }

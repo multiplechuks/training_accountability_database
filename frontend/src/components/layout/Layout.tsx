@@ -12,7 +12,7 @@ export default function Layout({ children }: LayoutProps) {
   // Derive active menu item from current route
   const getActiveMenuItem = (pathname: string): string => {
     if (pathname.startsWith("/participants")) return "participant";
-    if (pathname.startsWith("/training")) return "training";
+    if (pathname.startsWith("/training")) return "enrollment";
     if (pathname.startsWith("/enrollment")) return "enrollment";
     if (pathname.startsWith("/nomination")) return "nomination";
     if (pathname.startsWith("/allowances")) return "allowance";

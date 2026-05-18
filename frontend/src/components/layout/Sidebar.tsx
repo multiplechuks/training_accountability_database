@@ -22,17 +22,11 @@ const menuItems: MenuItem[] = [
   //   path: "/participants"
   // },
   {
-    id: "training",
-    label: "Training",
+    id: "enrollment",
+    label: "Enrollments",
     icon: "📚",
-    path: "/training"
+    path: "/enrollment"
   },
-  // {
-  //   id: "enrollment",
-  //   label: "Enrollment",
-  //   icon: "📝",
-  //   path: "/enrollment"
-  // },
   {
     id: "nomination",
     label: "Nominations",

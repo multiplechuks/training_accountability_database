@@ -125,17 +125,18 @@ export interface Form1_ParticipantProfileData {
 
 export interface Form2_NextOfKinData {
   nextOfKinName?: string;
-  nextOfKinRelationship?: string;
+  nextOfKinRelationshipId?: number;
   nextOfKinContactNo?: string;
 }
 
 export interface Form3_NominationData {
-  currentQualifications?: string[]; // Array to allow multiple qualifications
-  nominatedProgram?: string;
-  sponsorType?: string; // Govt sponsor, etc.
+  qualificationId?: number;
+  nominatedProgramId?: number;
+  sponsorTypeId?: number;
   yearOfNomination?: number;
   estimatedBudget?: number;
-  professionalBody?: string; // BHPC, etc.
+  professionalBody?: string;
+  notes?: string;
 }
 
 export interface Form4_AdmissionData {

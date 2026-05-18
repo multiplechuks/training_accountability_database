@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TrainingManagement.Core.Entities;
 using TrainingManagement.Infrastructure.Data.Configurations;
@@ -11,53 +11,40 @@ public class TrainingDbContext : IdentityDbContext<User, ApplicationRole, int>
     {
     }
 
-    // DbSets for core entities
+    // Core entities
     public DbSet<Participant> Participants { get; set; }
-    public DbSet<Training> Trainings { get; set; }
-    public DbSet<ParticipantEnrollment> ParticipantEnrollments { get; set; }
+    public DbSet<NextOfKin> NextOfKins { get; set; }
+    public DbSet<Nomination> Nominations { get; set; }
+    public DbSet<Admission> Admissions { get; set; }
+
+    // Allowances (kept)
     public DbSet<Allowance> Allowances { get; set; }
     public DbSet<AllowanceType> AllowanceTypes { get; set; }
     public DbSet<AllowanceStatus> AllowanceStatuses { get; set; }
 
-    // DbSets for lookup entities (from LookupEntities.cs)
+    // Configurable lookups
+    public DbSet<Title> Titles { get; set; }
+    public DbSet<IdType> IdTypes { get; set; }
+    public DbSet<RelationshipType> RelationshipTypes { get; set; }
     public DbSet<Department> Departments { get; set; }
-    public DbSet<Facility> Facilities { get; set; }
-    public DbSet<Designation> Designations { get; set; }
     public DbSet<SalaryScale> SalaryScales { get; set; }
-    public DbSet<Sponsor> Sponsors { get; set; }
-
-    // DbSets for additional entities (from split files)
-    public DbSet<NextOfKin> NextOfKins { get; set; }
-    public DbSet<ParticipantTraining> ParticipantTrainings { get; set; }
-    public DbSet<Bond> Bonds { get; set; }
-    public DbSet<TrainingBudget> TrainingBudgets { get; set; }
-    public DbSet<TrainingReport> TrainingReports { get; set; }
-    public DbSet<TrainingTransfer> TrainingTransfers { get; set; }
-
-    // DbSets for new enrollment entities
-    public DbSet<Nomination> Nominations { get; set; }
-    public DbSet<TrainingExtension> TrainingExtensions { get; set; }
-    public DbSet<EnrollmentProgress> EnrollmentProgresses { get; set; }
-
-    // DbSets for new lookup entities
-    public DbSet<ExtensionReason> ExtensionReasons { get; set; }
-    public DbSet<NominationStatus> NominationStatuses { get; set; }
-    public DbSet<TravelMode> TravelModes { get; set; }
-    public DbSet<StudyMode> StudyModes { get; set; }
-    public DbSet<Specialty> Specialties { get; set; }
+    public DbSet<DutyStation> DutyStations { get; set; }
+    public DbSet<SponsorType> SponsorTypes { get; set; }
     public DbSet<Qualification> Qualifications { get; set; }
+    public DbSet<NominatedProgram> NominatedPrograms { get; set; }
+    public DbSet<AdmissionProgram> AdmissionPrograms { get; set; }
+    public DbSet<ModeOfStudy> ModesOfStudy { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Apply configurations using local method calls
         IdentityConfiguration.ConfigureIdentityTables(modelBuilder);
-        TrainingConfiguration.ConfigureTrainingEntities(modelBuilder);
-        ParticipantConfiguration.ConfigureParticipantEntities(modelBuilder);
+        ParticipantConfiguration.Configure(modelBuilder);
+        NominationConfiguration.Configure(modelBuilder);
+        AdmissionConfiguration.Configure(modelBuilder);
         AllowanceConfiguration.ConfigureAllowanceEntities(modelBuilder);
-        RelatedEntitiesConfiguration.ConfigureRelatedEntities(modelBuilder);
-        LookupConfiguration.ConfigureLookupEntities(modelBuilder);
+        LookupConfiguration.Configure(modelBuilder);
         DatabaseSpecificConfiguration.ConfigureDatabaseSpecific(modelBuilder, "microsoft.entityframeworkcore.sqlserver");
     }
 }

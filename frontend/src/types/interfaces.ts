@@ -55,45 +55,69 @@ export interface Participant extends BaseEntity {
 
 // Participant DTOs that match backend structure
 export interface ParticipantResponseDto {
-  id: number;
-  title: string;
+  pk: number;
+  /** @deprecated use pk */
+  id?: number;
+  titleFK?: number;
+  titleName?: string;
   firstname: string;
   lastname: string;
   middlename?: string;
-  idNo: string;
   sex: string;
   dob: string;
-  idType: string;
+  idTypeFK?: number;
+  idTypeName?: string;
+  idNumber: string;
   phone: string;
   email: string;
+  address?: string;
+  postalAddress?: string;
+  salaryScaleFK?: number;
+  departmentFK?: number;
+  departmentName?: string;
+  dutyStationFK?: number;
   fullName: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateParticipantDto {
-  title?: string;
+  titleFK?: number;
   firstname: string;
   lastname: string;
   middlename?: string;
-  idNo: string;
   sex: string;
   dob: string;
-  idType: string;
+  idTypeFK?: number;
+  idNumber: string;
   phone: string;
   email: string;
+  address?: string;
+  postalAddress?: string;
+  salaryScaleFK?: number;
+  departmentFK?: number;
+  dutyStationFK?: number;
 }
 
-export interface UpdateParticipantDto {
-  title?: string;
-  firstname?: string;
-  lastname?: string;
-  middlename?: string;
-  sex?: string;
-  dob?: string;
-  idType?: string;
+export interface UpdateParticipantDto extends Partial<CreateParticipantDto> {}
+
+export interface NextOfKinResponseDto {
+  pk: number;
+  participantFK: number;
+  fullName: string;
+  relationshipTypeFK?: number;
+  relationshipTypeName?: string;
   phone?: string;
   email?: string;
+  idNumber?: string;
+}
+
+export interface UpsertNextOfKinDto {
+  fullName: string;
+  relationshipTypeFK?: number;
+  phone?: string;
+  email?: string;
+  idNumber?: string;
 }
 
 export interface ParticipantWithEnrollmentsDto extends ParticipantResponseDto {
@@ -276,6 +300,132 @@ export interface TrainingSummaryDto {
   financialYear: string;
 }
 
+// Nomination DTOs
+export interface NominationResponseDto {
+  pk: number;
+  participantFK: number;
+  participantName?: string;
+  qualificationFK?: number;
+  qualificationName?: string;
+  nominatedProgramFK?: number;
+  nominatedProgramName?: string;
+  sponsorTypeFK?: number;
+  sponsorTypeName?: string;
+  yearOfNomination?: number;
+  estimatedBudget?: number;
+  currency?: string;
+  professionalBody?: string;
+  nominationStatus: string;
+  statusReason?: string;
+  nominationDate?: string;
+  approvalDate?: string;
+  approvedBy?: string;
+  notes?: string;
+  hasAdmission?: boolean;
+  createdAt: string;
+}
+
+export interface CreateNominationDto {
+  participantFK: number;
+  qualificationFK?: number;
+  nominatedProgramFK?: number;
+  sponsorTypeFK?: number;
+  yearOfNomination?: number;
+  estimatedBudget?: number;
+  currency?: string;
+  professionalBody?: string;
+  nominationStatus?: string;
+  nominationDate?: string;
+  notes?: string;
+}
+
+export interface UpdateNominationDto extends Partial<CreateNominationDto> {
+  statusReason?: string;
+  approvalDate?: string;
+  approvedBy?: string;
+}
+
+// Admission DTOs
+export interface AdmissionResponseDto {
+  pk: number;
+  nominationFK: number;
+  participantName: string;
+  admissionDate: string;
+  admissionProgramFK?: number;
+  admissionProgramName?: string;
+  modeOfStudyFK?: number;
+  modeOfStudyName?: string;
+  releaseStartDate?: string;
+  releaseEndDate?: string;
+  releaseLetterPath?: string;
+  releaseLetterOriginalName?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface CreateAdmissionDto {
+  nominationId: number;
+  admissionDate: string;
+  admissionProgramId?: number;
+  modeOfStudyId?: number;
+  releaseStartDate?: string;
+  releaseEndDate?: string;
+  notes?: string;
+}
+
+export interface UpdateAdmissionDto {
+  admissionDate?: string;
+  admissionProgramId?: number;
+  modeOfStudyId?: number;
+  releaseStartDate?: string;
+  releaseEndDate?: string;
+  notes?: string;
+}
+
+export interface UpdateNominationStatusDto {
+  status: string;
+  statusReason?: string;
+  approvedBy?: string;
+  approvalDate?: string;
+}
+
+// All lookups aggregate
+export interface AllLookupsDto {
+  titles: LookupItemDto[];
+  idTypes: LookupItemDto[];
+  relationshipTypes: LookupItemDto[];
+  departments: LookupItemDto[];
+  salaryScales: LookupItemDto[];
+  dutyStations: LookupItemDto[];
+  sponsorTypes: LookupItemDto[];
+  qualifications: LookupItemDto[];
+  nominatedPrograms: LookupItemDto[];
+  admissionPrograms: AdmissionProgramDto[];
+  modesOfStudy: LookupItemDto[];
+  allowanceTypes: LookupItemDto[];
+  allowanceStatuses: LookupItemDto[];
+}
+
+export interface LookupItemDto {
+  pk: number;
+  name: string;
+  description?: string;
+  isActive: boolean;
+  // optional fields for specific lookups
+  scale?: string;
+  grade?: string;
+  level?: string;
+  year?: number;
+}
+
+export interface AdmissionProgramDto {
+  pk: number;
+  name: string;
+  country?: string;
+  institution?: string;
+  description?: string;
+}
+
 // Allowance interfaces
 export interface AllowanceType extends LookupDto {
   frequency?: string;
@@ -315,6 +465,7 @@ export interface UpdateAllowanceStatusDto {
 export interface PaginatedResponse<T> {
   data: T[];
   totalCount: number;
+  total?: number;
   page: number;
   pageSize: number;
   totalPages: number;
@@ -347,7 +498,7 @@ export interface CreateAllowanceDto {
   startDate: string;
   endDate: string;
   comments?: string;
-  trainingFK: number;
+  admissionFK?: number;
   statusFK: number;
   participantFK: number;
   allowanceTypeFK: number;
@@ -415,14 +566,6 @@ export interface ApiResponse<T> {
   data?: T;
   message?: string;
   errors?: string[];
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
 }
 
 // Configuration interfaces

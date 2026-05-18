@@ -1,3 +1,7 @@
+import { useState, useEffect } from "react";
+import { getLookupItems } from "../../../api/nomination";
+import { ApiUrls } from "../../../constants/apiUrls";
+import type { LookupItemDto } from "../../../types";
 import type { Form2_NextOfKinData } from "../../../types/nomination";
 
 interface Form2Props {
@@ -5,11 +9,18 @@ interface Form2Props {
   onDataChange: (data: Form2_NextOfKinData) => void;
   onNext: () => void;
   onBack: () => void;
-  onSave: () => void;
   loading: boolean;
 }
 
-export default function Form2_NextOfKin({ data, onDataChange, onNext, onBack, onSave, loading }: Form2Props) {
+export default function Form2_NextOfKin({ data, onDataChange, onNext, onBack, loading }: Form2Props) {
+  const [relationshipTypes, setRelationshipTypes] = useState<LookupItemDto[]>([]);
+
+  useEffect(() => {
+    getLookupItems(ApiUrls.lookups.RELATIONSHIP_TYPES)
+      .then(setRelationshipTypes)
+      .catch(() => setRelationshipTypes([]));
+  }, []);
+
   return (
     <div className="form-container">
       <div className="card">
@@ -35,14 +46,17 @@ export default function Form2_NextOfKin({ data, onDataChange, onNext, onBack, on
             <div className="col-md-4">
               <div className="form-group">
                 <label htmlFor="nextOfKinRelationship">Relationship</label>
-                <input
-                  type="text"
+                <select
                   id="nextOfKinRelationship"
                   className="form-control"
-                  value={data.nextOfKinRelationship || ""}
-                  onChange={(e) => onDataChange({ ...data, nextOfKinRelationship: e.target.value })}
-                  placeholder="e.g., Spouse, Parent, Sibling"
-                />
+                  value={data.nextOfKinRelationshipId ?? ""}
+                  onChange={(e) => onDataChange({ ...data, nextOfKinRelationshipId: e.target.value ? parseInt(e.target.value) : undefined })}
+                >
+                  <option value="">Select relationship...</option>
+                  {relationshipTypes.map(r => (
+                    <option key={r.pk} value={r.pk}>{r.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -72,14 +86,6 @@ export default function Form2_NextOfKin({ data, onDataChange, onNext, onBack, on
             </button>
             <button
               type="button"
-              className="btn btn-outline-secondary me-2"
-              onClick={onSave}
-              disabled={loading}
-            >
-              Save Progress
-            </button>
-            <button
-              type="button"
               className="btn btn-primary"
               onClick={onNext}
               disabled={loading}
@@ -92,3 +98,4 @@ export default function Form2_NextOfKin({ data, onDataChange, onNext, onBack, on
     </div>
   );
 }
+

@@ -1,126 +1,60 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axiosInstance from "../../../utils/axiosInstance";
+import { getLookupItems } from "../../../api/nomination";
+import { ApiUrls } from "../../../constants/apiUrls";
+import type { LookupItemDto } from "../../../types";
 import type { Form3_NominationData } from "../../../types/nomination";
+
+interface NominatedProgramOption {
+  pk: number;
+  name: string;
+  year: number;
+  description?: string;
+}
 
 interface Form3Props {
   data: Form3_NominationData;
   onDataChange: (data: Form3_NominationData) => void;
   onNext: () => void;
   onBack: () => void;
-  onSave: () => void;
   loading: boolean;
 }
 
-export default function Form3_Nomination({ data, onDataChange, onNext, onBack, onSave, loading }: Form3Props) {
-  const [newQualification, setNewQualification] = useState("");
+export default function Form3_Nomination({ data, onDataChange, onNext, onBack, loading }: Form3Props) {
+  const [qualifications, setQualifications] = useState<LookupItemDto[]>([]);
+  const [sponsorTypes, setSponsorTypes] = useState<LookupItemDto[]>([]);
+  const [nominatedPrograms, setNominatedPrograms] = useState<NominatedProgramOption[]>([]);
+  const [lookupsLoading, setLookupsLoading] = useState(true);
 
-  const addQualification = () => {
-    if (newQualification.trim()) {
-      const qualifications = data.currentQualifications || [];
-      onDataChange({ 
-        ...data, 
-        currentQualifications: [...qualifications, newQualification.trim()] 
-      });
-      setNewQualification("");
-    }
-  };
+  useEffect(() => {
+    const year = data.yearOfNomination;
+    const url = year
+      ? `${ApiUrls.lookups.NOMINATED_PROGRAMS}?year=${year}`
+      : ApiUrls.lookups.NOMINATED_PROGRAMS;
 
-  const removeQualification = (index: number) => {
-    const qualifications = data.currentQualifications || [];
-    onDataChange({ 
-      ...data, 
-      currentQualifications: qualifications.filter((_, i) => i !== index) 
-    });
-  };
+    Promise.all([
+      getLookupItems(ApiUrls.lookups.QUALIFICATIONS),
+      getLookupItems(ApiUrls.lookups.SPONSOR_TYPES),
+      axiosInstance.get(url).then(r => r.data),
+    ])
+      .then(([quals, sponsors, programs]) => {
+        setQualifications(quals);
+        setSponsorTypes(sponsors);
+        setNominatedPrograms(programs);
+      })
+      .catch(() => { /* keep empty */ })
+      .finally(() => setLookupsLoading(false));
+  }, [data.yearOfNomination]);
 
   return (
     <div className="form-container">
       <div className="card">
         <div className="card-body">
           <h3>Stage 3: Nomination</h3>
-          <p className="text-muted">Current qualifications and nominated program details</p>
-
-          {/* Current Qualifications */}
-          <div className="form-group">
-            <label>Current Qualifications</label>
-            <div className="input-group mb-2">
-              <select
-                className="form-control"
-                value={newQualification}
-                onChange={(e) => setNewQualification(e.target.value)}
-              >
-                <option value="">Select qualification...</option>
-                <option value="Certificate">Certificate</option>
-                <option value="Diploma">Diploma</option>
-                <option value="Degree">Degree</option>
-                <option value="Honours">Honours</option>
-                <option value="Masters">Masters</option>
-                <option value="PhD">PhD</option>
-              </select>
-              <button
-                type="button"
-                className="btn btn-outline-primary"
-                onClick={addQualification}
-                disabled={!newQualification}
-              >
-                Add
-              </button>
-            </div>
-            {data.currentQualifications && data.currentQualifications.length > 0 && (
-              <div className="mt-2">
-                {data.currentQualifications.map((qual, index) => (
-                  <span key={index} className="badge bg-primary me-2 mb-2">
-                    {qual}
-                    <button
-                      type="button"
-                      className="btn-close btn-close-white ms-2"
-                      style={{ fontSize: "0.7rem" }}
-                      onClick={() => removeQualification(index)}
-                    ></button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
+          <p className="text-muted">Qualification and nominated program details</p>
 
           <div className="row">
             <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="nominatedProgram">Nominated Program</label>
-                <input
-                  type="text"
-                  id="nominatedProgram"
-                  className="form-control"
-                  value={data.nominatedProgram || ""}
-                  onChange={(e) => onDataChange({ ...data, nominatedProgram: e.target.value })}
-                  placeholder="Enter the program you wish to study"
-                />
-                <small className="form-text text-muted">
-                  Enter the name of the program you are nominating for
-                </small>
-              </div>
-            </div>
-
-            <div className="col-md-6">
-              <div className="form-group">
-                <label htmlFor="sponsorType">Type of Sponsor</label>
-                <select
-                  id="sponsorType"
-                  className="form-control"
-                  value={data.sponsorType || ""}
-                  onChange={(e) => onDataChange({ ...data, sponsorType: e.target.value })}
-                >
-                  <option value="">Select...</option>
-                  <option value="Govt Sponsor">Govt Sponsor</option>
-                  <option value="Self Sponsored">Self Sponsored</option>
-                  <option value="Organization">Organization</option>
-                  <option value="Scholarship">Scholarship</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="row">
-            <div className="col-md-4">
               <div className="form-group">
                 <label htmlFor="yearOfNomination">Year of Nomination</label>
                 <input
@@ -135,14 +69,75 @@ export default function Form3_Nomination({ data, onDataChange, onNext, onBack, o
               </div>
             </div>
 
+            <div className="col-md-6">
+              <div className="form-group">
+                <label htmlFor="qualificationId">Current Qualification</label>
+                <select
+                  id="qualificationId"
+                  className="form-control"
+                  value={data.qualificationId ?? ""}
+                  onChange={(e) => onDataChange({ ...data, qualificationId: e.target.value ? parseInt(e.target.value) : undefined })}
+                  disabled={lookupsLoading}
+                >
+                  <option value="">{lookupsLoading ? "Loading..." : "Select qualification..."}</option>
+                  {qualifications.map(q => (
+                    <option key={q.pk} value={q.pk}>{q.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-md-6">
+              <div className="form-group">
+                <label htmlFor="nominatedProgramId">Nominated Program</label>
+                <select
+                  id="nominatedProgramId"
+                  className="form-control"
+                  value={data.nominatedProgramId ?? ""}
+                  onChange={(e) => onDataChange({ ...data, nominatedProgramId: e.target.value ? parseInt(e.target.value) : undefined })}
+                  disabled={lookupsLoading}
+                >
+                  <option value="">{lookupsLoading ? "Loading..." : "Select program..."}</option>
+                  {nominatedPrograms.map(p => (
+                    <option key={p.pk} value={p.pk}>{p.name} ({p.year})</option>
+                  ))}
+                </select>
+                {nominatedPrograms.length === 0 && !lookupsLoading && (
+                  <small className="text-muted">No programs available for {data.yearOfNomination ?? "this year"}.</small>
+                )}
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div className="form-group">
+                <label htmlFor="sponsorTypeId">Type of Sponsor</label>
+                <select
+                  id="sponsorTypeId"
+                  className="form-control"
+                  value={data.sponsorTypeId ?? ""}
+                  onChange={(e) => onDataChange({ ...data, sponsorTypeId: e.target.value ? parseInt(e.target.value) : undefined })}
+                  disabled={lookupsLoading}
+                >
+                  <option value="">{lookupsLoading ? "Loading..." : "Select sponsor type..."}</option>
+                  {sponsorTypes.map(s => (
+                    <option key={s.pk} value={s.pk}>{s.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="row">
             <div className="col-md-4">
               <div className="form-group">
                 <label htmlFor="estimatedBudget">Estimated Training Budget</label>
                 <select
                   id="estimatedBudget"
                   className="form-control"
-                  value={data.estimatedBudget || ""}
-                  onChange={(e) => onDataChange({ ...data, estimatedBudget: parseFloat(e.target.value) })}
+                  value={data.estimatedBudget ?? ""}
+                  onChange={(e) => onDataChange({ ...data, estimatedBudget: e.target.value ? parseFloat(e.target.value) : undefined })}
                 >
                   <option value="">Select amount...</option>
                   <option value="50000">P50,000</option>
@@ -157,18 +152,28 @@ export default function Form3_Nomination({ data, onDataChange, onNext, onBack, o
             <div className="col-md-4">
               <div className="form-group">
                 <label htmlFor="professionalBody">Professional Body</label>
-                <select
+                <input
+                  type="text"
                   id="professionalBody"
                   className="form-control"
-                  value={data.professionalBody || ""}
-                  onChange={(e) => onDataChange({ ...data, professionalBody: e.target.value })}
-                >
-                  <option value="">Select...</option>
-                  <option value="BHPC">BHPC</option>
-                  <option value="BMA">BMA</option>
-                  <option value="BNC">BNC</option>
-                  <option value="Other">Other</option>
-                </select>
+                  value={data.professionalBody ?? ""}
+                  onChange={(e) => onDataChange({ ...data, professionalBody: e.target.value || undefined })}
+                  placeholder="e.g. BHPC, BMA, BNC"
+                />
+              </div>
+            </div>
+
+            <div className="col-md-4">
+              <div className="form-group">
+                <label htmlFor="notes">Notes</label>
+                <input
+                  type="text"
+                  id="notes"
+                  className="form-control"
+                  value={data.notes ?? ""}
+                  onChange={(e) => onDataChange({ ...data, notes: e.target.value || undefined })}
+                  placeholder="Additional notes"
+                />
               </div>
             </div>
           </div>
@@ -184,19 +189,11 @@ export default function Form3_Nomination({ data, onDataChange, onNext, onBack, o
             </button>
             <button
               type="button"
-              className="btn btn-outline-secondary me-2"
-              onClick={onSave}
-              disabled={loading}
-            >
-              Save Progress
-            </button>
-            <button
-              type="button"
               className="btn btn-primary"
               onClick={onNext}
               disabled={loading}
             >
-              {loading ? "Processing..." : "Next: Admission"}
+              {loading ? "Processing..." : "Submit Nomination"}
             </button>
           </div>
         </div>
@@ -204,3 +201,4 @@ export default function Form3_Nomination({ data, onDataChange, onNext, onBack, o
     </div>
   );
 }
+

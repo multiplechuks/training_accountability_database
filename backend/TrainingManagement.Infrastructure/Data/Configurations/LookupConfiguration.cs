@@ -1,84 +1,22 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TrainingManagement.Core.Entities;
 
 namespace TrainingManagement.Infrastructure.Data.Configurations;
 
 public static class LookupConfiguration
 {
-    public static void ConfigureLookupEntities(ModelBuilder builder)
+    public static void Configure(ModelBuilder builder)
     {
-        builder.Entity<Department>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name).IsUnique();
-            entity.HasIndex(e => e.Code).IsUnique();
-        });
-
-        builder.Entity<Facility>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name);
-            entity.HasIndex(e => e.Code).IsUnique();
-        });
-
-        builder.Entity<Designation>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Title);
-            entity.HasIndex(e => e.Code).IsUnique();
-        });
-
-        builder.Entity<SalaryScale>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Scale).IsUnique();
-            entity.Property(e => e.MinSalary).HasColumnType("decimal(18,2)");
-            entity.Property(e => e.MaxSalary).HasColumnType("decimal(18,2)");
-        });
-
-        builder.Entity<Sponsor>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name);
-            entity.HasIndex(e => e.Email);
-        });
-
-        // New lookup entities for 6-form enrollment
-        builder.Entity<ExtensionReason>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name);
-        });
-
-        builder.Entity<NominationStatus>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name).IsUnique();
-        });
-
-        builder.Entity<TravelMode>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name).IsUnique();
-        });
-
-        builder.Entity<StudyMode>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name).IsUnique();
-        });
-
-        builder.Entity<Specialty>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name);
-        });
-
-        builder.Entity<Qualification>(entity =>
-        {
-            entity.HasKey(e => e.PK);
-            entity.HasIndex(e => e.Name);
-            entity.HasIndex(e => e.Level);
-        });
+        builder.Entity<Title>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Name).IsUnique(); });
+        builder.Entity<IdType>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Name).IsUnique(); });
+        builder.Entity<RelationshipType>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Name).IsUnique(); });
+        builder.Entity<Department>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Name).IsUnique(); });
+        builder.Entity<SalaryScale>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Scale).IsUnique(); });
+        builder.Entity<DutyStation>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Name).IsUnique(); });
+        builder.Entity<SponsorType>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Name).IsUnique(); });
+        builder.Entity<Qualification>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Name).IsUnique(); });
+        builder.Entity<NominatedProgram>(e => e.HasKey(x => x.PK));
+        builder.Entity<AdmissionProgram>(e => e.HasKey(x => x.PK));
+        builder.Entity<ModeOfStudy>(e => { e.HasKey(x => x.PK); e.HasIndex(x => x.Name).IsUnique(); });
     }
 }

@@ -27,7 +27,7 @@ import NominationListPage from "@/pages/nomination/NominationListPage";
 import NominationStartPage from "@/pages/nomination/NominationStartPage";
 import NominationProgressPage from "@/pages/nomination/NominationProgressPage";
 import { ReportsPage } from "@/pages/reports";
-import { ConfigurationPage } from "@/pages/configuration";
+import { ConfigurationPage, NominatedProgramsPage, AdmissionProgramsPage } from "@/pages/configuration";
 import { useAuth } from "@/hooks/useAuth";
 import { NavigationRoutes } from "./constants";
 import { AllowanceCreatePage, AllowanceListPage } from "./pages";
@@ -73,6 +73,7 @@ function App() {
             <Route path="/enrollment/wizard" element={<EnrollmentWizardPage />} />
             <Route path="/enrollment/wizard/:progressId" element={<EnrollmentWizardPage />} />
             <Route path="/enrollment/complete/:progressId" element={<EnrollmentCompletePage />} />
+            <Route path="/training/enroll/:nominationId" element={<EnrollmentCreatePage />} />
 
             <Route path="/nomination/list" element={<NominationListPage />} />
             <Route path="/nomination/start" element={<NominationStartPage />} />
@@ -84,6 +85,8 @@ function App() {
             <Route path={NavigationRoutes.REPORTS} element={<ReportsPage />} />
 
             <Route path={NavigationRoutes.CONFIGURATION} element={<ConfigurationPage />} />
+            <Route path="/configuration/nominated-programs" element={<NominatedProgramsPage />} />
+            <Route path="/configuration/admission-programs" element={<AdmissionProgramsPage />} />
 
             <Route path="/" element={<Navigate to={NavigationRoutes.DASHBOARD} replace />} />
             <Route path="*" element={<Navigate to={NavigationRoutes.DASHBOARD} replace />} />

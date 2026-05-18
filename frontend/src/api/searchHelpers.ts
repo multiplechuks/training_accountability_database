@@ -1,241 +1,115 @@
+﻿import axiosInstance from "@/utils/axiosInstance";
 import { searchParticipants, getParticipants } from "./participant";
-import { searchTrainings, getTrainings } from "./training";
-import { apiService } from "./apiService";
-import type { ParticipantResponseDto, TrainingResponseDto, PaginatedResponse, LookupDto, DesignationResponse, SalaryScaleResponse, DepartmentResponse, FacilityResponse, SponsorResponse } from "../types";
+import { getNominations } from "./training";
+import { getAdmissions } from "./enrollment";
+import { getAllowanceTypesLookup } from "./allowanceType";
+import { getAllowanceStatusesLookup } from "./allowanceStatus";
+import { ApiUrls } from "@/constants/apiUrls";
+import type { ParticipantResponseDto, NominationResponseDto, AdmissionResponseDto, PaginatedResponse, LookupDto, LookupItemDto } from "../types";
 
+// ─── Participants ────────────────────────────────────────────────────────────
 export async function searchParticipantsForSelect(searchTerm: string): Promise<LookupDto[]> {
   try {
-    // If empty search term, get all participants; otherwise search
     const response: PaginatedResponse<ParticipantResponseDto> = searchTerm
       ? await searchParticipants(searchTerm, 1, 10)
-      : await getParticipants(1, 50); // Get first 50 participants for dropdown
-    
-    if (response) {
-      return response.data.map((participant: ParticipantResponseDto) => ({
-        pk: participant.id,
-        name: `${participant.firstname} ${participant.lastname}`,
-        code: participant.email,
-        description: participant.email
-      }));
-    }
-    
-    return [];
+      : await getParticipants(1, 50);
+    return (response?.data ?? []).map((p) => ({
+      pk: p.pk,
+      name: p.fullName ?? `${p.firstname} ${p.lastname}`,
+      code: p.idNumber,
+      description: p.email,
+    }));
   } catch {
     return [];
   }
 }
 
+// ─── Nominations (used as "Trainings" in legacy pages) ──────────────────────
 export async function searchTrainingsForSelect(searchTerm: string): Promise<LookupDto[]> {
   try {
-    // If empty search term, get all trainings; otherwise search
-    const response: PaginatedResponse<TrainingResponseDto> = searchTerm
-      ? await searchTrainings(searchTerm, 1, 10)
-      : await getTrainings(1, 50); // Get first 50 trainings for dropdown
-    
-    if (response) {
-      return response.data.map((training: TrainingResponseDto) => ({
-        pk: training.id,
-        name: training.program,
-        code: training.institution,
-        description: `${training.program} at ${training.institution}`
-      }));
-    }
-    
-    return [];
+    const response: PaginatedResponse<NominationResponseDto> = searchTerm
+      ? await getNominations(1, 10, searchTerm)
+      : await getNominations(1, 50);
+    return (response?.data ?? []).map((n) => ({
+      pk: n.pk,
+      name: n.nominatedProgramName ?? `Nomination #${n.pk}`,
+      code: String(n.yearOfNomination ?? ""),
+      description: n.participantName ?? "",
+    }));
   } catch {
     return [];
   }
 }
 
-export async function searchDesignationsForSelect(searchTerm: string): Promise<LookupDto[]> {
+// ─── Admissions ──────────────────────────────────────────────────────────────
+export async function searchAdmissionsForSelect(searchTerm: string): Promise<LookupDto[]> {
   try {
-    const response: DesignationResponse = await apiService.getDesignations();
-    
-    if (response && Array.isArray(response)) {
-      const filtered = response.filter((designation) => 
-        designation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (designation.code && designation.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (designation.description && designation.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-      
-      return filtered.map((designation) => ({
-        pk: designation.pk,
-        name: designation.name,
-        code: designation.code,
-        description: designation.description
-      }));
-    }
-    
-    return [];
+    const response: PaginatedResponse<AdmissionResponseDto> = await getAdmissions(1, 50);
+    const all = response?.data ?? [];
+    const filtered = searchTerm
+      ? all.filter((a) =>
+          String(a.pk).includes(searchTerm) ||
+          (a.admissionProgramName ?? "").toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : all;
+    return filtered.map((a) => ({
+      pk: a.pk,
+      name: a.admissionProgramName ? `#${a.pk} – ${a.admissionProgramName}` : `Admission #${a.pk}`,
+      code: String(a.nominationFK),
+      description: a.modeOfStudyName ?? "",
+    }));
   } catch {
     return [];
   }
 }
 
-export async function searchSalaryScalesForSelect(searchTerm: string): Promise<LookupDto[]> {
+// ─── Lookups via backend /lookups/* ──────────────────────────────────────────
+async function fetchLookup(url: string, searchTerm: string): Promise<LookupDto[]> {
   try {
-    const response: SalaryScaleResponse = await apiService.getSalaryScales();
-    
-    if (response && Array.isArray(response)) {
-      const filtered = response.filter((scale) =>
-        scale.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (scale.code && scale.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (scale.description && scale.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-
-      return filtered.map((scale) => ({
-        pk: scale.pk,
-        name: scale.name,
-        code: scale.code,
-      }));
-    }
-    
-    return [];
+    const res = await axiosInstance.get<LookupItemDto[]>(url);
+    const items: LookupItemDto[] = Array.isArray(res.data) ? res.data : (res.data as { items?: LookupItemDto[] })?.items ?? [];
+    const lower = searchTerm.toLowerCase();
+    return items
+      .filter((item) => !searchTerm || item.name.toLowerCase().includes(lower))
+      .map((item) => ({ pk: item.pk, name: item.name, description: item.description }));
   } catch {
     return [];
   }
 }
 
 export async function searchDepartmentsForSelect(searchTerm: string): Promise<LookupDto[]> {
-  try {
-    // const response: DepartmentResponse = await apiService.getDepartments();
-    const response: DepartmentResponse = [
-      {
-        pk: 1,
-        name: "Primary Health Care",
-        code: "PHC",
-        description: "Primary Health Care Department"
-      },
-      {
-        pk: 2,
-        name: "Nursing and Midwifery",
-        code: "NM",
-        description: "Nursing and Midwifery Department"
-      },
-      {
-        pk: 3,
-        name: "Public Health",
-        code: "PH",
-        description: "Public Health Department"
-      },
-      {
-        pk: 4,
-        name: "Specialized Health Care",
-        code: "SHC",
-        description: "Specialized Health Care Department"
-      }
-    ];
+  return fetchLookup(ApiUrls.lookups.DEPARTMENTS, searchTerm);
+}
 
-    if (response && Array.isArray(response)) {
-      const filtered = response.filter((department) =>
-        department.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (department.code && department.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (department.description && department.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+export async function searchSalaryScalesForSelect(searchTerm: string): Promise<LookupDto[]> {
+  return fetchLookup(ApiUrls.lookups.SALARY_SCALES, searchTerm);
+}
 
-      return filtered.map((department) => ({
-        pk: department.pk,
-        name: department.name,
-        code: department.code,
-      }));
-    }
-    
-    return [];
-  } catch {
-    return [];
-  }
+export async function searchDesignationsForSelect(searchTerm: string): Promise<LookupDto[]> {
+  // No designations endpoint in new backend – return empty
+  return [];
 }
 
 export async function searchMinistriesForSelect(searchTerm: string): Promise<LookupDto[]> {
-  try {
-    const response: DepartmentResponse = await apiService.getDepartments();
-
-    if (response && Array.isArray(response)) {
-      const filtered = response.filter((department) =>
-        department.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (department.code && department.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (department.description && department.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-
-      return filtered.map((department) => ({
-        pk: department.pk,
-        name: department.name,
-        code: department.code,
-      }));
-    }
-    
-    return [];
-  } catch {
-    return [];
-  }
+  return fetchLookup(ApiUrls.lookups.DEPARTMENTS, searchTerm);
 }
 
 export async function searchFacilitiesForSelect(searchTerm: string): Promise<LookupDto[]> {
-  try {
-    const response: FacilityResponse = await apiService.getFacilities();
-
-    if (response && Array.isArray(response)) {
-      const filtered = response.filter((facility) =>
-        facility.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (facility.code && facility.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (facility.description && facility.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-
-      return filtered.map((facility) => ({
-        pk: facility.pk,
-        name: facility.name,
-        code: facility.code,
-      }));
-    }
-    
-    return [];
-  } catch {
-    return [];
-  }
+  // No facilities endpoint in new backend – return empty
+  return [];
 }
 
 export async function searchSponsorsForSelect(searchTerm: string): Promise<LookupDto[]> {
-  try {
-    const response: SponsorResponse = await apiService.getSponsors();
-
-    if (response && Array.isArray(response)) {
-      const filtered = response.filter((sponsor) =>
-        sponsor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (sponsor.code && sponsor.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (sponsor.description && sponsor.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-
-      return filtered.map((sponsor) => ({
-        pk: sponsor.pk,
-        name: sponsor.name,
-        code: sponsor.code,
-      }));
-    }
-    
-    return [];
-  } catch {
-    return [];
-  }
+  return fetchLookup(ApiUrls.lookups.SPONSOR_TYPES, searchTerm);
 }
 
 export async function searchAllowanceTypesForSelect(searchTerm: string): Promise<LookupDto[]> {
   try {
-    const response = await apiService.getAllowanceTypes();
-
-    if (response && Array.isArray(response)) {
-      const filtered = response.filter((type) =>
-        type.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (type.description && type.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-
-      return filtered.map((type) => ({
-        pk: type.pk,
-        name: type.name,
-        description: type.description,
-      }));
-    }
-    
-    return [];
+    const items = await getAllowanceTypesLookup();
+    const lower = searchTerm.toLowerCase();
+    return items
+      .filter((t) => !searchTerm || t.name.toLowerCase().includes(lower))
+      .map((t) => ({ pk: t.pk, name: t.name, description: t.description }));
   } catch {
     return [];
   }
@@ -243,22 +117,11 @@ export async function searchAllowanceTypesForSelect(searchTerm: string): Promise
 
 export async function searchAllowanceStatusesForSelect(searchTerm: string): Promise<LookupDto[]> {
   try {
-    const response = await apiService.getAllowanceStatuses();
-
-    if (response && Array.isArray(response)) {
-      const filtered = response.filter((status) =>
-        status.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (status.description && status.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-
-      return filtered.map((status) => ({
-        pk: status.pk,
-        name: status.name,
-        description: status.description,
-      }));
-    }
-    
-    return [];
+    const items = await getAllowanceStatusesLookup();
+    const lower = searchTerm.toLowerCase();
+    return items
+      .filter((s) => !searchTerm || s.name.toLowerCase().includes(lower))
+      .map((s) => ({ pk: s.pk, name: s.name, description: s.description }));
   } catch {
     return [];
   }

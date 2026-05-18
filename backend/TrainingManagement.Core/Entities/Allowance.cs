@@ -20,13 +20,13 @@ public class Allowance : BaseEntity
     public string? Comments { get; set; }
 
     // Foreign Keys
-    public int TrainingFK { get; set; }
+    public int? AdmissionFK { get; set; }
     public int StatusFK { get; set; }
     public int ParticipantFK { get; set; }
     public int AllowanceTypeFK { get; set; }
 
     // Navigation properties
-    public virtual Training Training { get; set; } = null!;
+    public virtual Admission? Admission { get; set; }
     public virtual AllowanceStatus AllowanceStatus { get; set; } = null!;
     public virtual Participant Participant { get; set; } = null!;
     public virtual AllowanceType AllowanceType { get; set; } = null!;

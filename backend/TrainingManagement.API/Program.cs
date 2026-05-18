@@ -76,14 +76,26 @@ builder.Services.AddAuthentication(options =>
 // Add JWT Service
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-// Add Repository Services
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+// Repositories
 builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
-builder.Services.AddScoped<ITrainingRepository, TrainingRepository>();
-builder.Services.AddScoped<IParticipantEnrollmentRepository, ParticipantEnrollmentRepository>();
-builder.Services.AddScoped<IAllowanceRepository, AllowanceRepository>();
-builder.Services.AddScoped<ITrainingTransferRepository, TrainingTransferRepository>();
+builder.Services.AddScoped<INextOfKinRepository, NextOfKinRepository>();
 builder.Services.AddScoped<INominationRepository, NominationRepository>();
+builder.Services.AddScoped<IAdmissionRepository, AdmissionRepository>();
+builder.Services.AddScoped<IAllowanceRepository, AllowanceRepository>();
+builder.Services.AddScoped<IAllowanceTypeRepository, AllowanceTypeRepository>();
+builder.Services.AddScoped<IAllowanceStatusRepository, AllowanceStatusRepository>();
+builder.Services.AddScoped<ILookupRepository, LookupRepository>();
+
+// Services
+builder.Services.AddScoped<IParticipantService, ParticipantService>();
+builder.Services.AddScoped<INextOfKinService, NextOfKinService>();
+builder.Services.AddScoped<INominationService, NominationService>();
+builder.Services.AddScoped<IAdmissionService, AdmissionService>();
+builder.Services.AddScoped<IAllowanceService, AllowanceService>();
+builder.Services.AddScoped<IAllowanceTypeService, AllowanceTypeService>();
+builder.Services.AddScoped<IAllowanceStatusService, AllowanceStatusService>();
+builder.Services.AddScoped<ILookupService, LookupService>();
+builder.Services.AddScoped<IWebHostEnvironmentAccessor, WebHostEnvironmentAccessor>();
 
 // Configure Swagger with JWT Authentication
 builder.Services.AddSwaggerGen(options =>
@@ -188,35 +200,7 @@ if (app.Environment.IsDevelopment())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
-    // Ensure database is created
     await context.Database.EnsureCreatedAsync();
-
-    // Seed lookup data
-    await SeedData.SeedLookupDataAsync(context);
-    await SeedData.SeedSampleDataAsync(context);
-    await EnrollmentLookupSeedData.SeedEnrollmentLookupsAsync(context);
-
-    // Seed authentication data (roles and users)
-    await AuthSeedData.SeedRolesAndUsersAsync(userManager, roleManager, context);
-}
-
-// seed data in production, this is to be changed to staging later
-if (app.Environment.IsProduction())
-{
-    using var scope = app.Services.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<TrainingDbContext>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-
-    // Ensure database is created
-    await context.Database.EnsureCreatedAsync();
-
-    // Seed lookup data
-    await SeedData.SeedLookupDataAsync(context);
-    await SeedData.SeedSampleDataAsync(context);
-    await EnrollmentLookupSeedData.SeedEnrollmentLookupsAsync(context);
-
-    // Seed authentication data (roles and users)
     await AuthSeedData.SeedRolesAndUsersAsync(userManager, roleManager, context);
 }
 

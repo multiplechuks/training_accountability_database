@@ -1,294 +1,180 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
+﻿import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Card, CardHeader, CardBody, StatCard } from "@/components/ui";
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { getAdmissions, deleteAdmission } from "@/api/enrollment";
+import type { AdmissionResponseDto, PaginatedResponse } from "@/types";
 import { NavigationRoutes } from "@/constants";
-import { Card, CardHeader, CardBody } from "@/components/ui";
-import { getEnrollments } from "@/api/enrollment";
-import type { ParticipantEnrollmentResponseDto } from "@/types";
 
 export default function EnrollmentListPage() {
-  const [enrollments, setEnrollments] = useState<ParticipantEnrollmentResponseDto[]>([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [admissions, setAdmissions] = useState<AdmissionResponseDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
-  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [toDelete, setToDelete] = useState<AdmissionResponseDto | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const pageSize = 10;
 
-  // Fetch enrollments from API
   useEffect(() => {
-    const fetchEnrollments = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await getEnrollments(currentPage, itemsPerPage);
-        setEnrollments(response.data || []);
-        setTotalCount(response.total || response.data?.length || 0);
-      } catch (err: unknown) {
-        const errorMsg = 
-          (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "message" in err.response.data) 
-            ? String(err.response.data.message)
-            : (err instanceof Error) 
-              ? err.message 
-              : "Failed to load enrollments. Please try again.";
-        setError(errorMsg);
-        setEnrollments([]);
-        setTotalCount(0);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
 
-    fetchEnrollments();
-  }, [currentPage, itemsPerPage]);
+  const fetchAdmissions = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response: PaginatedResponse<AdmissionResponseDto> = await getAdmissions(currentPage, pageSize, searchTerm || undefined);
+      setAdmissions(response.data ?? []);
+      setTotalCount(response.totalCount ?? 0);
+    } catch {
+      setError("Failed to load enrolments. Please try again.");
+      setAdmissions([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, searchTerm]);
 
-  // Calculate pagination - since API returns paginated data, we use the enrollments as-is
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
-  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
-  const indexOfLastItem = Math.min(indexOfFirstItem + itemsPerPage, totalCount);
+  useEffect(() => { fetchAdmissions(); }, [fetchAdmissions]);
 
-  const handlePageChange = (page: number) => {
-    if (page !== currentPage && page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+  const confirmDelete = async () => {
+    if (!toDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteAdmission(toDelete.pk);
+      setSuccessMessage("Enrolment deleted successfully.");
+      setToDelete(null);
+      fetchAdmissions();
+    } catch {
+      setError("Failed to delete enrolment.");
+      setToDelete(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  const handleCreateEnrollment = () => {
-    navigate(NavigationRoutes.ENROLLMENT_CREATE);
-  };
-
-  const getStatusBadgeClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "active":
-        return "badge badge-success";
-      case "completed":
-        return "badge badge-secondary";
-      case "pending":
-        return "badge badge-warning";
-      case "cancelled":
-        return "badge badge-danger";
-      default:
-        return "badge badge-secondary";
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="page-content">
-        <div className="page-header">
-          <h1 className="page-title">Training Enrollments</h1>
-          <p className="page-subtitle">Manage participant enrollments</p>
-        </div>
-        <div className="d-flex justify-content-center align-items-center py-4">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <span className="ms-2">Loading enrollments...</span>
-        </div>
-      </div>
-    );
-  }
+  const fmt = (d?: string) => d ? new Date(d).toLocaleDateString("en-GB") : "—";
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <div className="page-content">
       <div className="page-header">
-        <h1 className="page-title">Training Enrollments</h1>
-        <p className="page-subtitle">Manage participant enrollments</p>
+        <div>
+          <h1 className="page-title">Enrolments</h1>
+          <p className="page-subtitle">Participants currently enrolled in training programmes</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => navigate(NavigationRoutes.NOMINATIONS)}>
+          + Enrol from Nominations
+        </button>
       </div>
 
-      {error && (
-        <div className="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-          <strong>Error:</strong> {error}
-          <button 
-            type="button" 
-            className="btn-close" 
-            aria-label="Close"
-            onClick={() => setError(null)}
-          ></button>
+      {successMessage && (
+        <div className="alert alert-success alert-dismissible fade show" role="alert">
+          {successMessage}
+          <button type="button" className="btn-close" onClick={() => setSuccessMessage(null)} />
         </div>
       )}
 
+      <div className="content-grid">
+        <StatCard title="Total Enrolments" value={totalCount} subtitle="All time" color="primary" icon="🎓" />
+      </div>
+
       <Card>
-        <CardHeader
-          title="Enrollment Records"
-          subtitle={`${totalCount} total enrollments`}
-          actions={
-            <button className="btn btn-primary" onClick={handleCreateEnrollment}>
-              Enrol
-            </button>
-          }
-        />
+        <CardHeader title="Enrolment Records" subtitle={`${totalCount} total`} />
         <CardBody>
-          <div className="mb-4 d-flex justify-content-between align-items-center">
+          <div className="mb-3">
             <input
               type="search"
-              placeholder="Search enrollments..."
-              className="form-input"
-              style={{ maxWidth: "300px" }}
+              className="form-control"
+              style={{ maxWidth: 320 }}
+              placeholder="Search by participant or programme..."
+              value={searchTerm}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             />
           </div>
+
+          {error && <div className="alert alert-danger">{error}</div>}
 
           <div className="table-container">
             <table className="table table-hover">
               <thead>
                 <tr>
+                  <th>#</th>
                   <th>Participant</th>
-                  <th>Training Program</th>
-                  <th>Duration</th>
-                  <th>Status</th>
-                  <th>Study Period</th>
-                  <th>Actions</th>
+                  <th>Programme</th>
+                  <th>Mode of Study</th>
+                  <th>Admission Date</th>
+                  <th>Release Period</th>
+                  <th style={{ width: 160 }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {enrollments.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-4">
-                      <div className="text-muted">
-                        <i className="bi bi-inbox fs-1 d-block mb-2"></i>
-                        No enrollments found
+                    <td colSpan={7} className="text-center py-4">
+                      <div className="spinner-border text-primary" role="status" />
+                      <span className="ms-2">Loading...</span>
+                    </td>
+                  </tr>
+                ) : admissions.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-4 text-muted">
+                      {searchTerm ? "No enrolments match your search." : "No enrolments yet. Go to Nominations and enrol an approved nomination."}
+                    </td>
+                  </tr>
+                ) : admissions.map((a) => (
+                  <tr key={a.pk}>
+                    <td className="text-muted" style={{ fontSize: "0.85rem" }}>{a.pk}</td>
+                    <td><strong>{a.participantName}</strong></td>
+                    <td>{a.admissionProgramName ?? <span className="text-muted">—</span>}</td>
+                    <td>{a.modeOfStudyName ?? <span className="text-muted">—</span>}</td>
+                    <td>{fmt(a.admissionDate)}</td>
+                    <td>
+                      {a.releaseStartDate && a.releaseEndDate
+                        ? <span>{fmt(a.releaseStartDate)} – {fmt(a.releaseEndDate)}</span>
+                        : <span className="text-muted">—</span>}
+                    </td>
+                    <td>
+                      <div className="d-flex gap-1">
+                        <button className="btn btn-sm btn-outline-secondary" onClick={() => navigate(`/enrollment/view/${a.pk}`)}>View</button>
+                        <button className="btn btn-sm btn-outline-primary" onClick={() => navigate(`/enrollment/edit/${a.pk}`)}>Edit</button>
+                        <button className="btn btn-sm btn-outline-danger" onClick={() => setToDelete(a)}>Delete</button>
                       </div>
                     </td>
                   </tr>
-                ) : (
-                  enrollments.map((enrollment) => (
-                  <tr key={enrollment.pk}>
-                    <td>
-                      <div className="d-flex align-items-center">
-                        <div className="avatar me-3">
-                          {enrollment.participant?.firstname?.[0]}{enrollment.participant?.lastname?.[0]}
-                        </div>
-                        <div>
-                          <div className="fw-bold">
-                            {enrollment.participant?.fullName}
-                          </div>
-                          <div className="text-muted small">
-                            {enrollment.participant?.email}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div>
-                        <div className="fw-bold">{enrollment.training?.program}</div>
-                        <div className="text-muted small">{enrollment.training?.institution}</div>
-                      </div>
-                    </td>
-                    <td>
-                      <div>
-                        <div>{enrollment.duration} months</div>
-                        <div className="text-muted small">{enrollment.modeOfStudy}</div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className={getStatusBadgeClass(enrollment.trainingStatus)}>
-                        {enrollment.trainingStatus}
-                      </span>
-                    </td>
-                    <td>
-                      <div>
-                        <div>{formatDate(enrollment.startDate)} - {formatDate(enrollment.endDate)}</div>
-                        <div className="text-muted small">
-                          Study Leave: {enrollment.studyLeaveDate && formatDate(enrollment.studyLeaveDate)}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="table-actions">
-                        <button 
-                          className="btn btn-sm btn-ghost text-primary p-1" 
-                          title="View Details"
-                          aria-label="View enrollment details"
-                          onClick={() => navigate(NavigationRoutes.ENROLLMENT_DETAILS(enrollment.pk!))}
-                        >
-                          👁️
-                        </button>
-                        <button 
-                          className="btn btn-sm btn-ghost text-success p-1" 
-                          title="Manage Allowances"
-                          aria-label="Manage allowances"
-                          onClick={() => navigate(`/allowances/create?participantId=${enrollment.participant?.pk}&trainingId=${enrollment.training?.pk}`)}
-                        >
-                          💰
-                        </button>
-                        <button 
-                          className="btn btn-sm btn-ghost p-1" 
-                          title="Edit Enrollment"
-                          aria-label="Edit enrollment"
-                          onClick={() => navigate(NavigationRoutes.ENROLLMENT_EDIT(enrollment.pk!))}
-                        >
-                          ✏️
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  ))
-                )}
+                ))}
               </tbody>
             </table>
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
-            <div className="d-flex justify-content-between align-items-center mt-4">
-              <div className="text-muted">
-                Showing {indexOfFirstItem + 1} to {indexOfLastItem} of {totalCount} entries
-              </div>
-              <div className="pagination-controls">
-                <button
-                  className="btn btn-sm btn-outline-secondary me-1"
-                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </button>
-
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
-                  }
-
-                  return (
-                    <button
-                      key={pageNum}
-                      className={`btn btn-sm me-1 ${currentPage === pageNum ? "btn-primary" : "btn-outline-secondary"
-                        }`}
-                      onClick={() => handlePageChange(pageNum)}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-
-                <button
-                  className="btn btn-sm btn-outline-secondary ms-1"
-                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                >
-                  Next
-                </button>
+            <div className="d-flex justify-content-between align-items-center mt-3">
+              <span className="text-muted">Page {currentPage} of {totalPages} ({totalCount} total)</span>
+              <div>
+                <button className="btn btn-sm btn-outline-secondary me-1" disabled={currentPage <= 1} onClick={() => setCurrentPage(p => p - 1)}>Previous</button>
+                <button className="btn btn-sm btn-outline-secondary" disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)}>Next</button>
               </div>
             </div>
           )}
         </CardBody>
       </Card>
+
+      <ConfirmationModal
+        show={!!toDelete}
+        title="Delete Enrolment"
+        message={toDelete ? `Delete enrolment for ${toDelete.participantName}? This cannot be undone.` : ""}
+        confirmText={isDeleting ? "Deleting..." : "Delete"}
+        confirmVariant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setToDelete(null)}
+      />
     </div>
   );
 }
-

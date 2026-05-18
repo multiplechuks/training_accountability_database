@@ -7,11 +7,10 @@ interface Form1Props {
   data: Form1_ParticipantProfileData;
   onDataChange: (data: Form1_ParticipantProfileData) => void;
   onNext: () => void;
-  onSave: () => void;
   loading: boolean;
 }
 
-export default function Form1_ParticipantProfile({ data, onDataChange, onNext, onSave, loading }: Form1Props) {
+export default function Form1_ParticipantProfile({ data, onDataChange, onNext, loading }: Form1Props) {
   const [mode, setMode] = useState<"select" | "create">(data.participantId ? "select" : "create");
 
   // Sync mode with data changes
@@ -222,7 +221,6 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
                       <option value="">Select...</option>
                       <option value="M">Male</option>
                       <option value="F">Female</option>
-                      <option value="Other">Other</option>
                     </select>
                   </div>
                 </div>
@@ -371,14 +369,6 @@ export default function Form1_ParticipantProfile({ data, onDataChange, onNext, o
           )}
 
           <div className="form-actions mt-4">
-            <button
-              type="button"
-              className="btn btn-outline-secondary me-2"
-              onClick={onSave}
-              disabled={loading}
-            >
-              Save Progress
-            </button>
             <button
               type="button"
               className="btn btn-primary"
