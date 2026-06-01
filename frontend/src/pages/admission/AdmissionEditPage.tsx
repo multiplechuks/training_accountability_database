@@ -1,7 +1,8 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getAdmission, updateAdmission } from "@/api/enrollment";
+import { getAdmission, updateAdmission } from "@/api/admission";
 import { getAllLookups } from "@/api/nomination";
+import { LoadingSpinner } from "@/components/ui";
 import type { AdmissionResponseDto, AdmissionProgramDto, LookupItemDto } from "@/types";
 import { NavigationRoutes } from "@/constants";
 
@@ -14,7 +15,7 @@ interface EditForm {
   notes: string;
 }
 
-export default function EnrollmentEditPage() {
+export default function AdmissionEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [admission, setAdmission] = useState<AdmissionResponseDto | null>(null);
@@ -41,7 +42,7 @@ export default function EnrollmentEditPage() {
           notes: a.notes ?? "",
         });
       })
-      .catch(() => setError("Failed to load enrolment."))
+      .catch(() => setError("Failed to load admission."))
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -60,7 +61,7 @@ export default function EnrollmentEditPage() {
         releaseEndDate: form.releaseEndDate || undefined,
         notes: form.notes || undefined,
       });
-      navigate(`/enrollment/view/${admission.pk}`, { state: { message: "Enrolment updated successfully." } });
+      navigate(`/admission/view/${admission.pk}`, { state: { message: "Admission updated successfully." } });
     } catch {
       setError("Failed to save changes. Please try again.");
     } finally {
@@ -71,7 +72,7 @@ export default function EnrollmentEditPage() {
   if (loading) {
     return (
       <div className="page-content">
-        <div className="text-center py-5"><div className="spinner-border text-primary" role="status" /></div>
+        <LoadingSpinner centered />
       </div>
     );
   }
@@ -80,7 +81,7 @@ export default function EnrollmentEditPage() {
     return (
       <div className="page-content">
         <div className="alert alert-danger">{error}</div>
-        <button className="btn btn-outline-secondary" onClick={() => navigate(NavigationRoutes.ENROLLMENTS)}>← Back to Enrolments</button>
+        <button className="btn btn-outline-secondary" onClick={() => navigate(NavigationRoutes.ADMISSIONS)}>← Back to Admissions</button>
       </div>
     );
   }
@@ -89,11 +90,11 @@ export default function EnrollmentEditPage() {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Edit Enrolment</h1>
-          {admission && <p className="page-subtitle">{admission.participantName} &mdash; Enrolment #{admission.pk}</p>}
+          <h1 className="page-title">Edit Admission</h1>
+          {admission && <p className="page-subtitle">{admission.participantName} — Admission #{admission.pk}</p>}
         </div>
         <button className="btn btn-outline-secondary" disabled={saving}
-          onClick={() => navigate(admission ? `/enrollment/view/${admission.pk}` : NavigationRoutes.ENROLLMENTS)}>
+          onClick={() => navigate(admission ? `/admission/view/${admission.pk}` : NavigationRoutes.ADMISSIONS)}>
           Cancel
         </button>
       </div>
@@ -158,7 +159,7 @@ export default function EnrollmentEditPage() {
             {saving ? "Saving..." : "Save Changes"}
           </button>
           <button type="button" className="btn btn-outline-secondary" disabled={saving}
-            onClick={() => navigate(admission ? `/enrollment/view/${admission.pk}` : NavigationRoutes.ENROLLMENTS)}>
+            onClick={() => navigate(admission ? `/admission/view/${admission.pk}` : NavigationRoutes.ADMISSIONS)}>
             Cancel
           </button>
         </div>

@@ -1,7 +1,7 @@
 ﻿import axiosInstance from "@/utils/axiosInstance";
 import { searchParticipants, getParticipants } from "./participant";
 import { getNominations } from "./training";
-import { getAdmissions } from "./enrollment";
+import { getAdmissions } from "./admission";
 import { getAllowanceTypesLookup } from "./allowanceType";
 import { getAllowanceStatusesLookup } from "./allowanceStatus";
 import { ApiUrls } from "@/constants/apiUrls";
@@ -85,7 +85,7 @@ export async function searchSalaryScalesForSelect(searchTerm: string): Promise<L
   return fetchLookup(ApiUrls.lookups.SALARY_SCALES, searchTerm);
 }
 
-export async function searchDesignationsForSelect(searchTerm: string): Promise<LookupDto[]> {
+export async function searchDesignationsForSelect(_searchTerm: string): Promise<LookupDto[]> {
   // No designations endpoint in new backend – return empty
   return [];
 }
@@ -94,7 +94,7 @@ export async function searchMinistriesForSelect(searchTerm: string): Promise<Loo
   return fetchLookup(ApiUrls.lookups.DEPARTMENTS, searchTerm);
 }
 
-export async function searchFacilitiesForSelect(searchTerm: string): Promise<LookupDto[]> {
+export async function searchFacilitiesForSelect(_searchTerm: string): Promise<LookupDto[]> {
   // No facilities endpoint in new backend – return empty
   return [];
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CreateParticipantDto, UpdateParticipantDto, ParticipantResponseDto } from "@/types";
 import { FormSection } from "@/components/forms";
+import { LoadingSpinner } from "@/components/ui";
 
 interface ParticipantFormProps {
   participant?: ParticipantResponseDto; // For edit mode
@@ -376,9 +377,7 @@ export default function ParticipantForm({
           >
             {loading ? (
               <>
-                <div className="spinner-border spinner-border-sm me-2" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+                <LoadingSpinner size="sm" className="me-2" />
                 {isEditing ? "Updating..." : "Creating..."}
               </>
             ) : (

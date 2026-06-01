@@ -1,5 +1,4 @@
-import { Card, CardHeader, CardBody, StatCard } from "@/components/ui";
-import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { Card, CardHeader, CardBody, StatCard, ConfirmationModal, LoadingSpinner } from "@/components/ui";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getParticipants, searchParticipants, deleteParticipant } from "@/api/participant";
@@ -212,12 +211,7 @@ export default function ParticipantsListPage() {
                 {loading ? (
                   <tr>
                     <td colSpan={5} className="text-center">
-                      <div className="d-flex justify-content-center align-items-center py-4">
-                        <div className="spinner-border text-primary" role="status">
-                          <span className="visually-hidden">Loading...</span>
-                        </div>
-                        <span className="ms-2">Loading participants...</span>
-                      </div>
+                      <LoadingSpinner centered message="Loading participants..." />
                     </td>
                   </tr>
                 ) : participants.length === 0 ? (

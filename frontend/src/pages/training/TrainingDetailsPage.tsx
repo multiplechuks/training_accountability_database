@@ -2,6 +2,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardBody, ConfirmationModal } from "@/components/ui";
 import { getNomination, deleteNomination } from "@/api/training";
+import { formatTableDate } from "@/utils";
+import { LoadingSpinner } from "@/components/ui";
 import { NavigationRoutes } from "@/constants";
 import type { NominationResponseDto } from "@/types";
 
@@ -39,7 +41,7 @@ export default function TrainingDetailsPage() {
   if (loading) {
     return (
       <div className="page-content d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>
-        <div className="spinner-border text-primary" role="status" />
+        <LoadingSpinner />
       </div>
     );
   }
@@ -52,8 +54,6 @@ export default function TrainingDetailsPage() {
       </div>
     );
   }
-
-  const fmt = (d?: string) => d ? new Date(d).toLocaleDateString("en-GB") : "-";
 
   return (
     <div className="page-content">
@@ -84,9 +84,9 @@ export default function TrainingDetailsPage() {
             {nomination.professionalBody && (
               <div className="col-md-6"><strong>Professional Body:</strong> {nomination.professionalBody}</div>
             )}
-            <div className="col-md-6"><strong>Nomination Date:</strong> {fmt(nomination.nominationDate)}</div>
+            <div className="col-md-6"><strong>Nomination Date:</strong> {formatTableDate(nomination.nominationDate)}</div>
             {nomination.approvalDate && (
-              <div className="col-md-6"><strong>Approval Date:</strong> {fmt(nomination.approvalDate)}</div>
+              <div className="col-md-6"><strong>Approval Date:</strong> {formatTableDate(nomination.approvalDate)}</div>
             )}
             {nomination.approvedBy && (
               <div className="col-md-6"><strong>Approved By:</strong> {nomination.approvedBy}</div>
@@ -97,8 +97,8 @@ export default function TrainingDetailsPage() {
             {nomination.notes && (
               <div className="col-12"><strong>Notes:</strong> {nomination.notes}</div>
             )}
-            <div className="col-md-6"><strong>Created:</strong> {fmt(nomination.createdAt)}</div>
-            <div className="col-md-6"><strong>Last Updated:</strong> {fmt(nomination.updatedAt)}</div>
+            <div className="col-md-6"><strong>Created:</strong> {formatTableDate(nomination.createdAt)}</div>
+            <div className="col-md-6"><strong>Last Updated:</strong> {formatTableDate(nomination.updatedAt)}</div>
           </div>
         </CardBody>
       </Card>

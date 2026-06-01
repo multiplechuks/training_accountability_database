@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Card, CardHeader, CardBody } from "@/components/ui";
+import { Card, CardHeader, CardBody, LoadingSpinner } from "@/components/ui";
 import AllowanceForm from "@/components/forms/AllowanceForm";
+import { formatTableDate } from "@/utils";
 import type { AllowanceResponseDto, CreateAllowanceDto, ParticipantResponseDto } from "@/types";
 
 // Sample participant data
@@ -157,14 +158,6 @@ export default function ParticipantAllowancePage({ participantId = 1 }: Particip
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    });
-  };
-
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat("en-BW", {
       style: "currency",
@@ -183,11 +176,7 @@ export default function ParticipantAllowancePage({ participantId = 1 }: Particip
           <h1 className="page-title">Participant Allowances</h1>
           <p className="page-subtitle">Manage allowances for participant</p>
         </div>
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "16rem" }}>
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
+        <LoadingSpinner centered />
       </div>
     );
   }
@@ -247,7 +236,7 @@ export default function ParticipantAllowancePage({ participantId = 1 }: Particip
             <div className="col-md-4 mb-3">
               <div className="text-muted small fw-medium mb-1">Personal Details</div>
               <div className="small">Gender: {participant.sex}</div>
-              <div className="small">DOB: {formatDate(participant.dob)}</div>
+              <div className="small">DOB: {formatTableDate(participant.dob)}</div>
             </div>
           </div>
         </CardBody>
@@ -393,7 +382,7 @@ export default function ParticipantAllowancePage({ participantId = 1 }: Particip
                       </td>
                       <td>
                         <div className="small">
-                          {formatDate(allowance.startDate)} - {formatDate(allowance.endDate)}
+                          {formatTableDate(allowance.startDate)} - {formatTableDate(allowance.endDate)}
                         </div>
                       </td>
                       <td>

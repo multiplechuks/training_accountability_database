@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Stage5BondDto } from "@/types";
+import { LoadingSpinner } from "@/components/ui";
 
 interface Props {
   onComplete: (data: Stage5BondDto) => void;
@@ -240,7 +241,7 @@ export default function Stage5Bonding({ onComplete, onBack, loading, initialData
             >
               {loading ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <LoadingSpinner size="sm" className="me-2" />
                   Saving...
                 </>
               ) : (

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { LookupDto } from "@/types";
+import { LoadingSpinner } from "@/components/ui";
 
 interface LookupManagementModalProps {
     title: string;
@@ -294,9 +295,7 @@ export default function LookupManagementModal({
                     <div className="table-responsive">
                         {loading && items.length === 0 ? (
                             <div className="text-center py-3">
-                                <div className="spinner-border spinner-border-sm text-primary" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
+                                <LoadingSpinner size="sm" />
                             </div>
                         ) : items.length === 0 ? (
                             <div className="text-center py-3 text-muted">

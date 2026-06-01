@@ -1,13 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { ApiUrls } from "@/constants/apiUrls";
-
-interface NominatedProgram {
-  pk: number;
-  name: string;
-  year: number;
-  description?: string;
-}
+import { LoadingSpinner } from "@/components/ui";
 
 interface FormState {
   name: string;
@@ -25,8 +19,8 @@ const getErrorMessage = (err: unknown) => {
   return err instanceof Error ? err.message : undefined;
 };
 
-export default function NominatedProgramsPage() {
-  const [programs, setPrograms] = useState<NominatedProgram[]>([]);
+export default function NominatedProgramDtosPage() {
+  const [programs, setPrograms] = useState<NominatedProgramDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -64,7 +58,7 @@ export default function NominatedProgramsPage() {
     setShowModal(true);
   };
 
-  const openEdit = (p: NominatedProgram) => {
+  const openEdit = (p: NominatedProgramDto) => {
     setEditingId(p.pk);
     setForm({ name: p.name, year: p.year, description: p.description ?? "" });
     setFormError(null);
@@ -99,7 +93,7 @@ export default function NominatedProgramsPage() {
     }
   };
 
-  const handleDelete = async (p: NominatedProgram) => {
+  const handleDelete = async (p: NominatedProgramDto) => {
     if (!confirm(`Delete "${p.name} (${p.year})"?`)) return;
     try {
       await axiosInstance.delete(ApiUrls.lookups.NOMINATED_PROGRAM(p.pk));
@@ -145,9 +139,7 @@ export default function NominatedProgramsPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-4">
-          <div className="spinner-border" role="status"><span className="visually-hidden">Loading...</span></div>
-        </div>
+        <LoadingSpinner centered />
       ) : programs.length === 0 ? (
         <div className="alert alert-info">No nominated programs found. Add one to get started.</div>
       ) : (

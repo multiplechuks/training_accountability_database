@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Stage1ParticipantDto } from "@/types";
+import { LoadingSpinner } from "@/components/ui";
 
 interface Props {
   onComplete: (data: Stage1ParticipantDto) => void;
@@ -254,7 +255,7 @@ export default function Stage1Participant({ onComplete, onCancel, loading, initi
             >
               {loading ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <LoadingSpinner size="sm" className="me-2" />
                   Saving...
                 </>
               ) : (

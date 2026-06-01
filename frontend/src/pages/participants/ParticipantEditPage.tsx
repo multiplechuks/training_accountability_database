@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardBody } from "@/components/ui";
+import { Card, CardHeader, CardBody, LoadingSpinner } from "@/components/ui";
 import ParticipantForm from "@/components/forms/ParticipantForm";
 import { getParticipant, updateParticipant } from "@/api/participant";
 import { NavigationRoutes } from "@/constants";
@@ -78,14 +78,7 @@ export default function ParticipantEditPage() {
   if (loading) {
     return (
       <div className="page-content">
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>
-          <div className="text-center">
-            <div className="spinner-border text-primary mb-3" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-            <p>Loading participant details...</p>
-          </div>
-        </div>
+        <LoadingSpinner centered message="Loading participant details..." />
       </div>
     );
   }

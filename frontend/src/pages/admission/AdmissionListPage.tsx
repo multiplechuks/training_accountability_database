@@ -1,12 +1,12 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Card, CardHeader, CardBody, StatCard } from "@/components/ui";
-import ConfirmationModal from "@/components/ui/ConfirmationModal";
-import { getAdmissions, deleteAdmission } from "@/api/enrollment";
+import { Card, CardHeader, CardBody, StatCard, ConfirmationModal, LoadingSpinner } from "@/components/ui";
+import { getAdmissions, deleteAdmission } from "@/api/admission";
+import { formatTableDate } from "@/utils";
 import type { AdmissionResponseDto, PaginatedResponse } from "@/types";
 import { NavigationRoutes } from "@/constants";
 
-export default function EnrollmentListPage() {
+export default function AdmissionListPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [admissions, setAdmissions] = useState<AdmissionResponseDto[]>([]);
@@ -35,7 +35,7 @@ export default function EnrollmentListPage() {
       setAdmissions(response.data ?? []);
       setTotalCount(response.totalCount ?? 0);
     } catch {
-      setError("Failed to load enrolments. Please try again.");
+      setError("Failed to load admissions. Please try again.");
       setAdmissions([]);
     } finally {
       setLoading(false);
@@ -49,29 +49,28 @@ export default function EnrollmentListPage() {
     setIsDeleting(true);
     try {
       await deleteAdmission(toDelete.pk);
-      setSuccessMessage("Enrolment deleted successfully.");
+      setSuccessMessage("Admission deleted successfully.");
       setToDelete(null);
       fetchAdmissions();
     } catch {
-      setError("Failed to delete enrolment.");
+      setError("Failed to delete admission.");
       setToDelete(null);
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const fmt = (d?: string) => d ? new Date(d).toLocaleDateString("en-GB") : "—";
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Enrolments</h1>
-          <p className="page-subtitle">Participants currently enrolled in training programmes</p>
+          <h1 className="page-title">Admissions</h1>
+          <p className="page-subtitle">Participants admitted into training programmes</p>
         </div>
         <button className="btn btn-primary" onClick={() => navigate(NavigationRoutes.NOMINATIONS)}>
-          + Enrol from Nominations
+          + Admit from Nominations
         </button>
       </div>
 
@@ -83,11 +82,11 @@ export default function EnrollmentListPage() {
       )}
 
       <div className="content-grid">
-        <StatCard title="Total Enrolments" value={totalCount} subtitle="All time" color="primary" icon="🎓" />
+        <StatCard title="Total Admissions" value={totalCount} subtitle="All time" color="primary" icon="🎓" />
       </div>
 
       <Card>
-        <CardHeader title="Enrolment Records" subtitle={`${totalCount} total`} />
+        <CardHeader title="Admission Records" subtitle={`${totalCount} total`} />
         <CardBody>
           <div className="mb-3">
             <input
@@ -119,14 +118,14 @@ export default function EnrollmentListPage() {
                 {loading ? (
                   <tr>
                     <td colSpan={7} className="text-center py-4">
-                      <div className="spinner-border text-primary" role="status" />
+                      <LoadingSpinner />
                       <span className="ms-2">Loading...</span>
                     </td>
                   </tr>
                 ) : admissions.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="text-center py-4 text-muted">
-                      {searchTerm ? "No enrolments match your search." : "No enrolments yet. Go to Nominations and enrol an approved nomination."}
+                      {searchTerm ? "No admissions match your search." : "No admissions yet. Go to Nominations and admit an approved nomination."}
                     </td>
                   </tr>
                 ) : admissions.map((a) => (
@@ -135,16 +134,16 @@ export default function EnrollmentListPage() {
                     <td><strong>{a.participantName}</strong></td>
                     <td>{a.admissionProgramName ?? <span className="text-muted">—</span>}</td>
                     <td>{a.modeOfStudyName ?? <span className="text-muted">—</span>}</td>
-                    <td>{fmt(a.admissionDate)}</td>
+                    <td>{formatTableDate(a.admissionDate)}</td>
                     <td>
                       {a.releaseStartDate && a.releaseEndDate
-                        ? <span>{fmt(a.releaseStartDate)} – {fmt(a.releaseEndDate)}</span>
+                        ? <span>{formatTableDate(a.releaseStartDate)} – {formatTableDate(a.releaseEndDate)}</span>
                         : <span className="text-muted">—</span>}
                     </td>
                     <td>
                       <div className="d-flex gap-1">
-                        <button className="btn btn-sm btn-outline-secondary" onClick={() => navigate(`/enrollment/view/${a.pk}`)}>View</button>
-                        <button className="btn btn-sm btn-outline-primary" onClick={() => navigate(`/enrollment/edit/${a.pk}`)}>Edit</button>
+                        <button className="btn btn-sm btn-outline-secondary" onClick={() => navigate(`/admission/view/${a.pk}`)}>View</button>
+                        <button className="btn btn-sm btn-outline-primary" onClick={() => navigate(`/admission/edit/${a.pk}`)}>Edit</button>
                         <button className="btn btn-sm btn-outline-danger" onClick={() => setToDelete(a)}>Delete</button>
                       </div>
                     </td>
@@ -168,8 +167,8 @@ export default function EnrollmentListPage() {
 
       <ConfirmationModal
         show={!!toDelete}
-        title="Delete Enrolment"
-        message={toDelete ? `Delete enrolment for ${toDelete.participantName}? This cannot be undone.` : ""}
+        title="Delete Admission"
+        message={toDelete ? `Delete admission for ${toDelete.participantName}? This cannot be undone.` : ""}
         confirmText={isDeleting ? "Deleting..." : "Delete"}
         confirmVariant="danger"
         onConfirm={confirmDelete}

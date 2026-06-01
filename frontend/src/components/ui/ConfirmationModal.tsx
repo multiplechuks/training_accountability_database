@@ -1,4 +1,4 @@
-// ConfirmationModal component for reusable confirmation dialogs
+import LoadingSpinner from "./LoadingSpinner";
 
 interface ConfirmationModalProps {
   show: boolean;
@@ -160,9 +160,7 @@ export default function ConfirmationModal({
             >
               {loading ? (
                 <>
-                  <div className="spinner-border spinner-border-sm me-2" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
+                  <LoadingSpinner size="sm" className="me-2" />
                   Processing...
                 </>
               ) : (

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardBody, IconCard, ConfirmationModal } from "@/components/ui";
+import { Card, CardHeader, CardBody, IconCard, ConfirmationModal, LoadingSpinner } from "@/components/ui";
 import { FormSection } from "@/components/forms";
 import { getParticipant, deleteParticipant } from "@/api/participant";
+import { formatDetailDate } from "@/utils";
 import { NavigationRoutes } from "@/constants";
 import type { ParticipantResponseDto } from "@/types";export default function ParticipantDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -74,18 +75,6 @@ import type { ParticipantResponseDto } from "@/types";export default function Pa
     setShowDeleteModal(false);
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      });
-    } catch {
-      return dateString;
-    }
-  };
-
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
@@ -93,14 +82,7 @@ import type { ParticipantResponseDto } from "@/types";export default function Pa
   if (loading) {
     return (
       <div className="page-content">
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>
-          <div className="text-center">
-            <div className="spinner-border text-primary mb-3" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-            <p>Loading participant details...</p>
-          </div>
-        </div>
+        <LoadingSpinner centered message="Loading participant details..." />
       </div>
     );
   }
@@ -215,7 +197,7 @@ import type { ParticipantResponseDto } from "@/types";export default function Pa
           <Card>
             <CardHeader 
               title="Participant Information" 
-              subtitle={`Created on ${formatDate(participant.createdAt)}`}
+              subtitle={`Created on ${formatDetailDate(participant.createdAt)}`}
             />
             <CardBody>
               <FormSection title="Personal Information">
@@ -276,7 +258,7 @@ import type { ParticipantResponseDto } from "@/types";export default function Pa
                   <div className="col-md-3">
                     <div className="form-group mb-3">
                       <label className="form-label text-muted">Date of Birth</label>
-                      <p className="form-value">{formatDate(participant.dob)}</p>
+                      <p className="form-value">{formatDetailDate(participant.dob)}</p>
                     </div>
                   </div>
                 </div>
@@ -351,11 +333,11 @@ import type { ParticipantResponseDto } from "@/types";export default function Pa
             <CardBody>
               <div className="form-group mb-3">
                 <label className="form-label text-muted">Created</label>
-                <p className="form-value small">{formatDate(participant.createdAt)}</p>
+                <p className="form-value small">{formatDetailDate(participant.createdAt)}</p>
               </div>
               <div className="form-group">
                 <label className="form-label text-muted">Last Updated</label>
-                <p className="form-value small">{formatDate(participant.updatedAt)}</p>
+                <p className="form-value small">{formatDetailDate(participant.updatedAt)}</p>
               </div>
             </CardBody>
           </Card>

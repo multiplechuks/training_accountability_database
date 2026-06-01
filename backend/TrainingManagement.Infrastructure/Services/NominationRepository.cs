@@ -15,7 +15,8 @@ public class NominationRepository : INominationRepository
             .Include(n => n.Participant)
             .Include(n => n.Qualification)
             .Include(n => n.NominatedProgram)
-            .Include(n => n.SponsorType);
+            .Include(n => n.SponsorType)
+            .Include(n => n.Admission).ThenInclude(a => a.AdmissionProgram);
 
     public async Task<(IEnumerable<Nomination> Items, int Total)> GetPagedAsync(int page, int pageSize, string? search, int? year)
     {

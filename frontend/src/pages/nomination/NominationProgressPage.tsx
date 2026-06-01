@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { getNomination } from "../../api/training";
+import { LoadingSpinner } from "../../components/ui";
 import NominationWizard from "../../components/nomination/NominationWizard";
 import type { NominationResponseDto } from "../../types";
 
@@ -48,8 +49,8 @@ export default function NominationProgressPage() {
 
   if (loading) {
     return (
-      <div className="container mt-4 text-center">
-        <div className="spinner-border" role="status"><span className="visually-hidden">Loading...</span></div>
+      <div className="container mt-4">
+        <LoadingSpinner centered />
       </div>
     );
   }

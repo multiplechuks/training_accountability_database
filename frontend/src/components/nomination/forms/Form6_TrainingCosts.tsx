@@ -3,6 +3,7 @@ import type { Form6_TrainingCostsData, AllowanceItem } from "../../../types/nomi
 import type { AllowanceType, AllowanceStatus } from "../../../types";
 import { getAllowanceTypesLookup } from "../../../api/allowanceType";
 import { getAllowanceStatusesLookup } from "../../../api/allowanceStatus";
+import { LoadingSpinner } from "../../../components/ui";
 
 interface Form6Props {
   data: Form6_TrainingCostsData;
@@ -154,11 +155,7 @@ export default function Form6_TrainingCosts({ data, onDataChange, onNext, onBack
           )}
 
           {loadingTypes ? (
-            <div className="text-center py-4">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
+            <LoadingSpinner centered />
           ) : (
             <>
               {allowances.map((allowance, index) => (

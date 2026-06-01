@@ -2,4 +2,4 @@
 export * from "./auth";
 export * from "./interfaces";
 export * from "./nomination";
-export * from "./enrollment";
+export * from "./admission";

@@ -6,6 +6,7 @@ export interface DateFormatOptions {
   includeTime?: boolean;
   format?: "short" | "medium" | "long" | "full";
   locale?: string;
+  fallback?: string;
 }
 
 /**
@@ -19,7 +20,7 @@ export function formatDate(
   options: DateFormatOptions = {}
 ): string {
   if (!date) {
-    return "Not provided";
+    return options.fallback ?? "Not provided";
   }
 
   try {
@@ -82,7 +83,7 @@ export function formatDate(
  * @returns Formatted date string (e.g., "Jan 15, 2025")
  */
 export function formatTableDate(date: string | Date | null | undefined): string {
-  return formatDate(date, { format: "medium" });
+  return formatDate(date, { format: "medium", fallback: "—" });
 }
 
 /**

@@ -59,7 +59,7 @@ export interface ParticipantResponseDto {
   /** @deprecated use pk */
   id?: number;
   titleFK?: number;
-  titleName?: string;
+  title?: string;
   firstname: string;
   lastname: string;
   middlename?: string;
@@ -74,8 +74,9 @@ export interface ParticipantResponseDto {
   postalAddress?: string;
   salaryScaleFK?: number;
   departmentFK?: number;
-  departmentName?: string;
+  department?: string;
   dutyStationFK?: number;
+  dutyStation?: string;
   fullName: string;
   createdAt: string;
   updatedAt: string;
@@ -99,7 +100,7 @@ export interface CreateParticipantDto {
   dutyStationFK?: number;
 }
 
-export interface UpdateParticipantDto extends Partial<CreateParticipantDto> {}
+export type UpdateParticipantDto = Partial<CreateParticipantDto>;
 
 export interface NextOfKinResponseDto {
   pk: number;
@@ -389,6 +390,19 @@ export interface UpdateNominationStatusDto {
   approvalDate?: string;
 }
 
+export interface NominationStatusModalState {
+  nomination: NominationResponseDto;
+  status: string;
+  statusReason: string;
+  approvedBy: string;
+  approvalDate: string;
+}
+
+export interface NominationWithAdmission {
+  nomination: NominationResponseDto;
+  admission: AdmissionResponseDto | null;
+}
+
 // All lookups aggregate
 export interface AllLookupsDto {
   titles: LookupItemDto[];
@@ -423,6 +437,13 @@ export interface AdmissionProgramDto {
   name: string;
   country?: string;
   institution?: string;
+  description?: string;
+}
+
+export interface NominatedProgramDto {
+  pk: number;
+  name: string;
+  year: number;
   description?: string;
 }
 

@@ -3,11 +3,12 @@ import Layout from "@/components/layout/Layout";
 import ProtectedRoute from "@/components/layout/ProtectedRoute";
 import { LoginPage } from "@/pages/auth";
 import { DashboardPage } from "@/pages/dashboard";
-import { 
-  ParticipantsListPage, 
-  ParticipantCreatePage, 
-  ParticipantDetailsPage, 
-  ParticipantEditPage 
+import {
+  ParticipantsListPage,
+  ParticipantCreatePage,
+  ParticipantDetailsPage,
+  ParticipantEditPage,
+  ParticipantHistoryPage,
 } from "@/pages/participants";
 import { 
   TrainingListPage, 
@@ -15,19 +16,19 @@ import {
   TrainingDetailsPage, 
   TrainingEditPage 
 } from "@/pages/training";
-import { 
-  EnrollmentCreatePage, 
-  EnrollmentListPage, 
-  EnrollmentViewPage, 
-  EnrollmentEditPage,
-  EnrollmentWizardPage,
-  EnrollmentCompletePage
-} from "@/pages/enrollment";
+import {
+  AdmissionCreatePage,
+  AdmissionListPage,
+  AdmissionViewPage,
+  AdmissionEditPage,
+} from "@/pages/admission";
 import NominationListPage from "@/pages/nomination/NominationListPage";
 import NominationStartPage from "@/pages/nomination/NominationStartPage";
 import NominationProgressPage from "@/pages/nomination/NominationProgressPage";
+import NominationViewPage from "@/pages/nomination/NominationViewPage";
 import { ReportsPage } from "@/pages/reports";
 import { ConfigurationPage, NominatedProgramsPage, AdmissionProgramsPage } from "@/pages/configuration";
+import { LoadingSpinner } from "@/components/ui";
 import { useAuth } from "@/hooks/useAuth";
 import { NavigationRoutes } from "./constants";
 import { AllowanceCreatePage, AllowanceListPage } from "./pages";
@@ -38,9 +39,7 @@ function App() {
   if (isLoading) {
     return (
       <div className="d-flex align-items-center justify-content-center min-vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+        <LoadingSpinner />
       </div>
     );
   }
@@ -58,6 +57,7 @@ function App() {
 
             <Route path={NavigationRoutes.PARTICIPANTS} element={<ParticipantsListPage />} />
             <Route path={NavigationRoutes.PARTICIPANT_CREATE} element={<ParticipantCreatePage />} />
+            <Route path={NavigationRoutes.PARTICIPANT_HISTORY} element={<ParticipantHistoryPage />} />
             <Route path="/participants/view/:id" element={<ParticipantDetailsPage />} />
             <Route path="/participants/edit/:id" element={<ParticipantEditPage />} />
 
@@ -66,17 +66,15 @@ function App() {
             <Route path="/training/view/:id" element={<TrainingDetailsPage />} />
             <Route path="/training/edit/:id" element={<TrainingEditPage />} />
 
-            <Route path={NavigationRoutes.ENROLLMENTS} element={<EnrollmentListPage />} />
-            <Route path={NavigationRoutes.ENROLLMENT_CREATE} element={<EnrollmentCreatePage />} />
-            <Route path="/enrollment/view/:id" element={<EnrollmentViewPage />} />
-            <Route path="/enrollment/edit/:id" element={<EnrollmentEditPage />} />
-            <Route path="/enrollment/wizard" element={<EnrollmentWizardPage />} />
-            <Route path="/enrollment/wizard/:progressId" element={<EnrollmentWizardPage />} />
-            <Route path="/enrollment/complete/:progressId" element={<EnrollmentCompletePage />} />
-            <Route path="/training/enroll/:nominationId" element={<EnrollmentCreatePage />} />
+            <Route path={NavigationRoutes.ADMISSIONS} element={<AdmissionListPage />} />
+            <Route path={NavigationRoutes.ADMISSION_CREATE} element={<AdmissionCreatePage />} />
+            <Route path="/admission/view/:id" element={<AdmissionViewPage />} />
+            <Route path="/admission/edit/:id" element={<AdmissionEditPage />} />
+            <Route path="/training/enroll/:nominationId" element={<AdmissionCreatePage />} />
 
             <Route path="/nomination/list" element={<NominationListPage />} />
             <Route path="/nomination/start" element={<NominationStartPage />} />
+            <Route path="/nomination/view/:id" element={<NominationViewPage />} />
             <Route path="/nomination/progress/:progressId" element={<NominationProgressPage />} />
 
             <Route path={NavigationRoutes.ALLOWANCES} element={<AllowanceListPage />} />

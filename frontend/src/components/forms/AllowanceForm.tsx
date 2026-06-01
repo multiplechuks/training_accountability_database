@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardBody } from "@/components/ui";
+import { Card, CardHeader, CardBody, LoadingSpinner } from "@/components/ui";
 import type { CreateAllowanceDto, AllowanceType, AllowanceStatus, ParticipantResponseDto, TrainingResponseDto } from "@/types";
 
 interface AllowanceFormProps {
@@ -426,9 +426,7 @@ export default function AllowanceForm({ onSubmit, onCancel, loading = false, ini
             >
               {loading ? (
                 <div className="d-flex align-items-center">
-                  <div className="spinner-border spinner-border-sm me-2" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
+                  <LoadingSpinner size="sm" className="me-2" />
                   Creating...
                 </div>
               ) : (

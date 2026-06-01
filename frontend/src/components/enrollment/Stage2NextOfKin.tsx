@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Stage2NextOfKinDto } from "@/types";
+import { LoadingSpinner } from "@/components/ui";
 
 interface Props {
   onComplete: (data: Stage2NextOfKinDto) => void;
@@ -140,7 +141,7 @@ export default function Stage2NextOfKin({ onComplete, onBack, loading, initialDa
             >
               {loading ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <LoadingSpinner size="sm" className="me-2" />
                   Saving...
                 </>
               ) : (

@@ -3,7 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardHeader, CardBody } from "@/components/ui";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { getNominations, deleteNomination, updateNominationStatus } from "@/api/training";
+import { formatTableDate } from "@/utils";
+import { LoadingSpinner } from "@/components/ui";
 import type { NominationResponseDto, PaginatedResponse, UpdateNominationStatusDto } from "@/types";
+import { NavigationRoutes } from "@/constants";
 
 const STATUSES = ["Pending", "Approved", "Rejected", "Deferred"];
 
@@ -16,14 +19,6 @@ const statusBadgeClass = (status: string) => {
   }
 };
 
-interface StatusModalState {
-  nomination: NominationResponseDto;
-  status: string;
-  statusReason: string;
-  approvedBy: string;
-  approvalDate: string;
-}
-
 export default function NominationListPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,14 +28,14 @@ export default function NominationListPage() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("Pending");
+  const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
   const [toDelete, setToDelete] = useState<NominationResponseDto | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const [statusModal, setStatusModal] = useState<StatusModalState | null>(null);
+  const [statusModal, setStatusModal] = useState<NominationStatusModalState | null>(null);
   const [isSavingStatus, setIsSavingStatus] = useState(false);
 
   useEffect(() => {
@@ -175,9 +170,7 @@ export default function NominationListPage() {
 
           {loading ? (
             <div className="text-center py-4">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+              <LoadingSpinner />
             </div>
           ) : nominations.length === 0 ? (
             <div className="alert alert-info">No nominations found matching the current filters.</div>
@@ -216,12 +209,17 @@ export default function NominationListPage() {
                         </button>
                       </td>
                       <td>
-                        {n.nominationDate
-                          ? new Date(n.nominationDate).toLocaleDateString("en-GB")
-                          : "—"}
+                        {formatTableDate(n.nominationDate)}
                       </td>
                       <td style={{ whiteSpace: "nowrap" }}>
                         <div className="d-flex gap-1">
+                          <button
+                            className="btn btn-sm btn-outline-secondary"
+                            title="View nomination"
+                            onClick={() => navigate(NavigationRoutes.NOMINATION_VIEW(n.pk))}
+                          >
+                            View
+                          </button>
                           <button
                             className="btn btn-sm btn-outline-primary"
                             title="Edit nomination"
@@ -237,9 +235,6 @@ export default function NominationListPage() {
                             >
                               🎓 Enroll
                             </button>
-                          )}
-                          {n.hasAdmission && (
-                            <span className="badge badge-info align-self-center px-2">Enrolled</span>
                           )}
                           <button
                             className="btn btn-sm btn-outline-danger"

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Stage3NominationDto } from "@/types";
+import { LoadingSpinner } from "@/components/ui";
 
 interface Props {
   onComplete: (data: Stage3NominationDto) => void;
@@ -284,7 +285,7 @@ export default function Stage3Nomination({ onComplete, onBack, loading, initialD
             >
               {loading ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <LoadingSpinner size="sm" className="me-2" />
                   Saving...
                 </>
               ) : (

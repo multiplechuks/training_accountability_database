@@ -2,9 +2,11 @@
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getAdmissions, deleteAdmission, updateAdmission } from "@/api/enrollment";
+import { getAdmissions, deleteAdmission, updateAdmission } from "@/api/admission";
 import { getAllLookups } from "@/api/nomination";
+import { formatTableDate } from "@/utils";
 import { NavigationRoutes } from "@/constants";
+import { LoadingSpinner } from "@/components/ui";
 import type { AdmissionResponseDto, PaginatedResponse, AdmissionProgramDto, LookupItemDto } from "@/types";
 
 interface EditForm {
@@ -125,8 +127,6 @@ export default function TrainingListPage() {
     }
   };
 
-  const formatDate = (d?: string) => d ? new Date(d).toLocaleDateString("en-GB") : "—";
-
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
@@ -189,7 +189,7 @@ export default function TrainingListPage() {
                 {loading ? (
                   <tr>
                     <td colSpan={8} className="text-center py-4">
-                      <div className="spinner-border text-primary" role="status" />
+                      <LoadingSpinner />
                       <span className="ms-2">Loading...</span>
                     </td>
                   </tr>
@@ -205,9 +205,9 @@ export default function TrainingListPage() {
                     <td><strong>{a.participantName}</strong></td>
                     <td>{a.admissionProgramName ?? <span className="text-muted">—</span>}</td>
                     <td>{a.modeOfStudyName ?? <span className="text-muted">—</span>}</td>
-                    <td>{formatDate(a.admissionDate)}</td>
-                    <td>{formatDate(a.releaseStartDate)}</td>
-                    <td>{formatDate(a.releaseEndDate)}</td>
+                    <td>{formatTableDate(a.admissionDate)}</td>
+                    <td>{formatTableDate(a.releaseStartDate)}</td>
+                    <td>{formatTableDate(a.releaseEndDate)}</td>
                     <td>
                       <div className="d-flex gap-1">
                         <button className="btn btn-sm btn-outline-secondary" title="View details" onClick={() => setViewing(a)}>View</button>
@@ -271,7 +271,7 @@ export default function TrainingListPage() {
                 <dd className="col-sm-8 mb-0"><strong>{viewing.participantName}</strong></dd>
 
                 <dt className="col-sm-4 text-muted">Admission Date</dt>
-                <dd className="col-sm-8 mb-0">{formatDate(viewing.admissionDate)}</dd>
+                <dd className="col-sm-8 mb-0">{formatTableDate(viewing.admissionDate)}</dd>
 
                 <dt className="col-sm-4 text-muted">Programme</dt>
                 <dd className="col-sm-8 mb-0">{viewing.admissionProgramName ?? <span className="text-muted">—</span>}</dd>
@@ -280,10 +280,10 @@ export default function TrainingListPage() {
                 <dd className="col-sm-8 mb-0">{viewing.modeOfStudyName ?? <span className="text-muted">—</span>}</dd>
 
                 <dt className="col-sm-4 text-muted">Release Start</dt>
-                <dd className="col-sm-8 mb-0">{formatDate(viewing.releaseStartDate)}</dd>
+                <dd className="col-sm-8 mb-0">{formatTableDate(viewing.releaseStartDate)}</dd>
 
                 <dt className="col-sm-4 text-muted">Release End</dt>
-                <dd className="col-sm-8 mb-0">{formatDate(viewing.releaseEndDate)}</dd>
+                <dd className="col-sm-8 mb-0">{formatTableDate(viewing.releaseEndDate)}</dd>
 
                 {viewing.releaseLetterOriginalName && (
                   <>
@@ -304,7 +304,7 @@ export default function TrainingListPage() {
                 )}
 
                 <dt className="col-sm-4 text-muted">Recorded</dt>
-                <dd className="col-sm-8 mb-0">{formatDate(viewing.createdAt)}</dd>
+                <dd className="col-sm-8 mb-0">{formatTableDate(viewing.createdAt)}</dd>
               </dl>
             </div>
             <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid #e5e7eb", display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>

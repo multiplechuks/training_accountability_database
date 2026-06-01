@@ -15,23 +15,23 @@ const menuItems: MenuItem[] = [
     icon: "🏠",
     path: "/dashboard"
   },
-  // {
-  //   id: "participant",
-  //   label: "Participants",
-  //   icon: "👥",
-  //   path: "/participants"
-  // },
   {
-    id: "enrollment",
-    label: "Enrollments",
-    icon: "📚",
-    path: "/enrollment"
+    id: "participant",
+    label: "Participant History",
+    icon: "👥",
+    path: "/participants/history"
   },
   {
     id: "nomination",
     label: "Nominations",
     icon: "🎯",
     path: "/nomination/list"
+  },
+  {
+    id: "admission",
+    label: "Admissions",
+    icon: "📚",
+    path: "/admission"
   },
   {
     id: "allowance",

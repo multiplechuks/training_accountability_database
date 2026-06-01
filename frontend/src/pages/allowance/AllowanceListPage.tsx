@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Card, CardHeader, CardBody } from "@/components/ui";
+import { Card, CardHeader, CardBody, LoadingSpinner } from "@/components/ui";
 import type { AllowanceResponseDto } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { NavigationRoutes } from "@/constants";
 import { getAllowances } from "@/api/allowance";
+import { formatTableDate } from "@/utils";
 
 export default function AllowanceListPage() {
   const [allowances, setAllowances] = useState<AllowanceResponseDto[]>([]);
@@ -67,14 +68,6 @@ export default function AllowanceListPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    });
-  };
-
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat("en-BW", {
       style: "currency",
@@ -93,11 +86,7 @@ export default function AllowanceListPage() {
           <h1 className="page-title">Training Allowances</h1>
           <p className="page-subtitle">Manage participant allowances</p>
         </div>
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "16rem" }}>
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
+        <LoadingSpinner centered />
       </div>
     );
   }
@@ -278,7 +267,7 @@ export default function AllowanceListPage() {
                     </td>
                     <td>
                       <div className="small">
-                        {formatDate(allowance.startDate)} - {formatDate(allowance.endDate)}
+                        {formatTableDate(allowance.startDate)} - {formatTableDate(allowance.endDate)}
                       </div>
                     </td>
                     <td>

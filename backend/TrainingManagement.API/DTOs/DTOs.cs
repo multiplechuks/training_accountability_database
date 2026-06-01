@@ -255,7 +255,7 @@ public record AllowanceResponseDto(
 
 public record CreateAllowanceTypeDto(string Name, string? Description, string? Frequency);
 public record UpdateAllowanceTypeDto(string? Name, string? Description, string? Frequency);
-public record AllowanceTypeResponseDto(int Id, string Name, string? Description, string? Frequency);
+public record AllowanceTypeResponseDto(int Pk, string Name, string? Description, string? Frequency);
 
 public record CreateAllowanceStatusDto(string Name, string? Description);
 public record UpdateAllowanceStatusDto(string? Name, string? Description);

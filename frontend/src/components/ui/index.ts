@@ -5,5 +5,6 @@ export { default as Login } from "./Login";
 export { default as Card, CardHeader, CardBody, CardFooter, StatCard, IconCard } from "./Card";
 export { default as Stepper } from "./Stepper";
 export { default as ConfirmationModal } from "./ConfirmationModal";
+export { default as LoadingSpinner } from "./LoadingSpinner";
 export type { BaseCardProps, CardHeaderProps, CardBodyProps, CardFooterProps, StatCardProps, IconCardProps } from "./Card";
 export type { Step } from "./Stepper";

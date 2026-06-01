@@ -37,14 +37,3 @@ export async function deleteAdmission(id: number): Promise<void> {
   await axiosInstance.delete(ApiUrls.admissions.DETAILS(id));
 }
 
-// Aliases for backward compatibility with existing pages
-export const getEnrollments = getAdmissions;
-export const getEnrollment = getAdmission;
-export const createEnrollment = createAdmission;
-export const updateEnrollment = (id: number, data: UpdateAdmissionDto) => updateAdmission(id, data);
-export const deleteEnrollment = deleteAdmission;
-
-// enrollmentWizard stub so EnrollmentCompletePage doesn't crash on import
-export const enrollmentWizard = {
-  async getProgress(id: number) { return getAdmission(id); },
-};

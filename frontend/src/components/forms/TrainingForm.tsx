@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CreateTrainingDto, UpdateTrainingDto, TrainingResponseDto } from "@/types";
 import { FormSection } from "@/components/forms";
 import { formatInputDate } from "@/utils/dateFormatter";
+import { LoadingSpinner } from "@/components/ui";
 
 interface TrainingFormProps {
   training?: TrainingResponseDto; // For edit mode
@@ -322,9 +323,7 @@ export default function TrainingForm({
           >
             {loading ? (
               <>
-                <div className="spinner-border spinner-border-sm me-2" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+                <LoadingSpinner size="sm" className="me-2" />
                 {isEditing ? "Updating..." : "Creating..."}
               </>
             ) : (

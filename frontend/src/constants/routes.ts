@@ -13,7 +13,8 @@ export const NavigationRoutes = {
   PARTICIPANT_DETAILS: (id: number | string) => `/participants/view/${id}`,
   PARTICIPANT_CREATE: "/participants/create",
   PARTICIPANT_EDIT: (id: number | string) => `/participants/edit/${id}`,
-  PARTICIPANT_ENROLLMENTS: (id: number | string) => `/participants/${id}/enrollments`,
+  PARTICIPANT_ADMISSIONS: (id: number | string) => `/participants/${id}/admissions`,
+  PARTICIPANT_HISTORY: "/participants/history",
   
   // Training routes
   TRAININGS: "/training",
@@ -21,15 +22,16 @@ export const NavigationRoutes = {
   TRAINING_CREATE: "/training/create",
   TRAINING_EDIT: (id: number | string) => `/training/edit/${id}`,
   
-  // Enrollment routes
-  ENROLLMENTS: "/enrollment",
-  ENROLLMENT_CREATE: "/enrollment/create",
-  ENROLLMENT_DETAILS: (id: number | string) => `/enrollment/view/${id}`,
-  ENROLLMENT_EDIT: (id: number | string) => `/enrollment/edit/${id}`,
+  // Admission routes
+  ADMISSIONS: "/admission",
+  ADMISSION_CREATE: "/admission/create",
+  ADMISSION_DETAILS: (id: number | string) => `/admission/view/${id}`,
+  ADMISSION_EDIT: (id: number | string) => `/admission/edit/${id}`,
   
-  // Nomination routes (Enrollment Wizard)
+  // Nomination routes
   NOMINATIONS: "/nomination/list",
   NOMINATION_START: "/nomination/start",
+  NOMINATION_VIEW: (id: number | string) => `/nomination/view/${id}`,
   NOMINATION_PROGRESS: (progressId: number | string) => `/nomination/progress/${progressId}`,
 
   // Allowance routes
@@ -43,7 +45,7 @@ export const NavigationRoutes = {
   REPORTS: "/reports",
   REPORTS_PARTICIPANTS: "/reports/participants",
   REPORTS_TRAINING: "/reports/training",
-  REPORTS_ENROLLMENT: "/reports/enrollment",
+  REPORTS_ADMISSION: "/reports/admission",
   CONFIGURATION: "/configuration",
 } as const;
 
@@ -53,6 +55,6 @@ export const RouteHelpers = {
   goToParticipantEdit: (id: number | string) => NavigationRoutes.PARTICIPANT_EDIT(id),
   goToTrainingDetails: (id: number | string) => NavigationRoutes.TRAINING_DETAILS(id),
   goToTrainingEdit: (id: number | string) => NavigationRoutes.TRAINING_EDIT(id),
-  goToEnrollmentDetails: (id: number | string) => NavigationRoutes.ENROLLMENT_DETAILS(id),
-  goToEnrollmentEdit: (id: number | string) => NavigationRoutes.ENROLLMENT_EDIT(id),
+  goToAdmissionDetails: (id: number | string) => NavigationRoutes.ADMISSION_DETAILS(id),
+  goToAdmissionEdit: (id: number | string) => NavigationRoutes.ADMISSION_EDIT(id),
 } as const;

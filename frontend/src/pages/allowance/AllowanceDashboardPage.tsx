@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Card, CardHeader, CardBody } from "@/components/ui";
+import { Card, CardHeader, CardBody, LoadingSpinner } from "@/components/ui";
+import { formatTableDate } from "@/utils";
 
 // Sample data for allowance dashboard
 const sampleDashboardData = {
@@ -89,11 +90,7 @@ export default function AllowanceDashboardPage() {
           <h1 className="page-title">Allowance Dashboard</h1>
           <p className="page-subtitle">Overview of training allowances</p>
         </div>
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "16rem" }}>
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
+        <LoadingSpinner centered />
       </div>
     );
   }
@@ -284,7 +281,7 @@ export default function AllowanceDashboardPage() {
                     </td>
                     <td>
                       <div>
-                        {new Date(allowance.date).toLocaleDateString("en-GB")}
+                        {formatTableDate(allowance.date)}
                       </div>
                     </td>
                     <td>

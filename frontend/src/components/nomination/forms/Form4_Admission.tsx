@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import type { Form4_AdmissionData } from "../../../types/nomination";
 import { searchTrainings } from "../../../api/training";
 import type { TrainingResponseDto } from "../../../types";
+import { LoadingSpinner } from "../../../components/ui";
 
 interface Form4Props {
   data: Form4_AdmissionData;
@@ -114,9 +115,7 @@ export default function Form4_Admission({ data, onDataChange, onNext, onBack, on
                 />
                 {loadingPrograms && (
                   <div className="position-absolute end-0 top-50 me-2">
-                    <div className="spinner-border spinner-border-sm text-primary" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
+                    <LoadingSpinner size="sm" />
                   </div>
                 )}
                 {showProgramDropdown && programOptions.length > 0 && (

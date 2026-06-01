@@ -1,14 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 import { ApiUrls } from "@/constants/apiUrls";
-
-interface AdmissionProgram {
-  pk: number;
-  name: string;
-  country?: string;
-  institution?: string;
-  description?: string;
-}
+import { LoadingSpinner } from "@/components/ui";
 
 interface FormState {
   name: string;
@@ -27,8 +20,8 @@ const getErrorMessage = (err: unknown) => {
   return err instanceof Error ? err.message : undefined;
 };
 
-export default function AdmissionProgramsPage() {
-  const [programs, setPrograms] = useState<AdmissionProgram[]>([]);
+export default function AdmissionProgramDtosPage() {
+  const [programs, setPrograms] = useState<AdmissionProgramDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -63,7 +56,7 @@ export default function AdmissionProgramsPage() {
     setShowModal(true);
   };
 
-  const openEdit = (p: AdmissionProgram) => {
+  const openEdit = (p: AdmissionProgramDto) => {
     setEditingId(p.pk);
     setForm({ name: p.name, country: p.country ?? "", institution: p.institution ?? "", description: p.description ?? "" });
     setFormError(null);
@@ -99,7 +92,7 @@ export default function AdmissionProgramsPage() {
     }
   };
 
-  const handleDelete = async (p: AdmissionProgram) => {
+  const handleDelete = async (p: AdmissionProgramDto) => {
     if (!confirm(`Delete "${p.name}"?`)) return;
     try {
       await axiosInstance.delete(ApiUrls.lookups.ADMISSION_PROGRAM(p.pk));
@@ -134,9 +127,7 @@ export default function AdmissionProgramsPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-4">
-          <div className="spinner-border text-primary" role="status" />
-        </div>
+        <LoadingSpinner centered />
       ) : programs.length === 0 ? (
         <div className="alert alert-info">No admission programmes found. Add one to get started.</div>
       ) : (

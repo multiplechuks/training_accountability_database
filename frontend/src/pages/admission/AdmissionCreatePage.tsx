@@ -1,13 +1,13 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useParams } from "react-router-dom";
-import { Card, CardHeader, CardBody } from "@/components/ui";
-import { createAdmission } from "@/api/enrollment";
+import { Card, CardHeader, CardBody, LoadingSpinner } from "@/components/ui";
+import { createAdmission } from "@/api/admission";
 import { getNomination } from "@/api/training";
 import { getAllLookups } from "@/api/nomination";
 import type { NominationResponseDto, LookupItemDto, AdmissionProgramDto } from "@/types";
 import { NavigationRoutes } from "@/constants";
 
-export default function EnrollmentCreatePage() {
+export default function AdmissionCreatePage() {
   const navigate = useNavigate();
   const { nominationId: pathNomId } = useParams<{ nominationId: string }>();
   const [searchParams] = useSearchParams();
@@ -30,7 +30,6 @@ export default function EnrollmentCreatePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load nomination details and lookups
   useEffect(() => {
     const fetchLookups = getAllLookups().then((all) => {
       setAdmissionPrograms(all.admissionPrograms ?? []);
@@ -72,7 +71,7 @@ export default function EnrollmentCreatePage() {
       if (releaseLetter) formData.append("releaseLetter", releaseLetter);
 
       await createAdmission(formData);
-      navigate(NavigationRoutes.ENROLLMENTS, { state: { message: "Admission created successfully." } });
+      navigate(NavigationRoutes.ADMISSIONS, { state: { message: "Admission created successfully." } });
     } catch {
       setError("Failed to create admission. Please try again.");
     } finally {
@@ -83,9 +82,7 @@ export default function EnrollmentCreatePage() {
   if (loadingNomination) {
     return (
       <div className="page-content">
-        <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status" />
-        </div>
+        <LoadingSpinner centered />
       </div>
     );
   }
@@ -210,4 +207,3 @@ export default function EnrollmentCreatePage() {
     </div>
   );
 }
-

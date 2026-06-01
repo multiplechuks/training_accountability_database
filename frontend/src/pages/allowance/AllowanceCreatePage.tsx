@@ -1,10 +1,9 @@
 ﻿import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardBody } from "@/components/ui";
-import ConfirmationModal from "@/components/ui/ConfirmationModal";
+import { Card, CardHeader, CardBody, ConfirmationModal, LoadingSpinner } from "@/components/ui";
 import SearchableSelect from "@/components/ui/SearchableSelect";
 import { getParticipant } from "@/api/participant";
-import { getAdmission } from "@/api/enrollment";
+import { getAdmission } from "@/api/admission";
 import { getAllowanceTypesLookup } from "@/api/allowanceType";
 import { getAllowanceStatusesLookup } from "@/api/allowanceStatus";
 import { createAllowance } from "@/api/allowance";
@@ -181,11 +180,8 @@ export default function AllowanceCreatePage() {
 
   if (initialLoading) {
     return (
-      <div className="page-content d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
-        <div className="text-center">
-          <div className="spinner-border text-primary" role="status" />
-          <p className="mt-2 text-muted">Loading data...</p>
-        </div>
+      <div className="page-content">
+        <LoadingSpinner centered message="Loading data..." />
       </div>
     );
   }
@@ -275,68 +271,68 @@ export default function AllowanceCreatePage() {
             ) : (
               <>
                 <div className="table-responsive">
-                  <table className="table table-hover">
+                  <table className="table table-hover table-sm">
                     <thead className="table-light">
                       <tr>
-                        <th>Type</th>
-                        <th>Amount (BWP)</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th style={{ minWidth: "200px", padding: "0.5rem 0.25rem" }}>Type</th>
+                        <th style={{ minWidth: "140px", padding: "0.5rem 0.25rem" }}>Amount</th>
+                        <th style={{ minWidth: "160px", padding: "0.5rem 0.25rem" }}>Start Date</th>
+                        <th style={{ minWidth: "160px", padding: "0.5rem 0.25rem" }}>End Date</th>
+                        <th style={{ minWidth: "130px", padding: "0.5rem 0.25rem" }}>Status</th>
+                        <th style={{ width: "110px", padding: "0.5rem 0.25rem" }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {allowances.map((allowance) => (
                         <tr key={allowance.id} className={isEditing === allowance.id ? "table-active" : ""}>
-                          <td>
+                          <td style={{ padding: "0.5rem 0.25rem" }}>
                             {isEditing === allowance.id ? (
-                              <select value={allowance.allowanceTypeFK} onChange={(e) => updateAllowance(allowance.id, "allowanceTypeFK", parseInt(e.target.value))} className="form-select form-select-sm" required>
+                              <select value={allowance.allowanceTypeFK} onChange={(e) => updateAllowance(allowance.id, "allowanceTypeFK", parseInt(e.target.value))} className="form-select form-select-sm" required style={{ width: "100%" }}>
                                 <option value={0}>Select Type</option>
                                 {allowanceTypes.map((t) => <option key={t.pk} value={t.pk}>{t.name}</option>)}
                               </select>
                             ) : (
-                              <span className={!allowance.allowanceTypeFK ? "text-danger" : ""}>{getTypeName(allowance.allowanceTypeFK) || "Not selected"}</span>
+                              <span className={!allowance.allowanceTypeFK ? "text-danger" : ""} style={{ whiteSpace: "nowrap" }}>{getTypeName(allowance.allowanceTypeFK) || "Not selected"}</span>
                             )}
                           </td>
-                          <td>
+                          <td style={{ padding: "0.5rem 0.25rem" }}>
                             {isEditing === allowance.id ? (
-                              <input type="number" step="0.01" value={allowance.amount || ""} onChange={(e) => updateAllowance(allowance.id, "amount", parseFloat(e.target.value) || 0)} className="form-control form-control-sm" />
+                              <input type="number" step="0.01" value={allowance.amount || ""} onChange={(e) => updateAllowance(allowance.id, "amount", parseFloat(e.target.value) || 0)} className="form-control form-control-sm" style={{ width: "100%" }} />
                             ) : (
-                              <span className={allowance.amount <= 0 ? "text-danger" : ""}>{allowance.amount > 0 ? `P${allowance.amount.toFixed(2)}` : "Not set"}</span>
+                              <span className={allowance.amount <= 0 ? "text-danger" : ""} style={{ whiteSpace: "nowrap" }}>{allowance.amount > 0 ? `P${allowance.amount.toFixed(2)}` : "Not set"}</span>
                             )}
                           </td>
-                          <td>
+                          <td style={{ padding: "0.5rem 0.25rem" }}>
                             {isEditing === allowance.id ? (
-                              <input type="date" value={allowance.startDate} onChange={(e) => updateAllowance(allowance.id, "startDate", e.target.value)} className="form-control form-control-sm" />
+                              <input type="date" value={allowance.startDate} onChange={(e) => updateAllowance(allowance.id, "startDate", e.target.value)} className="form-control form-control-sm" style={{ width: "100%" }} />
                             ) : (
-                              <span className={!allowance.startDate ? "text-danger" : ""}>{allowance.startDate || "Not set"}</span>
+                              <span className={!allowance.startDate ? "text-danger" : ""} style={{ whiteSpace: "nowrap" }}>{allowance.startDate || "Not set"}</span>
                             )}
                           </td>
-                          <td>
+                          <td style={{ padding: "0.5rem 0.25rem" }}>
                             {isEditing === allowance.id ? (
-                              <input type="date" value={allowance.endDate} onChange={(e) => updateAllowance(allowance.id, "endDate", e.target.value)} className="form-control form-control-sm" />
+                              <input type="date" value={allowance.endDate} onChange={(e) => updateAllowance(allowance.id, "endDate", e.target.value)} className="form-control form-control-sm" style={{ width: "100%" }} />
                             ) : (
-                              <span className={!allowance.endDate ? "text-danger" : ""}>{allowance.endDate || "Not set"}</span>
+                              <span className={!allowance.endDate ? "text-danger" : ""} style={{ whiteSpace: "nowrap" }}>{allowance.endDate || "Not set"}</span>
                             )}
                           </td>
-                          <td>
+                          <td style={{ padding: "0.5rem 0.25rem" }}>
                             {isEditing === allowance.id ? (
-                              <select value={allowance.statusFK} onChange={(e) => updateAllowance(allowance.id, "statusFK", parseInt(e.target.value))} className="form-select form-select-sm">
+                              <select value={allowance.statusFK} onChange={(e) => updateAllowance(allowance.id, "statusFK", parseInt(e.target.value))} className="form-select form-select-sm" style={{ width: "100%" }}>
                                 {allowanceStatuses.map((s) => <option key={s.pk} value={s.pk}>{s.name}</option>)}
                               </select>
                             ) : (
-                              <span className="badge bg-secondary">{getStatusName(allowance.statusFK)}</span>
+                              <span className="badge bg-secondary" style={{ whiteSpace: "nowrap" }}>{getStatusName(allowance.statusFK)}</span>
                             )}
                           </td>
-                          <td>
-                            <div className="btn-group btn-group-sm">
+                          <td style={{ padding: "0.5rem 0.25rem" }}>
+                            <div className="btn-group btn-group-sm" style={{ whiteSpace: "nowrap" }}>
                               {isEditing === allowance.id ? (
-                                <button type="button" onClick={() => setIsEditing(null)} className="btn btn-success" title="Done">✅</button>
+                                <button type="button" onClick={() => setIsEditing(null)} className="btn btn-success btn-sm" title="Done">✅</button>
                               ) : (
-                                <button type="button" onClick={() => setIsEditing(allowance.id)} className="btn btn-outline-primary" title="Edit">✏️</button>
+                                <button type="button" onClick={() => setIsEditing(allowance.id)} className="btn btn-outline-primary btn-sm" title="Edit">✏️</button>
                               )}
-                              <button type="button" onClick={() => deleteAllowance(allowance.id)} className="btn btn-outline-danger" title="Remove">🗑️</button>
+                              <button type="button" onClick={() => deleteAllowance(allowance.id)} className="btn btn-outline-danger btn-sm" title="Remove">🗑️</button>
                             </div>
                           </td>
                         </tr>
@@ -355,7 +351,7 @@ export default function AllowanceCreatePage() {
                     <div className="d-flex gap-2">
                       <button type="button" onClick={() => { setAllowances([]); setComments(""); }} className="btn btn-outline-secondary" disabled={loading}>Clear</button>
                       <button type="button" onClick={handleSubmit} className="btn btn-primary" disabled={loading || allowances.length === 0}>
-                        {loading ? <><div className="spinner-border spinner-border-sm me-2" role="status" />Creating...</> : `Create ${allowances.length} Allowance${allowances.length !== 1 ? "s" : ""}`}
+                        {loading ? <><LoadingSpinner size="sm" className="me-2" />Creating...</> : `Create ${allowances.length} Allowance${allowances.length !== 1 ? "s" : ""}`}
                       </button>
                     </div>
                   </div>
