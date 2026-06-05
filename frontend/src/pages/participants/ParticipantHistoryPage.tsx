@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getParticipants } from "@/api/participant";
+import { getParticipants, getParticipant } from "@/api/participant";
 import { getNominationsByParticipant } from "@/api/training";
 import { getAdmissionByNomination } from "@/api/admission";
 import { getAllowancesByParticipant } from "@/api/allowance";
@@ -12,6 +12,9 @@ import type {
 } from "@/types";
 import { NavigationRoutes } from "@/constants";
 import { LoadingSpinner } from "@/components/ui";
+
+const SESSION_KEY = "participantHistoryPK";
+const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 const STATUS_BADGE: Record<string, string> = {
   Approved: "bg-success",
@@ -32,6 +35,22 @@ export default function ParticipantHistoryPage() {
   const [allowances, setAllowances] = useState<AllowanceResponseDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return;
+    try {
+      const { pk, savedAt } = JSON.parse(raw);
+      if (Date.now() - savedAt > SESSION_TTL_MS) {
+        sessionStorage.removeItem(SESSION_KEY);
+        return;
+      }
+      getParticipant(pk).then(loadParticipantHistory).catch(() => sessionStorage.removeItem(SESSION_KEY));
+    } catch {
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSearch = useCallback(async () => {
     if (!searchTerm.trim()) return;
@@ -54,6 +73,7 @@ export default function ParticipantHistoryPage() {
     setHasSearched(false);
     setError(null);
     setLoading(true);
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ pk: p.pk, savedAt: Date.now() }));
     try {
       const [nominations, allowanceList] = await Promise.all([
         getNominationsByParticipant(p.pk),
@@ -187,7 +207,7 @@ export default function ParticipantHistoryPage() {
                   </button>
                   <button
                     className="btn btn-sm btn-outline-secondary"
-                    onClick={() => { setParticipant(null); setNominationsWithAdmissions([]); setAllowances([]); }}
+                    onClick={() => { setParticipant(null); setNominationsWithAdmissions([]); setAllowances([]); sessionStorage.removeItem(SESSION_KEY); }}
                   >
                     Clear
                   </button>
@@ -283,7 +303,7 @@ export default function ParticipantHistoryPage() {
                           </div>
                           <button
                             className="btn btn-sm btn-outline-secondary flex-shrink-0"
-                            onClick={() => navigate(`/nomination/progress/${nomination.pk}`)}
+                            onClick={() => navigate(`/nomination/view/${nomination.pk}`)}
                           >
                             View Nomination
                           </button>
