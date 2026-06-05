@@ -43,7 +43,6 @@ export default function AdmissionViewPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">{admission.participantName}</h1>
-          <p className="page-subtitle">Admission #{admission.pk}</p>
         </div>
         <div className="d-flex gap-2">
           <button className="btn btn-primary" onClick={() => navigate(`/admission/edit/${admission.pk}`)}>Edit</button>
@@ -65,6 +64,12 @@ export default function AdmissionViewPage() {
 
                 <dt className="col-sm-4 text-muted">Programme</dt>
                 <dd className="col-sm-8 mb-0">{admission.admissionProgramName ?? <span className="text-muted">Not specified</span>}</dd>
+
+                <dt className="col-sm-4 text-muted">Country</dt>
+                <dd className="col-sm-8 mb-0">{admission.admissionProgramCountry ?? <span className="text-muted">Not specified</span>}</dd>
+
+                <dt className="col-sm-4 text-muted">Institution</dt>
+                <dd className="col-sm-8 mb-0">{admission.admissionProgramInstitution ?? <span className="text-muted">Not specified</span>}</dd>
 
                 <dt className="col-sm-4 text-muted">Mode of Study</dt>
                 <dd className="col-sm-8 mb-0">{admission.modeOfStudyName ?? <span className="text-muted">Not specified</span>}</dd>
@@ -103,10 +108,6 @@ export default function AdmissionViewPage() {
             <div className="card-header fw-semibold">Record Info</div>
             <div className="card-body">
               <dl className="row mb-0" style={{ rowGap: "0.5rem" }}>
-                <dt className="col-6 text-muted" style={{ fontSize: "0.85rem" }}>Admission ID</dt>
-                <dd className="col-6 mb-0" style={{ fontSize: "0.85rem" }}>#{admission.pk}</dd>
-                <dt className="col-6 text-muted" style={{ fontSize: "0.85rem" }}>Nomination Ref</dt>
-                <dd className="col-6 mb-0" style={{ fontSize: "0.85rem" }}>#{admission.nominationFK}</dd>
                 <dt className="col-6 text-muted" style={{ fontSize: "0.85rem" }}>Recorded</dt>
                 <dd className="col-6 mb-0" style={{ fontSize: "0.85rem" }}>{formatTableDate(admission.createdAt)}</dd>
               </dl>

@@ -92,6 +92,7 @@ public class AdmissionsController : ControllerBase
         a.Nomination?.Participant?.FullName ?? string.Empty,
         a.AdmissionDate,
         a.AdmissionProgramFK, a.AdmissionProgram?.Name,
+        a.AdmissionProgram?.Country, a.AdmissionProgram?.Institution,
         a.ModeOfStudyFK, a.ModeOfStudy?.Name,
         a.ReleaseStartDate, a.ReleaseEndDate,
         a.ReleaseLetterPath, a.ReleaseLetterOriginalName,

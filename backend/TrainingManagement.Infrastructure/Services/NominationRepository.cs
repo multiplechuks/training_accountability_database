@@ -44,7 +44,6 @@ public class NominationRepository : INominationRepository
 
     public async Task<Nomination> CreateAsync(Nomination nomination)
     {
-        nomination.CreatedAt = DateTime.UtcNow;
         _db.Nominations.Add(nomination);
         await _db.SaveChangesAsync();
         return nomination;
@@ -52,7 +51,6 @@ public class NominationRepository : INominationRepository
 
     public async Task<Nomination> UpdateAsync(Nomination nomination)
     {
-        nomination.UpdatedAt = DateTime.UtcNow;
         _db.Nominations.Update(nomination);
         await _db.SaveChangesAsync();
         return nomination;
@@ -61,6 +59,6 @@ public class NominationRepository : INominationRepository
     public async Task DeleteAsync(int id)
     {
         var n = await _db.Nominations.FindAsync(id);
-        if (n != null) { n.Deleted = true; n.UpdatedAt = DateTime.UtcNow; await _db.SaveChangesAsync(); }
+        if (n != null) { n.Deleted = true; await _db.SaveChangesAsync(); }
     }
 }

@@ -198,6 +198,8 @@ public record AdmissionResponseDto(
     DateTime AdmissionDate,
     int? AdmissionProgramFK,
     string? AdmissionProgramName,
+    string? AdmissionProgramCountry,
+    string? AdmissionProgramInstitution,
     int? ModeOfStudyFK,
     string? ModeOfStudyName,
     DateTime? ReleaseStartDate,

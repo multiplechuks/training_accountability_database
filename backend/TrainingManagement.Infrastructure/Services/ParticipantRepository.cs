@@ -41,7 +41,6 @@ public class ParticipantRepository : IParticipantRepository
 
     public async Task<Participant> CreateAsync(Participant participant)
     {
-        participant.CreatedAt = DateTime.UtcNow;
         _db.Participants.Add(participant);
         await _db.SaveChangesAsync();
         return participant;
@@ -49,7 +48,6 @@ public class ParticipantRepository : IParticipantRepository
 
     public async Task<Participant> UpdateAsync(Participant participant)
     {
-        participant.UpdatedAt = DateTime.UtcNow;
         _db.Participants.Update(participant);
         await _db.SaveChangesAsync();
         return participant;
@@ -58,6 +56,6 @@ public class ParticipantRepository : IParticipantRepository
     public async Task DeleteAsync(int id)
     {
         var p = await _db.Participants.FindAsync(id);
-        if (p != null) { p.Deleted = true; p.UpdatedAt = DateTime.UtcNow; await _db.SaveChangesAsync(); }
+        if (p != null) { p.Deleted = true; await _db.SaveChangesAsync(); }
     }
 }

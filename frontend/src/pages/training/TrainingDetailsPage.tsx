@@ -59,7 +59,7 @@ export default function TrainingDetailsPage() {
     <div className="page-content">
       <div className="page-header">
         <h1 className="page-title">Nomination Details</h1>
-        <p className="page-subtitle">Nomination #{nomination.pk}</p>
+        <p className="page-subtitle">Nomination</p>
       </div>
 
       <div className="d-flex gap-2 mb-3">

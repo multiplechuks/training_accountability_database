@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TrainingManagement.Core.Entities;
 using TrainingManagement.Infrastructure.Data.Configurations;
 
@@ -7,8 +9,12 @@ namespace TrainingManagement.Infrastructure.Data;
 
 public class TrainingDbContext : IdentityDbContext<User, ApplicationRole, int>
 {
-    public TrainingDbContext(DbContextOptions<TrainingDbContext> options) : base(options)
+    private readonly IHttpContextAccessor? _httpContextAccessor;
+
+    public TrainingDbContext(DbContextOptions<TrainingDbContext> options, IHttpContextAccessor? httpContextAccessor = null)
+        : base(options)
     {
+        _httpContextAccessor = httpContextAccessor;
     }
 
     // Core entities
@@ -34,6 +40,32 @@ public class TrainingDbContext : IdentityDbContext<User, ApplicationRole, int>
     public DbSet<NominatedProgram> NominatedPrograms { get; set; }
     public DbSet<AdmissionProgram> AdmissionPrograms { get; set; }
     public DbSet<ModeOfStudy> ModesOfStudy { get; set; }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var now = DateTime.UtcNow;
+        var currentUser = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value ?? "System";
+
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt = now;
+                entry.Entity.UpdatedAt = now;
+                entry.Entity.CreatedBy = currentUser;
+                entry.Entity.UpdatedBy = currentUser;
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = now;
+                entry.Entity.UpdatedBy = currentUser;
+                entry.Property(e => e.CreatedAt).IsModified = false;
+                entry.Property(e => e.CreatedBy).IsModified = false;
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

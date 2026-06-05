@@ -12,6 +12,7 @@ export async function getNominations(page = 1, pageSize = 10, search?: string, y
 
 export async function getNomination(id: number): Promise<NominationResponseDto> {
   const response = await axiosInstance.get(ApiUrls.nominations.DETAILS(id));
+  console.log("Fetched nomination:", response.data);
   return response.data;
 }
 

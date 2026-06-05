@@ -307,6 +307,16 @@ export default function ParticipantHistoryPage() {
                                       <span className="text-muted">Programme:</span> {admission.admissionProgramName}
                                     </span>
                                   )}
+                                  {admission.admissionProgramCountry && (
+                                    <span>
+                                      <span className="text-muted">Country:</span> {admission.admissionProgramCountry}
+                                    </span>
+                                  )}
+                                  {admission.admissionProgramInstitution && (
+                                    <span>
+                                      <span className="text-muted">Institution:</span> {admission.admissionProgramInstitution}
+                                    </span>
+                                  )}
                                   {admission.modeOfStudyName && (
                                     <span>
                                       <span className="text-muted">Mode:</span> {admission.modeOfStudyName}

@@ -354,6 +354,8 @@ export interface AdmissionResponseDto {
   admissionDate: string;
   admissionProgramFK?: number;
   admissionProgramName?: string;
+  admissionProgramCountry?: string;
+  admissionProgramInstitution?: string;
   modeOfStudyFK?: number;
   modeOfStudyName?: string;
   releaseStartDate?: string;

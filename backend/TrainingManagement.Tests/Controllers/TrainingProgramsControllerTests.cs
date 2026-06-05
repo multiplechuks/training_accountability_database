@@ -34,7 +34,7 @@ public class ParticipantsControllerTests
         var result = await _controller.GetAll(1, 20, null);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
         Assert.NotNull(okResult.Value);
     }
 
@@ -51,7 +51,7 @@ public class ParticipantsControllerTests
         var result = await _controller.GetById(1);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
         Assert.NotNull(okResult.Value);
     }
 
@@ -66,6 +66,6 @@ public class ParticipantsControllerTests
         var result = await _controller.GetById(999);
 
         // Assert
-        Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<NotFoundResult>(result.Result);
     }
 }

@@ -42,6 +42,7 @@ builder.Services.AddIdentity<User, ApplicationRole>(options =>
 .AddEntityFrameworkStores<TrainingDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 

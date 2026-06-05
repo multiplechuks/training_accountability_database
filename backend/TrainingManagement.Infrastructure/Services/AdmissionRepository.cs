@@ -37,7 +37,6 @@ public class AdmissionRepository : IAdmissionRepository
 
     public async Task<Admission> CreateAsync(Admission admission)
     {
-        admission.CreatedAt = DateTime.UtcNow;
         _db.Admissions.Add(admission);
         await _db.SaveChangesAsync();
         return admission;
@@ -45,7 +44,6 @@ public class AdmissionRepository : IAdmissionRepository
 
     public async Task<Admission> UpdateAsync(Admission admission)
     {
-        admission.UpdatedAt = DateTime.UtcNow;
         _db.Admissions.Update(admission);
         await _db.SaveChangesAsync();
         return admission;
@@ -54,6 +52,6 @@ public class AdmissionRepository : IAdmissionRepository
     public async Task DeleteAsync(int id)
     {
         var a = await _db.Admissions.FindAsync(id);
-        if (a != null) { a.Deleted = true; a.UpdatedAt = DateTime.UtcNow; await _db.SaveChangesAsync(); }
+        if (a != null) { a.Deleted = true; await _db.SaveChangesAsync(); }
     }
 }

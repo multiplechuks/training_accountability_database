@@ -40,7 +40,6 @@ public class AllowanceRepository : IAllowanceRepository
 
     public async Task<Allowance> CreateAsync(Allowance allowance)
     {
-        allowance.CreatedAt = DateTime.UtcNow;
         _db.Allowances.Add(allowance);
         await _db.SaveChangesAsync();
         return allowance;
@@ -48,7 +47,6 @@ public class AllowanceRepository : IAllowanceRepository
 
     public async Task<Allowance> UpdateAsync(Allowance allowance)
     {
-        allowance.UpdatedAt = DateTime.UtcNow;
         _db.Allowances.Update(allowance);
         await _db.SaveChangesAsync();
         return allowance;
@@ -57,6 +55,6 @@ public class AllowanceRepository : IAllowanceRepository
     public async Task DeleteAsync(int id)
     {
         var a = await _db.Allowances.FindAsync(id);
-        if (a != null) { a.Deleted = true; a.UpdatedAt = DateTime.UtcNow; await _db.SaveChangesAsync(); }
+        if (a != null) { a.Deleted = true; await _db.SaveChangesAsync(); }
     }
 }

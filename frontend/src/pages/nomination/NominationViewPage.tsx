@@ -55,15 +55,12 @@ export default function NominationViewPage() {
     <div className="page-content">
       <div className="page-header">
         <div>
-          <h1 className="page-title">
-            {nomination.participantName ?? `Nomination #${nomination.pk}`}
-          </h1>
-          <p className="page-subtitle d-flex align-items-center gap-2">
-            Nomination #{nomination.pk}
+          <h1 className="page-title d-flex align-items-center gap-2">
+            {nomination.participantName}
             <span className={statusBadge(nomination.nominationStatus)}>
               {nomination.nominationStatus}
             </span>
-          </p>
+          </h1>
         </div>
         <div className="d-flex gap-2">
           <button
@@ -197,9 +194,6 @@ export default function NominationViewPage() {
             <div className="card-header fw-semibold">Record Info</div>
             <div className="card-body">
               <dl className="row mb-0" style={{ rowGap: "0.5rem", fontSize: "0.875rem" }}>
-                <dt className="col-6 text-muted">Nomination ID</dt>
-                <dd className="col-6 mb-0">#{nomination.pk}</dd>
-
                 <dt className="col-6 text-muted">Recorded</dt>
                 <dd className="col-6 mb-0">{formatTableDate(nomination.createdAt)}</dd>
 
