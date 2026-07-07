@@ -75,9 +75,3 @@ public class ChangePasswordDto
     [Compare("NewPassword")]
     public string ConfirmNewPassword { get; set; } = string.Empty;
 }
-
-public class RefreshTokenDto
-{
-    [Required]
-    public string RefreshToken { get; set; } = string.Empty;
-}
