@@ -15,9 +15,16 @@ export default function Login({ onLogin: _onLogin, loading = false, error }: Log
   });
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    _onLogin(credentials);
+    // Read the live DOM values instead of state: autofilled fields don't
+    // always fire onChange, so state can lag behind what's actually in the inputs.
+    const formData = new FormData(e.currentTarget);
+    _onLogin({
+      ...credentials,
+      email: (formData.get("email") as string) ?? credentials.email,
+      password: (formData.get("password") as string) ?? credentials.password,
+    });
   };
 
   const handleInputChange = (field: keyof LoginCredentials, value: string | boolean) => {
@@ -56,6 +63,7 @@ export default function Login({ onLogin: _onLogin, loading = false, error }: Log
               <input
                 type="email"
                 id="email"
+                name="email"
                 className="form-control"
                 value={credentials.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
@@ -73,6 +81,7 @@ export default function Login({ onLogin: _onLogin, loading = false, error }: Log
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
+                  name="password"
                   className="form-control"
                   value={credentials.password}
                   onChange={(e) => handleInputChange("password", e.target.value)}
@@ -117,7 +126,7 @@ export default function Login({ onLogin: _onLogin, loading = false, error }: Log
             <button
               type="submit"
               className="btn btn-login"
-              disabled={loading || !credentials.email || !credentials.password}
+              disabled={loading}
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
