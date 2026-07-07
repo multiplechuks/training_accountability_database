@@ -8,8 +8,8 @@ public class NominationService : INominationService
     private readonly INominationRepository _repo;
     public NominationService(INominationRepository repo) => _repo = repo;
 
-    public Task<(IEnumerable<Nomination> Items, int Total)> GetPagedAsync(int page, int pageSize, string? search, int? year)
-        => _repo.GetPagedAsync(page, pageSize, search, year);
+    public Task<(IEnumerable<Nomination> Items, int Total)> GetPagedAsync(int page, int pageSize, string? search, int? year, string? status = null, int? sponsorTypeId = null)
+        => _repo.GetPagedAsync(page, pageSize, search, year, status, sponsorTypeId);
 
     public Task<Nomination?> GetByIdAsync(int id) => _repo.GetByIdAsync(id);
 

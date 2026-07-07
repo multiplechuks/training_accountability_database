@@ -18,17 +18,32 @@ public class NominationRepository : INominationRepository
             .Include(n => n.SponsorType)
             .Include(n => n.Admission).ThenInclude(a => a.AdmissionProgram);
 
-    public async Task<(IEnumerable<Nomination> Items, int Total)> GetPagedAsync(int page, int pageSize, string? search, int? year)
+    public async Task<(IEnumerable<Nomination> Items, int Total)> GetPagedAsync(int page, int pageSize, string? search, int? year, string? status = null, int? sponsorTypeId = null)
     {
         var query = BaseQuery();
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(n => n.Participant.Firstname.Contains(search) || n.Participant.Lastname.Contains(search));
+            query = query.Where(
+                n => n.Participant.Firstname.Contains(search)
+                || n.Participant.Lastname.Contains(search)
+                || n.Participant.Email.Contains(search)
+                || n.Participant.Phone.Contains(search)
+                || (n.NominatedProgram != null && n.NominatedProgram.Name.Contains(search)));
         }
 
         if (year.HasValue)
         {
             query = query.Where(n => n.YearOfNomination == year.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(status))
+        {
+            query = query.Where(n => n.NominationStatus == status);
+        }
+
+        if (sponsorTypeId.HasValue)
+        {
+            query = query.Where(n => n.SponsorTypeFK == sponsorTypeId.Value);
         }
 
         var total = await query.CountAsync();

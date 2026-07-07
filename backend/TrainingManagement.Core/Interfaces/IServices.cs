@@ -19,7 +19,7 @@ public interface INextOfKinService
 
 public interface INominationService
 {
-    Task<(IEnumerable<Nomination> Items, int Total)> GetPagedAsync(int page, int pageSize, string? search, int? year);
+    Task<(IEnumerable<Nomination> Items, int Total)> GetPagedAsync(int page, int pageSize, string? search, int? year, string? status = null, int? sponsorTypeId = null);
     Task<Nomination?> GetByIdAsync(int id);
     Task<IEnumerable<Nomination>> GetByParticipantAsync(int participantId);
     Task<Nomination> CreateAsync(Nomination nomination);

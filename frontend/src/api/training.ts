@@ -2,10 +2,12 @@
 import { ApiUrls } from "@/constants/apiUrls";
 import type { NominationResponseDto, CreateNominationDto, UpdateNominationDto, UpdateNominationStatusDto, PaginatedResponse } from "@/types";
 
-export async function getNominations(page = 1, pageSize = 10, search?: string, year?: number): Promise<PaginatedResponse<NominationResponseDto>> {
+export async function getNominations(page = 1, pageSize = 10, search?: string, year?: number, status?: string, sponsorTypeId?: number): Promise<PaginatedResponse<NominationResponseDto>> {
   const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
   if (search) params.append("search", search);
   if (year) params.append("year", String(year));
+  if (status) params.append("status", status);
+  if (sponsorTypeId) params.append("sponsorTypeId", String(sponsorTypeId));
   const response = await axiosInstance.get(`${ApiUrls.nominations.LIST}?${params}`);
   return response.data;
 }

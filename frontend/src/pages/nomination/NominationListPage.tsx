@@ -3,10 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardHeader, CardBody } from "@/components/ui";
 import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { getNominations, deleteNomination, updateNominationStatus } from "@/api/training";
+import { getLookupItems } from "@/api/nomination";
 import { formatTableDate } from "@/utils";
 import { LoadingSpinner } from "@/components/ui";
-import type { NominationResponseDto, PaginatedResponse, UpdateNominationStatusDto } from "@/types";
+import type { NominationResponseDto, PaginatedResponse, UpdateNominationStatusDto, LookupItemDto, NominationStatusModalState } from "@/types";
 import { NavigationRoutes } from "@/constants";
+import { ApiUrls } from "@/constants/apiUrls";
 
 const STATUSES = ["Pending", "Approved", "Rejected", "Deferred"];
 
@@ -29,6 +31,9 @@ export default function NominationListPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [yearFilter, setYearFilter] = useState("");
+  const [sponsorTypeFilter, setSponsorTypeFilter] = useState("");
+  const [sponsorTypes, setSponsorTypes] = useState<LookupItemDto[]>([]);
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
@@ -45,18 +50,31 @@ export default function NominationListPage() {
     }
   }, [location, navigate]);
 
+  useEffect(() => {
+    getLookupItems(ApiUrls.lookups.SPONSOR_TYPES)
+      .then(setSponsorTypes)
+      .catch(() => { /* keep empty */ });
+  }, []);
+
   const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const result = await getNominations(page, pageSize, search || undefined);
+      const result = await getNominations(
+        page,
+        pageSize,
+        search || undefined,
+        yearFilter ? Number(yearFilter) : undefined,
+        statusFilter || undefined,
+        sponsorTypeFilter ? Number(sponsorTypeFilter) : undefined
+      );
       setData(result);
     } catch {
       setError("Failed to load nominations. Please try again.");
     } finally {
       setLoading(false);
     }
-  }, [page, search]);
+  }, [page, search, yearFilter, statusFilter, sponsorTypeFilter]);
 
   useEffect(() => { loadData(); }, [loadData]);
 
@@ -107,9 +125,7 @@ export default function NominationListPage() {
     }
   };
 
-  const nominations = (data?.data ?? []).filter(
-    (n) => !statusFilter || n.nominationStatus === statusFilter
-  );
+  const nominations = data?.data ?? [];
 
   const totalPages = data?.totalPages ?? 1;
 
@@ -166,6 +182,39 @@ export default function NominationListPage() {
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
+            <input
+              type="number"
+              className="form-control"
+              style={{ maxWidth: 140 }}
+              placeholder="Year"
+              value={yearFilter}
+              onChange={(e) => { setYearFilter(e.target.value); setPage(1); }}
+            />
+            <select
+              className="form-select"
+              style={{ maxWidth: 200 }}
+              value={sponsorTypeFilter}
+              onChange={(e) => { setSponsorTypeFilter(e.target.value); setPage(1); }}
+            >
+              <option value="">All Sponsors</option>
+              {sponsorTypes.map((s) => (
+                <option key={s.pk} value={s.pk}>{s.name}</option>
+              ))}
+            </select>
+            {(search || statusFilter || yearFilter || sponsorTypeFilter) && (
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() => {
+                  setSearch("");
+                  setStatusFilter("");
+                  setYearFilter("");
+                  setSponsorTypeFilter("");
+                  setPage(1);
+                }}
+              >
+                Clear Filters
+              </button>
+            )}
           </div>
 
           {loading ? (

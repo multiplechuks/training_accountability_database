@@ -17,9 +17,10 @@ public class NominationsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PaginatedResponse<NominationResponseDto>>> GetAll(
         [FromQuery] int page = 1, [FromQuery] int pageSize = 20,
-        [FromQuery] string? search = null, [FromQuery] int? year = null)
+        [FromQuery] string? search = null, [FromQuery] int? year = null,
+        [FromQuery] string? status = null, [FromQuery] int? sponsorTypeId = null)
     {
-        var (items, total) = await _service.GetPagedAsync(page, pageSize, search, year);
+        var (items, total) = await _service.GetPagedAsync(page, pageSize, search, year, status, sponsorTypeId);
         return Ok(new PaginatedResponse<NominationResponseDto>(items.Select(MapToDto), total, page, pageSize));
     }
 
